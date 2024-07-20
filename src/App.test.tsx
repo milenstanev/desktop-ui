@@ -1,9 +1,13 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import React, { act } from 'react';
+import {render, screen, waitFor} from '@testing-library/react';
+import App from './app/App';
 
-test('renders learn react link', () => {
+test('renders learn react link', async () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+
+  // Use waitFor to handle the asynchronous rendering of components
+  await waitFor(() => {
+    const linkElement = screen.getByText(/ComponentLazy/i);
+    expect(linkElement).toBeInTheDocument();
+  });
 });
