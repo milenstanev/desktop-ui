@@ -1,21 +1,18 @@
 import React, {lazy, useCallback, Suspense, useMemo, useEffect} from 'react';
-import '/node_modules/react-grid-layout/css/styles.css';
-import '/node_modules/react-resizable/css/styles.css';
-import { Responsive, WidthProvider, Layout } from 'react-grid-layout';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
+import { Responsive, WidthProvider, Layouts } from 'react-grid-layout';
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
-import { removeWindow, addWindow } from './DesktopSlice';
+import { updateLayouts } from './DesktopSlice';
 import WindowComponent from '../../components/Window';
 import { componentLoader, ComponentNames } from './componentLoader';
-import styles from '../../app/Desktop.module.css';
+import styles from './Desktop.module.css';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-export type Breakpoint = 'lg' | 'md' | 'sm';
-export type Layouts = {
-  [key in Breakpoint]: Layout[];
-};
 
 const Desktop: React.FC = () => {
-  const windows = useAppSelector((state) => state.Desktop);
+  const windows = useAppSelector((state) => state.Desktop.desktopWindows);
+  const savedLayouts = useAppSelector((state) => state.Desktop.layouts);
   const dispatch = useAppDispatch();
 
   const loadComponent = useCallback((componentName: ComponentNames) => {
@@ -44,27 +41,21 @@ const Desktop: React.FC = () => {
     return layoutsData;
   }, [windows]);
 
-  useEffect(() => {
-    setTimeout(() => dispatch(removeWindow()), 2000);
-    setTimeout(() => dispatch(addWindow({
-      id: '1',
-      name: 'Component 1000',
-      lazyLoadComponent: 'ComponentLazy2',
-    })), 4000);
-  }, [dispatch]);
-
   return (
     <div className={styles.desktop}>
       <ResponsiveReactGridLayout
         cols={{ lg: 12, md: 8, sm: 2 }}
-        layouts={layouts}
+        layouts={savedLayouts ?? layouts}
         breakpoints={{ lg: 1200, md: 996, sm: 768 }}
-        /*onLayoutChange={(currentLayout, allLayouts) => console.log(currentLayout, allLayouts)}*/
+        onLayoutChange={(currentLayout, allLayouts) => {
+          dispatch(updateLayouts(allLayouts));
+        }}
+        draggableHandle=".drag-handle"
       >
         {windows.map((window) => (
           <div key={window.id}>
-            <WindowComponent>
-              <Suspense fallback={'loading'}>
+            <WindowComponent name={window.name} id={window.id}>
+              <Suspense fallback={<div>Loading...</div>}>
                 {window.lazyLoadComponent && (
                   React.createElement(loadComponent(window.lazyLoadComponent))
                 )}
