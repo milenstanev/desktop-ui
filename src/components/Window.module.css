@@ -16,4 +16,5 @@
 .main {
   padding: var(--window-padding);
   height: calc(100% - 53px);
+  overflow-y: auto;
 }

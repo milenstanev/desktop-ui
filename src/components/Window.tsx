@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { useAppDispatch } from '../app/hooks';
 import { removeWindow } from '../features/Desktop/DesktopSlice';
+import ErrorBoundary from '../components/ErrorBoundary';
 import styles from './Window.module.css';
 
 interface WindowProps {
@@ -15,37 +16,24 @@ const Window: React.FC<WindowProps> = ({
    children
 }) => {
   const dispatch = useAppDispatch();
-  const [clientX, setClientX] = useState<number>(0);
-  const [clientY, setClientY] = useState<number>(0);
 
   return (
-    <div
-      style={{ left: `${clientX}px`, top: `${clientY}px` }}
-      className={styles.window}
-      draggable={true}
-      onDrag={(event) => {
-        const dragEvent = event as React.DragEvent<HTMLDivElement>;
-        console.log(dragEvent.nativeEvent);
-        if (dragEvent.clientX > 0 && dragEvent.clientY > 0) {
-          setClientX(dragEvent.clientX);
-          setClientY(dragEvent.clientY);
-        }
-      }}>
+    <div className={styles.window}>
       <header className={styles.header}>
-        {name}
+        <span>{name}</span>
         <div>
           <button className="drag-handle">
             Drag here
           </button>
-          <button
-            onClick={() => dispatch(removeWindow(id))}
-          >
+          <button onClick={() => dispatch(removeWindow(id))}>
             Remove
           </button>
         </div>
       </header>
       <main className={styles.main}>
-        {children}
+        <ErrorBoundary>
+          {children}
+        </ErrorBoundary>
       </main>
     </div>
   )

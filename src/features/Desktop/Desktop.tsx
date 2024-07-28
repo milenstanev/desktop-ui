@@ -1,11 +1,11 @@
-import React, {lazy, useCallback, Suspense, useMemo, useEffect} from 'react';
+import React, {lazy, useCallback, Suspense, useMemo, useState} from 'react';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { Responsive, WidthProvider, Layouts } from 'react-grid-layout';
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
-import { updateLayouts } from './DesktopSlice';
+import {LayoutBreakpoint, updateLayouts} from './DesktopSlice';
 import WindowComponent from '../../components/Window';
-import { componentLoader, ComponentNames } from './componentLoader';
+import { componentLoader, ComponentNames } from '../../utils/componentLoader';
 import styles from './Desktop.module.css';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
@@ -13,6 +13,7 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 const Desktop: React.FC = () => {
   const windows = useAppSelector((state) => state.Desktop.desktopWindows);
   const savedLayouts = useAppSelector((state) => state.Desktop.layouts);
+  const [breakpoint, setBreakpoint] = useState<LayoutBreakpoint>('lg');
   const dispatch = useAppDispatch();
 
   const loadComponent = useCallback((componentName: ComponentNames) => {
@@ -47,9 +48,13 @@ const Desktop: React.FC = () => {
         cols={{ lg: 12, md: 8, sm: 2 }}
         layouts={savedLayouts ?? layouts}
         breakpoints={{ lg: 1200, md: 996, sm: 768 }}
-        onLayoutChange={(currentLayout, allLayouts) => {
-          dispatch(updateLayouts(allLayouts));
+        onDragStop={(layout) => {
+          dispatch(updateLayouts({ layout, breakpoint }));
         }}
+        onResizeStop={(layout) => {
+          dispatch(updateLayouts({ layout, breakpoint }));
+        }}
+        onBreakpointChange={(newBreakpoint: LayoutBreakpoint) => setBreakpoint(newBreakpoint)}
         draggableHandle=".drag-handle"
       >
         {windows.map((window) => (
