@@ -29,11 +29,11 @@ class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <>
-          <h1 style={{textAlign: 'center'}}>
+          <h1 className="text-center">
             Something went wrong.
           </h1>
           {error && (
-            <p style={{textAlign: 'center'}}>
+            <p className="text-center">
               {error.toString()}
             </p>
           )}
