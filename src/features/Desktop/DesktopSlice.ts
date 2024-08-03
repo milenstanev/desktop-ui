@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import { Layouts, Layout } from 'react-grid-layout';
 import { DesktopUIWindow, LayoutBreakpoint } from './types';
-import { LOCAL_STORAGE_LAYOUT_KEY, LOCAL_STORAGE_DESKTOP_KEY } from './config';
+import { LOCAL_STORAGE_LAYOUT_KEY, LOCAL_STORAGE_DESKTOP_KEY, defaultWindowsPositions } from './config';
 
 interface State {
   desktopWindows: DesktopUIWindow[];
@@ -48,9 +48,9 @@ export const DesktopSlice = createSlice({
         state.desktopWindows.unshift(action.payload);
         saveWindowsToLocalStorage(state.desktopWindows);
 
-        const lg: Layout = action.payload.layout?.lg ?? { i: `${action.payload.id}`, x: 0, y: 0, w: 4, h: 2 };
-        const md: Layout = action.payload.layout?.md ?? { i: `${action.payload.id}`, x: 0, y: 0, w: 4, h: 2 };
-        const sm: Layout = action.payload.layout?.sm ?? { i: `${action.payload.id}`, x: 0, y: 0, w: 1, h: 1 };
+        const lg: Layout = action.payload.layout?.lg ?? { ...defaultWindowsPositions.lg, i: `${action.payload.id}` };
+        const md: Layout = action.payload.layout?.md ?? { ...defaultWindowsPositions.md, i: `${action.payload.id}` };
+        const sm: Layout = action.payload.layout?.sm ?? { ...defaultWindowsPositions.sm, i: `${action.payload.id}` };
 
         state.layouts.lg.push(lg);
         state.layouts.md.push(md);

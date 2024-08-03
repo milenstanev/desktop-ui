@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import styles from './Header.module.css';
 import { useAppDispatch } from './hooks';
 import { addWindow } from '../features/Desktop/DesktopSlice';
-import { NewWindowLayout } from '../features/Desktop/types';
+import { WindowLayout } from '../features/Desktop/types';
 import { ComponentNames } from "../utils/componentLoader";
 
 const Header: React.FC = () => {
@@ -13,7 +13,7 @@ const Header: React.FC = () => {
     id: string,
     name: string,
     lazyLoadComponent: ComponentNames,
-    layout?: NewWindowLayout,
+    layout?: WindowLayout,
   ) => {
     dispatch(addWindow({ id, name, lazyLoadComponent, layout }));
   }, [dispatch]);
