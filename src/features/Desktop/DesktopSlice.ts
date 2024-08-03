@@ -62,6 +62,7 @@ export const DesktopSlice = createSlice({
           state.layouts.lg && state.layouts.lg.push(lg);
           state.layouts.md && state.layouts.md.push(md);
           state.layouts.sm && state.layouts.sm.push(sm);
+          localStorage.setItem(LOCAL_STORAGE_LAYOUT_KEY, JSON.stringify(state.layouts));
         }
       }
     },

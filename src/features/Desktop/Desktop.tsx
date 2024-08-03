@@ -3,12 +3,18 @@ import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { Responsive, WidthProvider, Layouts } from 'react-grid-layout';
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
-import {LayoutBreakpoint, updateLayouts} from './DesktopSlice';
+import {LayoutBreakpoint, updateLayouts, DesktopUIWindow} from './DesktopSlice';
 import WindowComponent from '../../components/Window';
 import { componentLoader, ComponentNames } from '../../utils/componentLoader';
 import styles from './Desktop.module.css';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
+
+interface LazyLoadedComponentProps extends React.Attributes {
+  windowId: string;
+  windowName: string;
+}
+type LazyComponentType = React.ComponentType<LazyLoadedComponentProps>;
 
 const Desktop: React.FC = () => {
   const windows = useAppSelector((state) => state.Desktop.desktopWindows);
@@ -20,7 +26,9 @@ const Desktop: React.FC = () => {
     const loader = componentLoader[componentName];
 
     if (loader) {
-      return lazy(loader);
+      return lazy(() =>
+        loader().then((module) => ({ default: module.default as LazyComponentType }))
+      );
     } else {
       throw new Error(`Unknown component: ${componentName}`);
     }
@@ -30,7 +38,7 @@ const Desktop: React.FC = () => {
     const layoutsData: Layouts = { lg: [], md: [], sm: [], };
     let xPosition = -1;
 
-    windows.forEach((window, index) => {
+    windows.forEach((window: DesktopUIWindow, index: number) => {
       xPosition++;
       if (xPosition > 2) {
         xPosition = 0;
@@ -57,12 +65,15 @@ const Desktop: React.FC = () => {
         onBreakpointChange={(newBreakpoint: LayoutBreakpoint) => setBreakpoint(newBreakpoint)}
         draggableHandle=".drag-handle"
       >
-        {windows.map((window) => (
+        {windows.map((window: DesktopUIWindow) => (
           <div key={window.id}>
             <WindowComponent name={window.name} id={window.id}>
               <Suspense fallback={<div>Loading...</div>}>
                 {window.lazyLoadComponent && (
-                  React.createElement(loadComponent(window.lazyLoadComponent))
+                  React.createElement(
+                    loadComponent(window.lazyLoadComponent),
+                    { windowId: window.id, windowName: window.name } as LazyLoadedComponentProps
+                  )
                 )}
               </Suspense>
             </WindowComponent>
