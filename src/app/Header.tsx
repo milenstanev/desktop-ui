@@ -2,8 +2,9 @@ import React, { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import styles from './Header.module.css';
 import { useAppDispatch } from './hooks';
-import {addWindow, NewWindowLayout} from '../features/Desktop/DesktopSlice';
-import {ComponentNames} from "../utils/componentLoader";
+import { addWindow } from '../features/Desktop/DesktopSlice';
+import { NewWindowLayout } from '../features/Desktop/types';
+import { ComponentNames } from "../utils/componentLoader";
 
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -14,7 +15,7 @@ const Header: React.FC = () => {
     lazyLoadComponent: ComponentNames,
     layout?: NewWindowLayout,
   ) => {
-    dispatch(addWindow({ id, name, lazyLoadComponent, layout: layout ? layout : undefined }));
+    dispatch(addWindow({ id, name, lazyLoadComponent, layout }));
   }, [dispatch]);
 
   return (
