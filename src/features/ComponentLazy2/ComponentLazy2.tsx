@@ -18,6 +18,10 @@ const ComponentLazy: React.FC<ComponentLazyProps> = ({ windowId }) => {
 
   useEffect(() => {
     lazyLoadReducer(store, LAZY_LOAD_REDUCER_NAME, featureReducer);
+
+    return () => {
+      // TODO: remove reducer in case they are no other windows that using it
+    }
   }, [windowId, store]);
 
   return (
