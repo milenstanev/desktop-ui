@@ -1,28 +1,40 @@
-import React, { useEffect } from 'react';
+import React, {useCallback, useEffect} from 'react';
 import { useStore } from 'react-redux';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { RootState } from '../../app/store';
-import { lazyLoadReducer } from  '../../utils/lazyLoadReducer';
+import { lazyLoadReducer, removeLazyLoadedReducer } from  '../../utils/lazyLoadReducer';
 import featureReducer, { decrement, increment } from './ComponentLazy2Slice';
+import { DesktopUIWindow } from '../Desktop/types';
 
 interface ComponentLazyProps {
   windowId: string;
+  windowName: string;
 }
 
 const LAZY_LOAD_REDUCER_NAME = 'ComponentLazy2';
 
-const ComponentLazy: React.FC<ComponentLazyProps> = ({ windowId }) => {
+const ComponentLazy: React.FC<ComponentLazyProps> = ({ windowId, windowName }) => {
   const store = useStore();
   const dispatch = useAppDispatch();
   const value = useAppSelector((state: RootState) => state[LAZY_LOAD_REDUCER_NAME]?.value || 0);
+  const windows = useAppSelector((state) => state.Desktop.desktopWindows);
+
+  const handleRemove = useCallback(() => {
+    const found = windows.find((window: DesktopUIWindow) => {
+      return window.name === windowName && window.id !== windowId;
+    });
+    if (!found) {
+      removeLazyLoadedReducer(store, LAZY_LOAD_REDUCER_NAME);
+    }
+  }, [store, windowId, windowName, windows]);
 
   useEffect(() => {
     lazyLoadReducer(store, LAZY_LOAD_REDUCER_NAME, featureReducer);
-
     return () => {
-      // TODO: remove reducer in case they are no other windows that using it
+      handleRemove();
     }
-  }, [windowId, store]);
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <div style={{ display: 'flex', gap: '1em' }}>
