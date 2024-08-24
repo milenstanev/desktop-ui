@@ -1,12 +1,14 @@
 import React, {lazy, useCallback, Suspense, useState} from 'react';
+import { useStore } from "react-redux";
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
-import { updateLayouts } from './DesktopSlice';
+import {removeWindow, updateLayouts} from './DesktopSlice';
 import { LayoutBreakpoint, DesktopUIWindow } from './types';
 import WindowComponent from '../../components/Window';
 import { componentLoader, ComponentNames } from '../../utils/componentLoader';
+import { removeLazyLoadedReducer } from "../../utils/lazyLoadReducer";
 import styles from './Desktop.module.css';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
@@ -14,6 +16,7 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 interface LazyLoadedComponentProps extends React.Attributes {
   windowId: string;
   windowName: string;
+  lazyLoadReducerName: string;
 }
 type LazyComponentType = React.ComponentType<LazyLoadedComponentProps>;
 
@@ -22,8 +25,9 @@ const Desktop: React.FC = () => {
   const savedLayouts = useAppSelector((state) => state.Desktop.layouts);
   const [breakpoint, setBreakpoint] = useState<LayoutBreakpoint>('lg');
   const dispatch = useAppDispatch();
+  const store = useStore();
 
-  const loadComponent = useCallback((componentName: ComponentNames) => {
+  const loadWindow = useCallback((componentName: ComponentNames) => {
     const loader = componentLoader[componentName];
 
     if (loader) {
@@ -36,6 +40,18 @@ const Desktop: React.FC = () => {
       throw new Error(`Unknown component: ${componentName}`);
     }
   },[]);
+
+  const unloadWindow = useCallback((id: string, lazyLoadReducerName: string) => {
+    dispatch(removeWindow(id));
+
+    const foundComponentWithSameReducer = windows.find((window: DesktopUIWindow) => {
+      return window.lazyLoadReducerName === lazyLoadReducerName && window.id !== id;
+    });
+
+    if (!foundComponentWithSameReducer) {
+      removeLazyLoadedReducer(store, lazyLoadReducerName);
+    }
+  }, [dispatch, store, windows]);
 
   /*const layouts: Layouts = useMemo(() => {
     const layoutsData: Layouts = { lg: [], md: [], sm: [], };
@@ -70,12 +86,21 @@ const Desktop: React.FC = () => {
       >
         {windows.map((window: DesktopUIWindow) => (
           <div key={window.id}>
-            <WindowComponent name={window.name} id={window.id}>
+            <WindowComponent
+              name={window.name}
+              id={window.id}
+              removeWindow={unloadWindow}
+              lazyLoadReducerName={window.lazyLoadReducerName}
+            >
               <Suspense fallback={<div>Loading...</div>}>
                 {window.lazyLoadComponent && (
                   React.createElement(
-                    loadComponent(window.lazyLoadComponent),
-                    { windowId: window.id, windowName: window.name } as LazyLoadedComponentProps
+                    loadWindow(window.lazyLoadComponent),
+                    {
+                      windowId: window.id,
+                      windowName: window.name,
+                      lazyLoadReducerName: window.lazyLoadReducerName,
+                    } as LazyLoadedComponentProps
                   )
                 )}
               </Suspense>

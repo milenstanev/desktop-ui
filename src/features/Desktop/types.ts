@@ -11,5 +11,6 @@ export type DesktopUIWindow = {
   id: string;
   name: string;
   lazyLoadComponent?: ComponentNames;
-  layout?: WindowLayout;
+  layout: WindowLayout | undefined;
+  lazyLoadReducerName?: string | undefined;
 }
