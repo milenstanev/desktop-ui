@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import styles from './Header.module.css';
 import { useAppDispatch } from './hooks';
