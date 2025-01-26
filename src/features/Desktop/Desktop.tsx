@@ -1,4 +1,4 @@
-import React, {lazy, useCallback, Suspense, useState} from 'react';
+import React, { lazy, useCallback, Suspense, useState } from 'react';
 import { useStore } from "react-redux";
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -41,14 +41,13 @@ const Desktop: React.FC = () => {
     }
   },[]);
 
-  const unloadWindow = useCallback((id: string, lazyLoadReducerName: string) => {
+  const handleRemoveWindow = useCallback((id: string, lazyLoadReducerName: string) => {
     dispatch(removeWindow(id));
 
-    const foundComponentWithSameReducer = windows.find((window: DesktopUIWindow) => {
-      return window.lazyLoadReducerName === lazyLoadReducerName && window.id !== id;
-    });
-
-    if (!foundComponentWithSameReducer) {
+    const componentWithSameReducer = windows.find((window: DesktopUIWindow) => (
+      window.lazyLoadReducerName === lazyLoadReducerName && window.id !== id
+    ));
+    if (!componentWithSameReducer) {
       removeLazyLoadedReducer(store, lazyLoadReducerName);
     }
   }, [dispatch, store, windows]);
@@ -89,7 +88,7 @@ const Desktop: React.FC = () => {
             <WindowComponent
               name={window.name}
               id={window.id}
-              removeWindow={unloadWindow}
+              removeWindow={handleRemoveWindow}
               lazyLoadReducerName={window.lazyLoadReducerName}
             >
               <Suspense fallback={<div>Loading...</div>}>

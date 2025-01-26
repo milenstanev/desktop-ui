@@ -1,5 +1,5 @@
-import {Layout} from 'react-grid-layout';
-import {ComponentNames} from '../../utils/componentLoader';
+import { Layout } from 'react-grid-layout';
+import { ComponentNames } from '../../utils/componentLoader';
 
 export type LayoutBreakpoint = 'lg' | 'md' | 'sm';
 
