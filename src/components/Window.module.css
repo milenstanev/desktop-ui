@@ -5,3 +5,16 @@
   overflow: hidden;
   border: 1px solid gray;
 }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--window-padding);
+  border-bottom: 1px solid gray;
+}
+
+.main {
+  padding: var(--window-padding);
+  height: calc(100% - 53px);
+  overflow-y: auto;
+}

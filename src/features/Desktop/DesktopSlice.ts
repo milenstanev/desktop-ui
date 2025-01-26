@@ -1,50 +1,80 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
-import { ComponentNames } from './componentLoader';
+import { Layouts, Layout } from 'react-grid-layout';
+import { DesktopUIWindow, LayoutBreakpoint } from './types';
+import { LOCAL_STORAGE_LAYOUT_KEY, LOCAL_STORAGE_DESKTOP_KEY, defaultWindowsPositions } from './config';
 
-interface DesktopUIWindow {
-  id: string;
-  name: string;
-  // lazyLoadComponent?: LazyExoticComponent<FC<{}>>;
-  lazyLoadComponent?: ComponentNames;
+interface State {
+  desktopWindows: DesktopUIWindow[];
+  layouts: Layouts;
 }
 
-const initialState: DesktopUIWindow[] = [
-  {
-    id: '1',
-    name: 'Component 1',
-    lazyLoadComponent: 'ComponentLazy',
-  },
-  {
-    id: '2',
-    name: 'Component 2',
-  },
-  {
-    id: '3',
-    name: 'Component 3',
-  },
-  {
-    id: '4',
-    name: 'Component 2',
-  },
-  {
-    id: '5',
-    name: 'Component 3',
-  },
-];
+const storedWindows = localStorage.getItem(LOCAL_STORAGE_DESKTOP_KEY);
+const desktopWindows = storedWindows ? JSON.parse(storedWindows) as DesktopUIWindow[] : [];
+
+const storedLayouts = localStorage.getItem(LOCAL_STORAGE_LAYOUT_KEY);
+const layouts = storedLayouts ? JSON.parse(storedLayouts) as Layouts : { lg: [], md: [], sm: [] };
+
+const saveWindowsToLocalStorage = (desktopWindows: DesktopUIWindow[]) => {
+  localStorage.setItem(LOCAL_STORAGE_DESKTOP_KEY, JSON.stringify(desktopWindows));
+}
+const saveLayoutsToLocalStorage = (layouts: Layouts) => {
+  localStorage.setItem(LOCAL_STORAGE_LAYOUT_KEY, JSON.stringify(layouts));
+}
+
+const initialState: State = {
+  desktopWindows,
+  layouts,
+}
 
 export const DesktopSlice = createSlice({
   name: "Desktop",
   initialState,
   reducers: {
-    removeWindow: (state) => {
-      return state.filter((window) => window.id !== '1');
+    removeWindow: (state, action: PayloadAction<string>) => {
+      const index = state.desktopWindows.findIndex(window => window.id === action.payload);
+      if (index !== -1) {
+        state.desktopWindows.splice(index, 1);
+        saveWindowsToLocalStorage(state.desktopWindows);
+
+        const breakpoints: LayoutBreakpoint[] = ['lg', 'md', 'sm'];
+        breakpoints.forEach((breakpoint) => {
+          state.layouts[breakpoint] = state.layouts[breakpoint].filter(layout => layout.i !== action.payload);
+        });
+        saveLayoutsToLocalStorage(state.layouts);
+      }
     },
     addWindow: (state, action: PayloadAction<DesktopUIWindow>) => {
-      state.unshift(action.payload);
-    }
+      if(!state.desktopWindows.find((window) => window.id === action.payload.id)) {
+        state.desktopWindows.unshift(action.payload);
+        saveWindowsToLocalStorage(state.desktopWindows);
+
+        const lg: Layout = action.payload.layout?.lg ?? { ...defaultWindowsPositions.lg, i: `${action.payload.id}` };
+        const md: Layout = action.payload.layout?.md ?? { ...defaultWindowsPositions.md, i: `${action.payload.id}` };
+        const sm: Layout = action.payload.layout?.sm ?? { ...defaultWindowsPositions.sm, i: `${action.payload.id}` };
+
+        state.layouts.lg.push(lg);
+        state.layouts.md.push(md);
+        state.layouts.sm.push(sm);
+        saveLayoutsToLocalStorage(state.layouts);
+      }
+    },
+    updateLayouts: (
+      state,
+      action: PayloadAction<{ layout: Layout[], breakpoint: LayoutBreakpoint }>
+    ) => {
+      state.layouts = {
+        ...state.layouts,
+        [action.payload.breakpoint]: action.payload.layout,
+      };
+      saveLayoutsToLocalStorage(state.layouts);
+    },
   }
 });
 
-export const { removeWindow, addWindow } = DesktopSlice.actions;
+export const {
+  removeWindow,
+  addWindow,
+  updateLayouts,
+} = DesktopSlice.actions;
 
 export default DesktopSlice.reducer;

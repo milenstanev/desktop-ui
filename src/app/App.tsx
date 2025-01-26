@@ -1,10 +1,9 @@
 import React from 'react';
 import {Provider} from 'react-redux';
-import './App.css';
 import Header from './Header';
 import FooterTaskbar from './FooterTaskbar';
 import Desktop from '../features/Desktop/Desktop';
-import {store} from "./store";
+import { store } from "./store";
 
 function App() {
   return (

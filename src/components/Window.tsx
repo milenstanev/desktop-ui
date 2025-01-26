@@ -1,30 +1,42 @@
-import React, {useState} from 'react';
+import React from 'react';
+import ErrorBoundary from '../components/ErrorBoundary';
 import styles from './Window.module.css';
 
 interface WindowProps {
+  id: string;
+  name?: string;
+  removeWindow: (id: string, lazyLoadReducerName: string) => void;
+  lazyLoadReducerName?: string;
   children: React.ReactNode;
 }
 
-const Window: React.FC<WindowProps> = ({ children }) => {
-  const [clientX, setClientX] = useState<number>(0);
-  const [clientY, setClientY] = useState<number>(0);
-
-  return (
-    <div
-      style={{ left: `${clientX}px`, top: `${clientY}px` }}
-      className={styles.window}
-      draggable={true}
-      onDrag={(event) => {
-        const dragEvent = event as React.DragEvent<HTMLDivElement>;
-        console.log(dragEvent.nativeEvent);
-        if (dragEvent.clientX > 0 && dragEvent.clientY > 0) {
-          setClientX(dragEvent.clientX);
-          setClientY(dragEvent.clientY);
-        }
-      }}>
-      {children}
-    </div>
-  )
-}
+const Window: React.FC<WindowProps> = ({
+  id,
+  name,
+  removeWindow,
+  lazyLoadReducerName = '',
+  children
+}) => (
+  <div className={styles.window}>
+    <header className={styles.header}>
+      <span>{name}</span>
+      <div>
+        <button className="drag-handle">
+          Drag here
+        </button>
+        <button onClick={() => {
+          removeWindow(id, lazyLoadReducerName);
+        }}>
+          Remove
+        </button>
+      </div>
+    </header>
+    <main className={styles.main}>
+      <ErrorBoundary>
+        {children}
+      </ErrorBoundary>
+    </main>
+  </div>
+);
 
 export default Window;
