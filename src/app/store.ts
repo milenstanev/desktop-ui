@@ -1,3 +1,12 @@
+/**
+ * Store setup with dynamic reducer injection.
+ *
+ * The root reducer is not a static combineReducers(...). It is the reducer
+ * manager's reduce function, which can change over time as we add/remove
+ * feature slices (see reducerManager.ts). We attach the manager to the store
+ * so that lazyLoadReducer and removeLazyLoadedReducer can call add/remove and
+ * then replaceReducer(manager.reduce) to apply the new root reducer.
+ */
 import { configureStore, EnhancedStore } from '@reduxjs/toolkit';
 import { createReducerManager } from '../utils/reducerManager';
 import DesktopReducer from '../features/Desktop/DesktopSlice';

@@ -1,5 +1,34 @@
 # Architecture
 
+## High-Level Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                  App (ThemeProvider)                          │
+│  ┌───────────────────────────────────────────────────────────────────────┐  │
+│  │                         Redux Store (reducerManager)                     │  │
+│  │  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐  (lazy: Notes, …)  │  │
+│  │  │   Desktop   │  │ ComponentLazy2│  │   Notes     │  ← injected on open │  │
+│  │  │ (always)    │  │ (on demand)  │  │ (on demand) │  ← removed on close  │  │
+│  │  └─────────────┘  └──────────────┘  └─────────────┘                      │  │
+│  └───────────────────────────────────────────────────────────────────────┘  │
+│  ┌────────────┐  ┌─────────────────────────────────────┐  ┌──────────────┐   │
+│  │  Header    │  │  Desktop (grid)                     │  │ FooterTaskbar│   │
+│  │  + theme   │  │  ┌───────┐ ┌───────┐ ┌───────┐     │  │              │   │
+│  │  + buttons │  │  │Window │ │Window │ │Window │ …   │  └──────────────┘   │
+│  └────────────┘  │  │+Error │ │+Error │ │+Error │     │                     │
+│                  │  │Boundary│ │Boundary│ │Boundary│     │                     │
+│                  │  │ lazy  │ │ lazy  │ │ lazy  │     │                     │
+│                  │  │ comp  │ │ comp  │ │ comp  │     │                     │
+│                  │  └───────┘ └───────┘ └───────┘     │                     │
+│                  └─────────────────────────────────────┘                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+         │                        │
+         ▼                        ▼
+   localStorage              componentLoader
+   (layouts, theme)          (dynamic imports)
+```
+
 ## Overview
 
 Desktop UI is a feature-based React app that mimics a desktop environment with draggable windows. Each window can load its own component and Redux slice lazily, keeping the initial bundle small. The app supports window focus, keyboard shortcuts, light/dark theme, and multiple feature components (Notes, Timer, and lazy-loaded counters).
@@ -88,3 +117,20 @@ See `docs/FEATURE_COMPONENTS.md` for how to add new features.
 | `middleware/desktopStorageMiddleware.ts` | Persist Desktop state to localStorage    |
 | `features/Notes/`      | Notes feature (slice + component + tests)         |
 | `features/Timer/`      | Timer feature (component + tests, no slice)       |
+
+## Why This Structure?
+
+- **Feature folders**  
+  Each feature (Notes, Timer, Desktop, …) lives in one place with its component, optional slice, and tests. Adding a feature doesn’t touch the core store or other features.
+
+- **Reducer manager + single root reducer**  
+  The store has one “root” reducer that is actually the reducer manager’s `reduce` function. That function delegates to a combined reducer that can change over time (slices added/removed). We never touch Redux’s default `combineReducers` at the top level; we own the composition.
+
+- **Lazy reducer + lazy component together**  
+  When a window opens, we load the component (via `React.lazy` + `componentLoader`) and inject the slice (via `useLazyLoadReducer`). When the last window of that type closes, we remove the slice and optionally let the chunk be GC’d. State and code stay in sync.
+
+- **Middleware for persistence**  
+  Reducers only compute the next state. Writing to `localStorage` (or later IndexedDB) happens in middleware that listens for specific actions. That keeps reducers pure and keeps persistence in one place.
+
+- **Constants for copy and tests**  
+  `APP_STRINGS` and `APP_TEST` in `constants.ts` ensure the UI and tests use the same labels. Renaming a button is one change, not a hunt through tests.

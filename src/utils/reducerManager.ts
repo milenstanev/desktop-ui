@@ -1,4 +1,21 @@
-// reducerManager.ts
+/**
+ * Reducer Manager: dynamic Redux reducer injection
+ *
+ * Redux's combineReducers() is static—you pass a fixed object and it never changes.
+ * Here we need to add reducers when a feature window opens and remove them when
+ * the last window of that type closes. The reducer manager:
+ *
+ * 1. Holds a mutable map of reducers and rebuilds the combined reducer when
+ *    add() or remove() is called.
+ * 2. Exposes a single reduce(state, action) that behaves like a normal root reducer
+ *    but delegates to the current combined reducer.
+ * 3. On remove(), we don't delete the key from state immediately (that would mutate
+ *    state inside reduce). We queue keys in keysToRemove and strip them at the
+ *    start of the next reduce() call, then run the new combined reducer so the
+ *    removed slice's state is gone.
+ *
+ * Used by: store (as the root reducer), lazyLoadReducer / removeLazyLoadedReducer.
+ */
 import { combineReducers, Reducer } from '@reduxjs/toolkit';
 
 export interface ReducerManager {
