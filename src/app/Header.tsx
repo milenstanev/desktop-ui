@@ -54,6 +54,31 @@ const Header: React.FC = () => {
       }}>
         {APP_STRINGS.BUTTON_ADD_LAZY_3}
       </button>
+      <button
+        onClick={() => {
+          dispatch(addWindow({
+            id: uuidv4(),
+            name: 'Notes',
+            lazyLoadComponent: 'Notes',
+            layout: undefined,
+            lazyLoadReducerName: 'NotesReducer',
+          }));
+        }}
+      >
+        {APP_STRINGS.BUTTON_ADD_NOTES}
+      </button>
+      <button
+        onClick={() => {
+          dispatch(addWindow({
+            id: uuidv4(),
+            name: 'Timer',
+            lazyLoadComponent: 'Timer',
+            layout: undefined,
+          }));
+        }}
+      >
+        {APP_STRINGS.BUTTON_ADD_TIMER}
+      </button>
       </div>
     </header>
   );

@@ -1,0 +1,16 @@
+.timer {
+  padding: 0.5em 0;
+  text-align: center;
+}
+
+.display {
+  font-size: 2rem;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 0.75em;
+}
+
+.controls {
+  display: flex;
+  gap: 0.5em;
+  justify-content: center;
+}
