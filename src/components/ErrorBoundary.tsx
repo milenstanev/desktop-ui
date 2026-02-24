@@ -2,6 +2,7 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
+  onReset?: () => void;
 }
 
 interface State {
@@ -15,29 +16,31 @@ class ErrorBoundary extends Component<Props, State> {
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(_: Error): State {
-    return { hasError: true };
+  static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("Uncaught error:", error, errorInfo);
-    this.setState({ ...this.state, error });
+    console.error('Uncaught error:', error, errorInfo);
+    this.setState({ hasError: true, error });
   }
 
+  handleReset = () => {
+    this.setState({ hasError: false, error: undefined });
+    this.props.onReset?.();
+  };
+
   render() {
-    const { error } = this.state;
     if (this.state.hasError) {
+      const { error } = this.state;
       return (
-        <>
-          <h1 className="text-center">
-            Something went wrong.
-          </h1>
-          {error && (
-            <p className="text-center">
-              {error.toString()}
-            </p>
-          )}
-        </>
+        <div role="alert" className="error-boundary-fallback">
+          <h2>Something went wrong</h2>
+          {error && <p>{error.toString()}</p>}
+          <button type="button" onClick={this.handleReset}>
+            Try again
+          </button>
+        </div>
       );
     }
 

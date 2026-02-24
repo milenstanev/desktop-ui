@@ -1,17 +1,19 @@
 import { useEffect } from 'react';
-import { useStore } from "react-redux";
-import { lazyLoadReducer } from "../utils/lazyLoadReducer";
+import { useStore } from 'react-redux';
+import { lazyLoadReducer } from '../utils/lazyLoadReducer';
+import type { StoreWithReducerManager } from '../app/store';
+import type { Reducer } from '@reduxjs/toolkit';
 
 type UseLazyLoadReducerParams = {
   lazyLoadReducerName: string;
-  featureReducer: any;
-}
+  featureReducer: Reducer;
+};
 
 function useLazyLoadReducer({
   lazyLoadReducerName,
-  featureReducer
+  featureReducer,
 }: UseLazyLoadReducerParams) {
-  const store = useStore();
+  const store = useStore() as StoreWithReducerManager;
 
   useEffect(() => {
     lazyLoadReducer(store, lazyLoadReducerName, featureReducer);

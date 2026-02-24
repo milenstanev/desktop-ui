@@ -1,5 +1,5 @@
-import React from 'react';
-import ErrorBoundary from '../components/ErrorBoundary';
+import React, { memo } from 'react';
+import ErrorBoundary from './ErrorBoundary';
 import styles from './Window.module.css';
 
 interface WindowProps {
@@ -7,36 +7,54 @@ interface WindowProps {
   name?: string;
   removeWindow: (id: string, lazyLoadReducerName: string) => void;
   lazyLoadReducerName?: string;
+  isFocused?: boolean;
+  onFocus?: () => void;
   children: React.ReactNode;
 }
 
-const Window: React.FC<WindowProps> = ({
+const Window: React.FC<WindowProps> = memo(({
   id,
   name,
   removeWindow,
   lazyLoadReducerName = '',
-  children
+  isFocused = false,
+  onFocus,
+  children,
 }) => (
-  <div className={styles.window}>
-    <header className={styles.header}>
-      <span>{name}</span>
+  <div
+    className={`${styles.window} ${isFocused ? styles.focused : ''}`}
+    role="application"
+    aria-label={name ? `Window: ${name}` : 'Window'}
+  >
+    <header
+      className={styles.header}
+      onClick={onFocus}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onFocus?.(); } }}
+      role="button"
+      tabIndex={0}
+      aria-label={name ? `Focus window: ${name}` : 'Focus window'}
+    >
+      <div className={`drag-handle ${styles.headerDrag}`}>
+        <span id={`window-title-${id}`}>{name}</span>
+      </div>
       <div>
-        <button className="drag-handle">
-          Drag here
-        </button>
-        <button onClick={() => {
-          removeWindow(id, lazyLoadReducerName);
-        }}>
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); removeWindow(id, lazyLoadReducerName); }}
+          aria-label="Close window"
+        >
           Remove
         </button>
       </div>
     </header>
-    <main className={styles.main}>
+    <main className={styles.main} aria-labelledby={`window-title-${id}`}>
       <ErrorBoundary>
         {children}
       </ErrorBoundary>
     </main>
   </div>
-);
+));
+
+Window.displayName = 'Window';
 
 export default Window;

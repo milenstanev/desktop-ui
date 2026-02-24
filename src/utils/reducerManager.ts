@@ -1,7 +1,7 @@
 // reducerManager.ts
 import { combineReducers, Reducer } from '@reduxjs/toolkit';
 
-interface ReducerManager {
+export interface ReducerManager {
   getReducerMap: () => { [key: string]: Reducer };
   reduce: (state: any, action: any) => any;
   add: (key: string, reducer: Reducer) => void;
