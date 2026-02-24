@@ -16,23 +16,23 @@ describe('Window', () => {
   });
 
   it('applies focused class when isFocused', () => {
-    const { container } = render(
+    render(
       <Window id="w1" name="W" removeWindow={noop} isFocused>
         <span>Content</span>
       </Window>
     );
-    const windowEl = container.querySelector('[role="application"]');
-    expect(windowEl?.className).toMatch(/focused/);
+    const windowEl = screen.getByRole('application', { name: /window/i });
+    expect(windowEl.className).toMatch(/focused/);
   });
 
   it('does not apply focused class when not focused', () => {
-    const { container } = render(
+    render(
       <Window id="w1" name="W" removeWindow={noop} isFocused={false}>
         <span>Content</span>
       </Window>
     );
-    const windowEl = container.querySelector('[role="application"]');
-    expect(windowEl?.className).not.toMatch(/focused/);
+    const windowEl = screen.getByRole('application', { name: /window/i });
+    expect(windowEl.className).not.toMatch(/focused/);
   });
 
   it('calls onFocus when header is clicked', () => {

@@ -1,5 +1,5 @@
 import reducer, { addWindow, removeWindow, updateLayouts, setFocus } from './DesktopSlice';
-import type { DesktopUIWindow, LayoutBreakpoint } from './types';
+import type { DesktopUIWindow } from './types';
 
 const createWindow = (overrides: Partial<DesktopUIWindow> = {}): DesktopUIWindow =>
   ({

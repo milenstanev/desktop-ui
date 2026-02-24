@@ -17,18 +17,19 @@ function renderDesktopWithWindow() {
   };
   store.dispatch(addWindow(windowPayload));
 
-  render(
+  const view = render(
     <Provider store={store}>
       <Desktop />
     </Provider>
   );
 
-  return store;
+  return { ...view, getStore: () => store };
 }
 
 describe('Desktop keyboard shortcuts', () => {
   it('closes focused window on Escape', () => {
-    const store = renderDesktopWithWindow();
+    const { getStore } = renderDesktopWithWindow();
+    const store = getStore();
     expect(store.getState().Desktop.desktopWindows).toHaveLength(1);
     expect(store.getState().Desktop.focusedWindowId).toBe('keyboard-test-window');
 
@@ -39,7 +40,8 @@ describe('Desktop keyboard shortcuts', () => {
   });
 
   it('closes focused window on Cmd+W (Mac) or Ctrl+W', () => {
-    const store = renderDesktopWithWindow();
+    const { getStore } = renderDesktopWithWindow();
+    const store = getStore();
 
     fireEvent.keyDown(window, { key: 'w', metaKey: true });
 
