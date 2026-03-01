@@ -40,7 +40,10 @@ const Window: React.FC<WindowProps> = memo(
         tabIndex={0}
         aria-label={name ? `Focus window: ${name}` : 'Focus window'}
       >
-        <div className={`drag-handle ${styles.headerDrag}`}>
+        <div 
+          className={`drag-handle ${styles.headerDrag}`}
+          onClick={(e) => e.stopPropagation()}
+        >
           <span id={`window-title-${id}`}>{name}</span>
         </div>
         <div>
