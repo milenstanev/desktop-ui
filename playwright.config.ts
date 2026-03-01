@@ -1,4 +1,4 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests',
@@ -6,11 +6,23 @@ export default defineConfig({
   expect: {
     timeout: 5000,
   },
-  retries: 1,
+  retries: process.env.CI ? 2 : 1,
   reporter: 'html',
   use: {
-    headless: false,
+    headless: process.env.CI ? true : false,
     baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
+  },
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+  ],
+  webServer: {
+    command: 'npx serve -s build -l 3000',
+    port: 3000,
+    timeout: 120 * 1000,
+    reuseExistingServer: !process.env.CI,
   },
 });

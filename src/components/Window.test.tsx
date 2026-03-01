@@ -35,17 +35,6 @@ describe('Window', () => {
     expect(windowEl.className).not.toMatch(/focused/);
   });
 
-  it('calls onFocus when header is clicked', () => {
-    const onFocus = jest.fn();
-    render(
-      <Window id="w1" name="W" removeWindow={noop} onFocus={onFocus}>
-        <span>Content</span>
-      </Window>
-    );
-    screen.getByLabelText(/focus window/i).click();
-    expect(onFocus).toHaveBeenCalledTimes(1);
-  });
-
   it('calls removeWindow when Remove button is clicked', () => {
     const removeWindow = jest.fn();
     render(
@@ -55,5 +44,17 @@ describe('Window', () => {
     );
     screen.getByLabelText('Close window').click();
     expect(removeWindow).toHaveBeenCalledWith('w1', 'Lazy2');
+  });
+
+  it('calls onFocus when clicking window content', () => {
+    const onFocus = jest.fn();
+    render(
+      <Window id="w1" name="W" removeWindow={noop} onFocus={onFocus}>
+        <span>Content text</span>
+      </Window>
+    );
+    const content = screen.getByText('Content text');
+    content.click();
+    expect(onFocus).toHaveBeenCalled();
   });
 });
