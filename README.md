@@ -22,7 +22,7 @@ A **modular workspace UI** built with React and Redux where each “window” is
 
 - **React 18** (TypeScript), **Redux Toolkit**, **react-grid-layout**
 - **Testing**: Jest + React Testing Library (unit), Playwright (E2E)
-- **CI**: GitHub Actions (lint, typecheck, unit tests, build)
+- **CI**: GitHub Actions (lint, typecheck, unit tests, E2E tests, build)
 
 ## Getting Started
 
