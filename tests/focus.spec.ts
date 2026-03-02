@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { TEST_SELECTORS } from '~/testSelectors';
 
-const ROLE_SELECTOR = `[role="${TEST_SELECTORS.APPLICATION_ROLE}"]`;
+const ROLE_SELECTOR = `[role="${TEST_SELECTORS.WINDOW_ROLE}"]`;
 const CLASS_ATTRIBUTE = 'class';
 const BUTTON_ROLE = 'button';
 const ADD_TIMER_BUTTON_NAME = /add timer/i;
@@ -27,6 +27,7 @@ test.describe('Window focus and keyboard shortcuts', () => {
     const timerDisplay = page.getByRole('timer');
     const window1 = page.locator(ROLE_SELECTOR).first();
 
+    await expect(addTimerButton).toBeVisible();
     await addTimerButton.click();
 
     // Wait for lazy-loaded Timer component
@@ -39,7 +40,9 @@ test.describe('Window focus and keyboard shortcuts', () => {
   });
 
   test('Escape key closes focused window', async ({ page }) => {
-    await page.getByRole(BUTTON_ROLE, { name: ADD_TIMER_BUTTON_NAME }).click();
+    const addTimerButton = page.getByRole(BUTTON_ROLE, { name: ADD_TIMER_BUTTON_NAME });
+    await expect(addTimerButton).toBeVisible();
+    await addTimerButton.click();
     await expect(page.locator(ROLE_SELECTOR)).toHaveCount(1);
 
     await page.keyboard.press(TEST_SELECTORS.KEYBOARD.ESCAPE);
@@ -48,7 +51,9 @@ test.describe('Window focus and keyboard shortcuts', () => {
   });
 
   test('Ctrl+W closes focused window', async ({ page }) => {
-    await page.getByRole(BUTTON_ROLE, { name: ADD_TIMER_BUTTON_NAME }).click();
+    const addTimerButton = page.getByRole(BUTTON_ROLE, { name: ADD_TIMER_BUTTON_NAME });
+    await expect(addTimerButton).toBeVisible();
+    await addTimerButton.click();
     await expect(page.locator(ROLE_SELECTOR)).toHaveCount(1);
 
     await page.keyboard.press(TEST_SELECTORS.KEYBOARD.CTRL_W);

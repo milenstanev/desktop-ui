@@ -51,7 +51,13 @@ test.describe('Layout control buttons', () => {
       name: ORGANIZE_GRID_BUTTON_NAME,
     });
 
+    await expect(addTimerButton).toBeVisible();
+    await expect(addCounterButton).toBeVisible();
+    await expect(addNotesButton).toBeVisible();
+    await expect(organizeButton).toBeVisible();
+
     // Add 3 windows
+    await expect(addTimerButton).toBeVisible();
     await addTimerButton.click();
     await expect(timerContainer).toBeVisible();
     await expect(timerDisplay).toBeVisible();
@@ -65,7 +71,7 @@ test.describe('Layout control buttons', () => {
     await expect(notesInput).toBeVisible();
 
     // Get all windows by data-testid prefix
-    const allWindows = page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`);
+    const allWindows = page.locator(`[role="region"]`);
     await expect(allWindows).toHaveCount(3);
 
     // Get initial position of first window
@@ -73,6 +79,7 @@ test.describe('Layout control buttons', () => {
     const initialBox1 = await window1.boundingBox();
 
     // Click Organize Grid
+    await expect(organizeButton).toBeVisible();
     await organizeButton.click();
 
     // Wait for layout to change
@@ -112,28 +119,37 @@ test.describe('Layout control buttons', () => {
       name: RESET_LAYOUT_BUTTON_NAME,
     });
 
+    await expect(addTimerButton).toBeVisible();
+    await expect(addCounterButton).toBeVisible();
+    await expect(organizeButton).toBeVisible();
+    await expect(resetButton).toBeVisible();
+
     // Add 2 windows
+    await expect(addTimerButton).toBeVisible();
     await addTimerButton.click();
     await expect(timerContainer).toBeVisible();
     await expect(timerDisplay).toBeVisible();
 
+    await expect(addCounterButton).toBeVisible();
     await addCounterButton.click();
     await expect(counterContainer).toBeVisible();
     await expect(counterValue).toBeVisible();
 
     // Get all windows by data-testid prefix
-    const allWindows = page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`);
+    const allWindows = page.locator(`[role="region"]`);
     await expect(allWindows).toHaveCount(2);
 
     // Organize grid first
     const window1 = allWindows.first();
 
+    await expect(organizeButton).toBeVisible();
     await organizeButton.click();
     await page.waitForTimeout(500);
 
     const organizedBox = await window1.boundingBox();
 
     // Click Reset Layout
+    await expect(resetButton).toBeVisible();
     await resetButton.click();
     await page.waitForTimeout(500);
 
@@ -171,7 +187,13 @@ test.describe('Layout control buttons', () => {
       name: CLOSE_ALL_BUTTON_NAME,
     });
 
+    await expect(addTimerButton).toBeVisible();
+    await expect(addCounterButton).toBeVisible();
+    await expect(addNotesButton).toBeVisible();
+    await expect(closeAllButton).toBeVisible();
+
     // Add 3 windows
+    await expect(addTimerButton).toBeVisible();
     await addTimerButton.click();
     await expect(timerContainer).toBeVisible();
     await expect(timerDisplay).toBeVisible();
@@ -185,7 +207,7 @@ test.describe('Layout control buttons', () => {
     await expect(notesInput).toBeVisible();
 
     // Get all windows by data-testid prefix
-    const allWindows = page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`);
+    const allWindows = page.locator(`[role="region"]`);
     await expect(allWindows).toHaveCount(3);
 
     // Click Close All
@@ -210,22 +232,29 @@ test.describe('Layout control buttons', () => {
       name: ORGANIZE_GRID_BUTTON_NAME,
     });
 
+    await expect(addTimerButton).toBeVisible();
+    await expect(addCounterButton).toBeVisible();
+    await expect(organizeButton).toBeVisible();
+
     // Add 2 windows
+    await expect(addTimerButton).toBeVisible();
     await addTimerButton.click();
     await expect(timerContainer).toBeVisible();
     await expect(timerDisplay).toBeVisible();
 
+    await expect(addCounterButton).toBeVisible();
     await addCounterButton.click();
     await expect(counterContainer).toBeVisible();
     await expect(counterValue).toBeVisible();
 
     // Get all windows by data-testid prefix
-    const allWindows = page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`);
+    const allWindows = page.locator(`[role="region"]`);
     await expect(allWindows).toHaveCount(2);
 
     // Organize grid
     const window1 = allWindows.first();
 
+    await expect(organizeButton).toBeVisible();
     await organizeButton.click();
     await page.waitForTimeout(500);
 
@@ -259,16 +288,21 @@ test.describe('Layout control buttons', () => {
       name: CLOSE_ALL_BUTTON_NAME,
     });
 
+    await expect(addTimerButton).toBeVisible();
+    await expect(closeAllButton).toBeVisible();
+
     // Add windows
+    await expect(addTimerButton).toBeVisible();
     await addTimerButton.click();
     await expect(timerContainer).toBeVisible();
     await expect(timerDisplay).toBeVisible();
 
     // Get all windows by data-testid prefix
-    const allWindows = page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`);
+    const allWindows = page.locator(`[role="region"]`);
     await expect(allWindows).toHaveCount(1);
 
     // Click Close All
+    await expect(closeAllButton).toBeVisible();
     await closeAllButton.click();
 
     // Wait for windows to be removed

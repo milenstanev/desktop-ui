@@ -18,9 +18,9 @@ test.describe('FormEditor feature', () => {
   });
 
   test('opens FormEditor window and loads form', async ({ page }) => {
-    await page
-      .getByRole(BUTTON_ROLE, { name: ADD_FORM_EDITOR_BUTTON_NAME })
-      .click();
+    const addFormButton = page.getByRole(BUTTON_ROLE, { name: ADD_FORM_EDITOR_BUTTON_NAME });
+    await expect(addFormButton).toBeVisible();
+    await addFormButton.click();
 
     // Wait for form to load (mock API has delay)
     await expect(page.getByTestId(TEST_SELECTORS.FORM_EDITOR)).toBeVisible();
@@ -48,9 +48,9 @@ test.describe('FormEditor feature', () => {
   });
 
   test('form fields are populated with mock data', async ({ page }) => {
-    await page
-      .getByRole(BUTTON_ROLE, { name: ADD_FORM_EDITOR_BUTTON_NAME })
-      .click();
+    const addFormButton = page.getByRole(BUTTON_ROLE, { name: ADD_FORM_EDITOR_BUTTON_NAME });
+    await expect(addFormButton).toBeVisible();
+    await addFormButton.click();
 
     // Wait for form to load
     await expect(page.getByTestId(TEST_SELECTORS.FORM_EDITOR)).toBeVisible();
@@ -76,9 +76,9 @@ test.describe('FormEditor feature', () => {
   });
 
   test('can edit form fields', async ({ page }) => {
-    await page
-      .getByRole(BUTTON_ROLE, { name: ADD_FORM_EDITOR_BUTTON_NAME })
-      .click();
+    const addFormButton = page.getByRole(BUTTON_ROLE, { name: ADD_FORM_EDITOR_BUTTON_NAME });
+    await expect(addFormButton).toBeVisible();
+    await addFormButton.click();
 
     await expect(page.getByTestId(TEST_SELECTORS.FORM_EDITOR)).toBeVisible();
     await expect(
@@ -87,31 +87,41 @@ test.describe('FormEditor feature', () => {
 
     // Edit text field
     const firstNameInput = page.getByTestId(getFormFieldTestId('firstName'));
+    await expect(firstNameInput).toBeVisible();
+    await expect(firstNameInput).toBeVisible();
     await firstNameInput.clear();
+    await expect(firstNameInput).toBeVisible();
     await firstNameInput.fill('Jane');
     await expect(firstNameInput).toHaveValue('Jane');
 
     // Edit number field
     const ageInput = page.getByTestId(getFormFieldTestId('age'));
+    await expect(ageInput).toBeVisible();
+    await expect(ageInput).toBeVisible();
     await ageInput.clear();
+    await expect(ageInput).toBeVisible();
     await ageInput.fill('25');
     await expect(ageInput).toHaveValue('25');
 
     // Toggle checkbox
     const isActiveCheckbox = page.getByTestId(getFormFieldTestId('isActive'));
+    await expect(isActiveCheckbox).toBeVisible();
+    await expect(isActiveCheckbox).toBeVisible();
     await isActiveCheckbox.uncheck();
     await expect(isActiveCheckbox).not.toBeChecked();
 
     // Change select
     const roleSelect = page.getByTestId(getFormFieldTestId('role'));
+    await expect(roleSelect).toBeVisible();
+    await expect(roleSelect).toBeVisible();
     await roleSelect.selectOption('user');
     await expect(roleSelect).toHaveValue('user');
   });
 
   test('can submit form successfully', async ({ page }) => {
-    await page
-      .getByRole(BUTTON_ROLE, { name: ADD_FORM_EDITOR_BUTTON_NAME })
-      .click();
+    const addFormButton = page.getByRole(BUTTON_ROLE, { name: ADD_FORM_EDITOR_BUTTON_NAME });
+    await expect(addFormButton).toBeVisible();
+    await addFormButton.click();
 
     await expect(page.getByTestId(TEST_SELECTORS.FORM_EDITOR)).toBeVisible();
     await expect(
@@ -120,7 +130,9 @@ test.describe('FormEditor feature', () => {
 
     // Edit a field
     const firstNameInput = page.getByTestId(getFormFieldTestId('firstName'));
+    await expect(firstNameInput).toBeVisible();
     await firstNameInput.clear();
+    await expect(firstNameInput).toBeVisible();
     await firstNameInput.fill('Jane');
 
     // Setup dialog handler before clicking submit
@@ -131,6 +143,8 @@ test.describe('FormEditor feature', () => {
 
     // Submit form
     const submitButton = page.getByTestId(TEST_SELECTORS.FORM_SUBMIT_BUTTON);
+    await expect(submitButton).toBeVisible();
+    await expect(submitButton).toBeVisible();
     await submitButton.click();
 
     // Wait for form to be re-enabled after submission
@@ -138,9 +152,9 @@ test.describe('FormEditor feature', () => {
   });
 
   test('submit button is disabled while submitting', async ({ page }) => {
-    await page
-      .getByRole(BUTTON_ROLE, { name: ADD_FORM_EDITOR_BUTTON_NAME })
-      .click();
+    const addFormButton = page.getByRole(BUTTON_ROLE, { name: ADD_FORM_EDITOR_BUTTON_NAME });
+    await expect(addFormButton).toBeVisible();
+    await addFormButton.click();
 
     await expect(page.getByTestId(TEST_SELECTORS.FORM_EDITOR)).toBeVisible();
     await expect(
@@ -158,6 +172,7 @@ test.describe('FormEditor feature', () => {
     });
 
     // Click submit
+    await expect(submitButton).toBeVisible();
     await submitButton.click();
 
     // Button should be disabled immediately after click
@@ -170,9 +185,9 @@ test.describe('FormEditor feature', () => {
   test('shows loading state initially', async ({ page }) => {
     await page.goto('/');
 
-    await page
-      .getByRole(BUTTON_ROLE, { name: ADD_FORM_EDITOR_BUTTON_NAME })
-      .click();
+    const addFormButton = page.getByRole(BUTTON_ROLE, { name: ADD_FORM_EDITOR_BUTTON_NAME });
+    await expect(addFormButton).toBeVisible();
+    await addFormButton.click();
 
     // Should show loading immediately
     await expect(page.getByTestId(TEST_SELECTORS.FORM_LOADING)).toBeVisible({

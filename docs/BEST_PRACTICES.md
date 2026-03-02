@@ -213,12 +213,13 @@ const items = useAppSelector(state => state.items ?? EMPTY_ARRAY);
 
 ### ✅ Test Coverage
 
-**Current:** 55 tests across 14 test suites
+**Current:** 93 unit tests + 49 E2E tests
 
 **Required:**
 - Unit tests for all reducers
 - Component tests for all UI components
 - Integration tests for critical flows (reducer cleanup, persistence)
+- E2E tests for critical user flows
 
 ### ✅ Testing Library Best Practices
 
@@ -248,6 +249,41 @@ describe('ComponentName', () => {
   it('handles edge cases', () => { ... });
 });
 ```
+
+### ✅ E2E Testing Best Practice
+
+**Always verify element visibility before interaction** to ensure tests fail early with clear error messages:
+
+```typescript
+// ✅ Good - Verify visibility first
+test('should edit form fields', async ({ page }) => {
+  const nameInput = page.getByTestId('name-input');
+  const submitButton = page.getByTestId('submit-button');
+  
+  // Verify elements exist and are visible
+  await expect(nameInput).toBeVisible();
+  await expect(submitButton).toBeVisible();
+  
+  // Now safe to interact
+  await nameInput.fill('John');
+  await submitButton.click();
+});
+
+// ❌ Bad - Direct interaction without verification
+test('should edit form fields', async ({ page }) => {
+  const nameInput = page.getByTestId('name-input');
+  
+  await nameInput.fill('John'); // May timeout if element doesn't exist
+});
+```
+
+**Benefits:**
+- Tests fail immediately if elements don't exist (not after timeout)
+- Clear error messages showing which element is missing
+- Ensures elements are ready before interaction
+- Prevents flaky tests due to timing issues
+
+**See:** Existing E2E tests in `src/features/*/tests/e2e/` for examples.
 
 ### ✅ No Skipped Tests
 

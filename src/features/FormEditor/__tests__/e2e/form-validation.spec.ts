@@ -38,6 +38,7 @@ test.describe('FormEditor Validation', () => {
     await page.waitForLoadState('domcontentloaded');
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
 
+    await expect(addFormButton).toBeVisible();
     await addFormButton.click();
 
     // Wait for form to be visible and loaded (not showing loading state)
@@ -53,7 +54,12 @@ test.describe('FormEditor Validation', () => {
     const firstNameError = page.getByTestId(getFormErrorTestId('firstName'));
     const submitButton = page.getByTestId(TEST_SELECTORS.FORM_SUBMIT_BUTTON);
 
+    await expect(firstNameInput).toBeVisible();
+    await expect(submitButton).toBeVisible();
+
+    await expect(firstNameInput).toBeVisible();
     await firstNameInput.clear();
+    await expect(submitButton).toBeVisible();
     await submitButton.click();
 
     await expect(firstNameError).toBeVisible();
@@ -65,8 +71,14 @@ test.describe('FormEditor Validation', () => {
     const firstNameError = page.getByTestId(getFormErrorTestId('firstName'));
     const submitButton = page.getByTestId(TEST_SELECTORS.FORM_SUBMIT_BUTTON);
 
+    await expect(firstNameInput).toBeVisible();
+    await expect(submitButton).toBeVisible();
+
+    await expect(firstNameInput).toBeVisible();
     await firstNameInput.clear();
+    await expect(firstNameInput).toBeVisible();
     await firstNameInput.fill('J');
+    await expect(submitButton).toBeVisible();
     await submitButton.click();
 
     await expect(firstNameError).toBeVisible();
@@ -77,8 +89,14 @@ test.describe('FormEditor Validation', () => {
     const ageError = page.getByTestId(getFormErrorTestId('age'));
     const submitButton = page.getByTestId(TEST_SELECTORS.FORM_SUBMIT_BUTTON);
 
+    await expect(ageInput).toBeVisible();
+    await expect(submitButton).toBeVisible();
+
+    await expect(ageInput).toBeVisible();
     await ageInput.clear();
+    await expect(ageInput).toBeVisible();
     await ageInput.fill('15');
+    await expect(submitButton).toBeVisible();
     await submitButton.click();
 
     await expect(ageError).toBeVisible();
@@ -89,8 +107,14 @@ test.describe('FormEditor Validation', () => {
     const ageError = page.getByTestId(getFormErrorTestId('age'));
     const submitButton = page.getByTestId(TEST_SELECTORS.FORM_SUBMIT_BUTTON);
 
+    await expect(ageInput).toBeVisible();
+    await expect(submitButton).toBeVisible();
+
+    await expect(ageInput).toBeVisible();
     await ageInput.clear();
+    await expect(ageInput).toBeVisible();
     await ageInput.fill('150');
+    await expect(submitButton).toBeVisible();
     await submitButton.click();
 
     await expect(ageError).toBeVisible();
@@ -101,7 +125,12 @@ test.describe('FormEditor Validation', () => {
     const roleError = page.getByTestId(getFormErrorTestId('role'));
     const submitButton = page.getByTestId(TEST_SELECTORS.FORM_SUBMIT_BUTTON);
 
+    await expect(roleSelect).toBeVisible();
+    await expect(submitButton).toBeVisible();
+
+    await expect(roleSelect).toBeVisible();
     await roleSelect.selectOption('');
+    await expect(submitButton).toBeVisible();
     await submitButton.click();
 
     await expect(roleError).toBeVisible();
@@ -119,10 +148,15 @@ test.describe('FormEditor Validation', () => {
     const ageError = page.getByTestId(getFormErrorTestId('age'));
     const submitButton = page.getByTestId(TEST_SELECTORS.FORM_SUBMIT_BUTTON);
 
+    await expect(firstNameInput).toBeVisible();
     await firstNameInput.clear();
+    await expect(lastNameInput).toBeVisible();
     await lastNameInput.clear();
+    await expect(ageInput).toBeVisible();
     await ageInput.clear();
+    await expect(ageInput).toBeVisible();
     await ageInput.fill('10');
+    await expect(submitButton).toBeVisible();
     await submitButton.click();
 
     await expect(firstNameError).toBeVisible();
@@ -142,8 +176,15 @@ test.describe('FormEditor Validation', () => {
     const ageInput = page.getByTestId(getFormFieldTestId('age'));
     const submitButton = page.getByTestId(TEST_SELECTORS.FORM_SUBMIT_BUTTON);
 
+    await expect(lastNameInput).toBeVisible();
+    await expect(ageInput).toBeVisible();
+    await expect(submitButton).toBeVisible();
+
+    await expect(lastNameInput).toBeVisible();
     await lastNameInput.clear();
+    await expect(ageInput).toBeVisible();
     await ageInput.clear();
+    await expect(submitButton).toBeVisible();
     await submitButton.click();
 
     // Wait for validation to trigger and focus to be set
@@ -162,12 +203,19 @@ test.describe('FormEditor Validation', () => {
     const firstNameError = page.getByTestId(getFormErrorTestId('firstName'));
     const submitButton = page.getByTestId(TEST_SELECTORS.FORM_SUBMIT_BUTTON);
 
+    await expect(firstNameInput).toBeVisible();
+    await expect(submitButton).toBeVisible();
+
+    await expect(firstNameInput).toBeVisible();
     await firstNameInput.clear();
+    await expect(submitButton).toBeVisible();
     await submitButton.click();
 
     await expect(firstNameError).toBeVisible();
 
+    await expect(firstNameInput).toBeVisible();
     await firstNameInput.fill('Jane');
+    await expect(submitButton).toBeVisible();
     await submitButton.click();
 
     await expect(firstNameError).not.toBeVisible();
@@ -175,7 +223,9 @@ test.describe('FormEditor Validation', () => {
 
   test('valid form submission shows success alert', async ({ page }) => {
     const firstNameInput = page.getByTestId(getFormFieldTestId('firstName'));
+    await expect(firstNameInput).toBeVisible();
     await firstNameInput.clear();
+    await expect(firstNameInput).toBeVisible();
     await firstNameInput.fill('Jane');
 
     page.once('dialog', async (dialog) => {
@@ -184,6 +234,7 @@ test.describe('FormEditor Validation', () => {
     });
 
     const submitButton = page.getByTestId(TEST_SELECTORS.FORM_SUBMIT_BUTTON);
+    await expect(submitButton).toBeVisible();
     await submitButton.click();
 
     // Wait for submission to complete (button re-enabled)
@@ -194,7 +245,9 @@ test.describe('FormEditor Validation', () => {
     page,
   }) => {
     const firstNameInput = page.getByTestId(getFormFieldTestId('firstName'));
+    await expect(firstNameInput).toBeVisible();
     await firstNameInput.clear();
+    await expect(firstNameInput).toBeVisible();
     await firstNameInput.fill('Jane');
 
     await expect(firstNameInput).toHaveValue('Jane');
@@ -204,6 +257,7 @@ test.describe('FormEditor Validation', () => {
     });
 
     const submitButton = page.getByTestId(TEST_SELECTORS.FORM_SUBMIT_BUTTON);
+    await expect(submitButton).toBeVisible();
     await submitButton.click();
 
     // Wait for submission to complete and form to reset
@@ -218,8 +272,14 @@ test.describe('FormEditor Validation', () => {
     const firstNameError = page.getByTestId(getFormErrorTestId('firstName'));
     const submitButton = page.getByTestId(TEST_SELECTORS.FORM_SUBMIT_BUTTON);
 
+    await expect(firstNameInput).toBeVisible();
+    await expect(submitButton).toBeVisible();
+
+    await expect(firstNameInput).toBeVisible();
     await firstNameInput.clear();
+    await expect(firstNameInput).toBeVisible();
     await firstNameInput.fill('A'.repeat(51));
+    await expect(submitButton).toBeVisible();
     await submitButton.click();
 
     await expect(firstNameError).toBeVisible();
@@ -231,6 +291,9 @@ test.describe('FormEditor Validation', () => {
     const firstNameInput = page.getByTestId(getFormFieldTestId('firstName'));
     const firstNameError = page.getByTestId(getFormErrorTestId('firstName'));
     const submitButton = page.getByTestId(TEST_SELECTORS.FORM_SUBMIT_BUTTON);
+
+    await expect(firstNameInput).toBeVisible();
+    await expect(submitButton).toBeVisible();
 
     await firstNameInput.clear();
     await submitButton.click();

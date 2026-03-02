@@ -49,6 +49,7 @@ export const TEST_SELECTORS = {
   PAGE_TITLE: 'React App',
   HEADING_SELECTOR: 'H1',
   APPLICATION_ROLE: 'application',
+  WINDOW_ROLE: 'region',
   LAZY_LOAD_WAIT_MS: 500,
   FOCUSED_CLASS: 'focused',
   TIMER_FORMAT_REGEX: /^\d{2}:\d{2}$/,

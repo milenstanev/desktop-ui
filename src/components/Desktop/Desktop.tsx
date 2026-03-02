@@ -167,7 +167,6 @@ const Desktop: React.FC = () => {
         {windowsSorted.map((window: DesktopUIWindow) => (
           <div
             key={window.id}
-            data-testid={TEST_SELECTORS.WINDOW_CONTAINER}
             style={{
               zIndex:
                 window.id === focusedWindowId

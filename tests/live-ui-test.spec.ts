@@ -12,14 +12,8 @@ import { test, expect } from '@playwright/test';
 import { TEST_SELECTORS } from '~/testSelectors';
 
 test.describe('Live UI - Comprehensive Test', () => {
-  test.beforeEach(async ({ page, context }) => {
-    await context.clearCookies();
+  test.beforeEach(async ({ page }) => {
     await page.goto('/');
-    await page.evaluate(() => {
-      localStorage.clear();
-      sessionStorage.clear();
-    });
-    await page.reload();
     await page.waitForLoadState('domcontentloaded');
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
   });
@@ -50,10 +44,12 @@ test.describe('Live UI - Comprehensive Test', () => {
     await expect(themeSelect).toBeVisible();
 
     // Switch to dark theme
+    await expect(themeSelect).toBeVisible();
     await themeSelect.selectOption('dark');
     await expect(html).toHaveAttribute('data-theme', 'dark');
 
     // Switch to gradient theme
+    await expect(themeSelect).toBeVisible();
     await themeSelect.selectOption('gradient');
     await expect(html).toHaveAttribute('data-theme', 'gradient');
 
@@ -80,11 +76,14 @@ test.describe('Live UI - Comprehensive Test', () => {
     const incrementBtn = page.getByTestId(
       TEST_SELECTORS.COUNTER.INCREMENT_BUTTON
     );
+    await expect(incrementBtn).toBeVisible();
     await incrementBtn.click();
     await expect(counterValue).toHaveText('1');
 
     // Increment multiple times
+    await expect(incrementBtn).toBeVisible();
     await incrementBtn.click();
+    await expect(incrementBtn).toBeVisible();
     await incrementBtn.click();
     await expect(counterValue).toHaveText('3');
 
@@ -92,6 +91,7 @@ test.describe('Live UI - Comprehensive Test', () => {
     const decrementBtn = page.getByTestId(
       TEST_SELECTORS.COUNTER.DECREMENT_BUTTON
     );
+    await expect(decrementBtn).toBeVisible();
     await decrementBtn.click();
     await expect(counterValue).toHaveText('2');
   });
@@ -99,6 +99,7 @@ test.describe('Live UI - Comprehensive Test', () => {
   test('Can add and use Notes window', async ({ page }) => {
     // Add Notes window
     const addNotesBtn = page.getByRole('button', { name: /add notes/i });
+    await expect(addNotesBtn).toBeVisible();
     await addNotesBtn.click();
 
     // Wait for lazy-loaded component
@@ -108,7 +109,9 @@ test.describe('Live UI - Comprehensive Test', () => {
     // Add a note
     const noteInput = notesContainer.locator('input[type="text"]');
     await expect(noteInput).toBeVisible();
+    await expect(noteInput).toBeVisible();
     await noteInput.fill('Test note from live UI');
+    await expect(noteInput).toBeVisible();
     await noteInput.press('Enter');
 
     // Verify note appears
@@ -119,12 +122,15 @@ test.describe('Live UI - Comprehensive Test', () => {
     );
 
     // Add another note
+    await expect(noteInput).toBeVisible();
     await noteInput.fill('Second test note');
+    await expect(noteInput).toBeVisible();
     await noteInput.press('Enter');
     await expect(notesList.locator('li')).toHaveCount(2);
 
     // Remove a note
     const deleteBtn = notesList.locator('button').first();
+    await expect(deleteBtn).toBeVisible();
     await deleteBtn.click();
     await expect(notesList.locator('li')).toHaveCount(1);
   });
@@ -132,6 +138,7 @@ test.describe('Live UI - Comprehensive Test', () => {
   test('Can add and use Timer window', async ({ page }) => {
     // Add Timer window
     const addTimerBtn = page.getByRole('button', { name: /add timer/i });
+    await expect(addTimerBtn).toBeVisible();
     await addTimerBtn.click();
 
     // Wait for lazy-loaded component
@@ -144,6 +151,7 @@ test.describe('Live UI - Comprehensive Test', () => {
 
     // Start timer
     const startBtn = timerContainer.getByRole('button', { name: /start/i });
+    await expect(startBtn).toBeVisible();
     await startBtn.click();
 
     // Wait for timer to tick
@@ -152,6 +160,7 @@ test.describe('Live UI - Comprehensive Test', () => {
 
     // Pause timer
     const pauseBtn = timerContainer.getByRole('button', { name: /pause/i });
+    await expect(pauseBtn).toBeVisible();
     await pauseBtn.click();
 
     // Verify timer stopped
@@ -161,6 +170,7 @@ test.describe('Live UI - Comprehensive Test', () => {
 
     // Reset timer
     const resetBtn = timerContainer.getByRole('button', { name: /reset/i });
+    await expect(resetBtn).toBeVisible();
     await resetBtn.click();
     await expect(timerDisplay).toHaveText('00:00');
   });
@@ -168,6 +178,7 @@ test.describe('Live UI - Comprehensive Test', () => {
   test('Can add and use FormEditor window', async ({ page }) => {
     // Add FormEditor window
     const addFormBtn = page.getByRole('button', { name: /add form editor/i });
+    await expect(addFormBtn).toBeVisible();
     await addFormBtn.click();
 
     // Wait for lazy-loaded component and data
@@ -179,23 +190,32 @@ test.describe('Live UI - Comprehensive Test', () => {
     await expect(firstNameField).toBeVisible();
 
     // Fill out form
+    await expect(firstNameField).toBeVisible();
     await firstNameField.clear();
+    await expect(firstNameField).toBeVisible();
     await firstNameField.fill('John');
 
     const lastNameField = formEditor.locator('input[name="lastName"]');
+    await expect(lastNameField).toBeVisible();
     await lastNameField.clear();
+    await expect(lastNameField).toBeVisible();
     await lastNameField.fill('Doe');
 
     const emailField = formEditor.locator('input[name="email"]');
+    await expect(emailField).toBeVisible();
     await emailField.clear();
+    await expect(emailField).toBeVisible();
     await emailField.fill('john.doe@example.com');
 
     const ageField = formEditor.locator('input[name="age"]');
+    await expect(ageField).toBeVisible();
     await ageField.clear();
+    await expect(ageField).toBeVisible();
     await ageField.fill('30');
 
     // Submit form
     const submitBtn = page.getByTestId(TEST_SELECTORS.FORM_SUBMIT_BUTTON);
+    await expect(submitBtn).toBeVisible();
     await submitBtn.click();
 
     // Wait for alert (mock API success)
@@ -207,9 +227,15 @@ test.describe('Live UI - Comprehensive Test', () => {
 
   test('Can close windows', async ({ page }) => {
     // Add multiple windows
-    await page.getByRole('button', { name: /add counter/i }).click();
-    await page.getByRole('button', { name: /add notes/i }).click();
-    await page.getByRole('button', { name: /add timer/i }).click();
+    const addCounterBtn = page.getByRole('button', { name: /add counter/i });
+    await expect(addCounterBtn).toBeVisible();
+    await addCounterBtn.click();
+    const addNotesBtn = page.getByRole('button', { name: /add notes/i });
+    await expect(addNotesBtn).toBeVisible();
+    await addNotesBtn.click();
+    const addTimerBtn = page.getByRole('button', { name: /add timer/i });
+    await expect(addTimerBtn).toBeVisible();
+    await addTimerBtn.click();
 
     // Wait for all windows to load
     await expect(
@@ -223,23 +249,28 @@ test.describe('Live UI - Comprehensive Test', () => {
     ).toBeVisible();
 
     // Count windows
-    const windows = page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`);
+    const windows = page.locator(`[role="region"]`);
     await expect(windows).toHaveCount(3);
 
     // Close first window
-    const closeButtons = page.getByRole('button', { name: '×' });
+    const closeButtons = page.getByRole('button', { name: /close window/i });
+    await expect(closeButtons.first()).toBeVisible();
     await closeButtons.first().click();
     await expect(windows).toHaveCount(2);
 
     // Close all windows
+    await expect(closeButtons.first()).toBeVisible();
     await closeButtons.first().click();
+    await expect(closeButtons.first()).toBeVisible();
     await closeButtons.first().click();
     await expect(windows).toHaveCount(0);
   });
 
   test('Window drag and resize works', async ({ page }) => {
     // Add a window
-    await page.getByRole('button', { name: /add counter/i }).click();
+    const addCounterBtn = page.getByRole('button', { name: /add counter/i });
+    await expect(addCounterBtn).toBeVisible();
+    await addCounterBtn.click();
     const counterContainer = page.getByTestId(TEST_SELECTORS.COUNTER.CONTAINER);
     await expect(counterContainer).toBeVisible();
 
@@ -269,17 +300,24 @@ test.describe('Live UI - Comprehensive Test', () => {
 
   test('Layout controls work', async ({ page }) => {
     // Add multiple windows
-    await page.getByRole('button', { name: /add counter/i }).click();
-    await page.getByRole('button', { name: /add notes/i }).click();
-    await page.getByRole('button', { name: /add timer/i }).click();
+    const addCounterBtn = page.getByRole('button', { name: /add counter/i });
+    await expect(addCounterBtn).toBeVisible();
+    await addCounterBtn.click();
+    const addNotesBtn = page.getByRole('button', { name: /add notes/i });
+    await expect(addNotesBtn).toBeVisible();
+    await addNotesBtn.click();
+    const addTimerBtn = page.getByRole('button', { name: /add timer/i });
+    await expect(addTimerBtn).toBeVisible();
+    await addTimerBtn.click();
 
     // Wait for windows
-    await expect(page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`)).toHaveCount(
+    await expect(page.locator(`[role="region"]`)).toHaveCount(
       3
     );
 
     // Find organize button
     const organizeBtn = page.getByRole('button', { name: /organize/i });
+    await expect(organizeBtn).toBeVisible();
     await expect(organizeBtn).toBeVisible();
     await organizeBtn.click();
 
@@ -289,29 +327,34 @@ test.describe('Live UI - Comprehensive Test', () => {
     // Find reset button
     const resetBtn = page.getByRole('button', { name: /reset/i });
     await expect(resetBtn).toBeVisible();
+    await expect(resetBtn).toBeVisible();
     await resetBtn.click();
 
     // Verify all windows are removed
-    await expect(page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`)).toHaveCount(
+    await expect(page.locator(`[role="region"]`)).toHaveCount(
       0
     );
   });
 
   test('Keyboard shortcuts work', async ({ page }) => {
     // Add a window
-    await page.getByRole('button', { name: /add counter/i }).click();
+    const addCounterBtn = page.getByRole('button', { name: /add counter/i });
+    await expect(addCounterBtn).toBeVisible();
+    await addCounterBtn.click();
     await expect(
       page.getByTestId(TEST_SELECTORS.COUNTER.CONTAINER)
     ).toBeVisible();
 
     // Press Escape to close window
     await page.keyboard.press('Escape');
-    await expect(page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`)).toHaveCount(
+    await expect(page.locator(`[role="region"]`)).toHaveCount(
       0
     );
 
     // Add another window
-    await page.getByRole('button', { name: /add notes/i }).click();
+    const addNotesBtn = page.getByRole('button', { name: /add notes/i });
+    await expect(addNotesBtn).toBeVisible();
+    await addNotesBtn.click();
     await expect(
       page.getByTestId(TEST_SELECTORS.NOTES_CONTAINER)
     ).toBeVisible();
@@ -323,7 +366,7 @@ test.describe('Live UI - Comprehensive Test', () => {
     } else {
       await page.keyboard.press('Control+KeyW');
     }
-    await expect(page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`)).toHaveCount(
+    await expect(page.locator(`[role="region"]`)).toHaveCount(
       0
     );
   });
@@ -334,7 +377,9 @@ test.describe('Live UI - Comprehensive Test', () => {
     await expect(desktop).toHaveAttribute('role', 'application');
 
     // Add Timer to check ARIA
-    await page.getByRole('button', { name: /add timer/i }).click();
+    const addTimerBtn = page.getByRole('button', { name: /add timer/i });
+    await expect(addTimerBtn).toBeVisible();
+    await addTimerBtn.click();
     const timerContainer = page.getByTestId(TEST_SELECTORS.TIMER_CONTAINER);
     await expect(timerContainer).toBeVisible();
 

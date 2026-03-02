@@ -31,6 +31,7 @@ test.describe('Window positioning and state management', () => {
     const window = page.locator('.react-grid-item').first();
 
     // Add a counter window
+    await expect(addCounterButton).toBeVisible();
     await addCounterButton.click();
 
     // Wait for lazy-loaded Counter component to be fully rendered
@@ -124,6 +125,7 @@ test.describe('Window positioning and state management', () => {
     const window = page.locator('.react-grid-item').first();
 
     // Add a counter window
+    await expect(addCounterButton).toBeVisible();
     await addCounterButton.click();
 
     // Wait for lazy-loaded Counter component to be fully rendered
@@ -294,12 +296,14 @@ test.describe('Window positioning and state management', () => {
     const windows = page.locator('.react-grid-item');
 
     // Add two windows
+    await expect(addCounterButton).toBeVisible();
     await addCounterButton.click();
 
     // Wait for lazy-loaded Counter component
     await expect(counterContainer).toBeVisible();
     await expect(counterValue).toBeVisible();
 
+    await expect(addNotesButton).toBeVisible();
     await addNotesButton.click();
 
     // Wait for lazy-loaded Notes component (check input, not empty list)
@@ -323,6 +327,7 @@ test.describe('Window positioning and state management', () => {
     expect(parseInt(window2ZIndex)).toBeGreaterThan(parseInt(window1ZIndex));
 
     // Click first window to trigger focus
+    await expect(window1).toBeVisible();
     await window1.click();
 
     // Small wait for Redux state to update
@@ -355,6 +360,7 @@ test.describe('Window positioning and state management', () => {
     const window = page.locator('.react-grid-item').first();
 
     // Add a counter window
+    await expect(addCounterButton).toBeVisible();
     await addCounterButton.click();
 
     // Wait for lazy-loaded Counter component
@@ -372,6 +378,7 @@ test.describe('Window positioning and state management', () => {
     await expect(closeButton).toBeVisible();
 
     // Click close button should remove window, not drag it
+    await expect(closeButton).toBeVisible();
     await closeButton.click();
 
     // Wait for window to be removed

@@ -191,7 +191,7 @@ src/
      );
    }, [dispatch]);
    ```
-6. **Write tests**: Create `YourFeature.test.tsx`
+6. **Write tests**: Create `YourFeature.test.tsx` and E2E tests (see [Best Practices](./docs/BEST_PRACTICES.md#e2e-testing-best-practice) for E2E testing guidelines)
 
 See [FEATURE_COMPONENTS.md](./docs/FEATURE_COMPONENTS.md) for detailed examples.
 

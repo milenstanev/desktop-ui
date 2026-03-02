@@ -23,7 +23,7 @@ const Window: React.FC<WindowProps> = memo(
   ({ id, name, removeWindow, isFocused = false, onFocus, children }) => (
     <div
       className={`${styles.window} ${isFocused ? styles.focused : ''}`}
-      role="application"
+      role="region"
       aria-label={
         name
           ? `${WINDOW_LABEL_PREFIX}${name}`

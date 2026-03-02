@@ -26,6 +26,7 @@ test.describe('Notes feature', () => {
     const placeholder = page.getByPlaceholder(NOTES_STRINGS.PLACEHOLDER);
     const addButton = page.getByLabel(NOTES_STRINGS.ADD_ARIA_LABEL);
 
+    await expect(addNotesButton).toBeVisible();
     await addNotesButton.click();
 
     // Wait for lazy-loaded Notes component (check input field, not empty list)
@@ -49,7 +50,9 @@ test.describe('Notes feature', () => {
     await expect(notesContainer).toBeVisible();
     await expect(noteInput).toBeVisible();
 
+    await expect(noteInput).toBeVisible();
     await noteInput.fill(TEST_SELECTORS.TEST_NOTE_TEXT);
+    await expect(addNoteButton).toBeVisible();
     await addNoteButton.click();
     await expect(firstNoteItem).toBeVisible();
   });

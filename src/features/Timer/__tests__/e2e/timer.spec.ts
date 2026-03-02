@@ -37,6 +37,7 @@ test.describe('Timer feature', () => {
       name: RESET_TIMER_BUTTON_NAME,
     });
 
+    await expect(addTimerButton).toBeVisible();
     await addTimerButton.click();
 
     // Wait for lazy-loaded Timer component
