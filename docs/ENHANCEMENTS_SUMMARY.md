@@ -382,7 +382,6 @@ npm run build
 - [Performance Guide](./PERFORMANCE.md)
 - [Git Workflow](./GIT_WORKFLOW.md)
 - [API Documentation](./API_DOCUMENTATION.md)
-- [Recent Improvements](./RECENT_IMPROVEMENTS.md)
 
 ---
 

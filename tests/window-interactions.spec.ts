@@ -8,13 +8,15 @@ const ADD_COUNTER_BUTTON_NAME = /add counter/i;
 const ADD_NOTES_BUTTON_NAME = /add notes/i;
 
 test.describe('Window positioning and state management', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, context }) => {
+    await context.clearCookies();
     await page.goto('/');
     await page.evaluate(() => {
       localStorage.clear();
+      sessionStorage.clear();
     });
     await page.reload();
-    // Wait for app to be ready
+    await page.waitForLoadState('domcontentloaded');
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
   });
 

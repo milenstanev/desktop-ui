@@ -17,12 +17,15 @@ const RESET_LAYOUT_BUTTON_NAME = new RegExp(
 const CLOSE_ALL_BUTTON_NAME = new RegExp(APP_STRINGS.CLOSE_ALL_BUTTON, 'i');
 
 test.describe('Layout control buttons', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, context }) => {
+    await context.clearCookies();
     await page.goto('/');
     await page.evaluate(() => {
       localStorage.clear();
+      sessionStorage.clear();
     });
     await page.reload();
+    await page.waitForLoadState('domcontentloaded');
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
   });
 

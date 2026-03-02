@@ -11,6 +11,8 @@ export default defineConfig({
   },
   retries: process.env.CI ? 2 : 1,
   reporter: 'html',
+  fullyParallel: false,
+  workers: process.env.CI ? 2 : 1,
   use: {
     headless: !!process.env.CI,
     baseURL: 'http://localhost:3000',
@@ -19,7 +21,9 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { 
+        ...devices['Desktop Chrome'],
+      },
     },
   ],
   webServer: {

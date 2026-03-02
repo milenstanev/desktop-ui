@@ -5,7 +5,7 @@
 # Desktop UI - Starter Template
 
 [![React](https://img.shields.io/badge/React-18.3-61dafb?logo=react&logoColor=white)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-4.9-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Redux](https://img.shields.io/badge/Redux-Toolkit-764abc?logo=redux&logoColor=white)](https://redux-toolkit.js.org/)
 [![Tests](https://img.shields.io/badge/Tests-93%20unit%20%2B%2034%20E2E%20%7C%20100%25%20stable-success)](https://github.com)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -44,7 +44,7 @@ This starter template includes:
 - 🎹 **Keyboard Shortcuts Hook**: Reusable `useKeyboardShortcuts` hook
 - 🚀 **No More `any` Types**: Proper TypeScript types in all Form components
 
-[View detailed changelog →](docs/RECENT_IMPROVEMENTS.md) | [View enhancements summary →](docs/ENHANCEMENTS_SUMMARY.md)
+[View enhancements summary →](docs/ENHANCEMENTS_SUMMARY.md)
 
 ## Why Use This Template
 
@@ -114,7 +114,7 @@ See [PWA Guide](./docs/PWA_GUIDE.md) for detailed configuration options.
 | `npm run type-check` | TypeScript type checking |
 | `npm run format` | Format code with Prettier |
 
-See [Test Summary](./docs/TEST_SUMMARY.md) for detailed test documentation.
+Run `npm run test:all` to execute all tests.
 
 ## Project Structure
 
@@ -229,22 +229,25 @@ If you add a new action to `DesktopSlice` that modifies windows or layouts, you 
 
 ### Path Aliases
 
-This project uses `~` as an alias for the `src/` directory in **test files only**:
+This project uses `~` as an alias for the `src/` directory throughout the codebase:
 
 ```typescript
-// In test files (.test.tsx, .spec.ts):
-import { TEST_CONSTANTS } from '~/constants';
-import { getFormFieldTestId } from '~/testSelectors';
-
-// In production code (.tsx, .ts), use relative imports:
-import { TEST_CONSTANTS } from '../../../constants';
+// Use ~ alias everywhere:
+import { TEST_SELECTORS } from '~/testSelectors';
+import { APP_STRINGS } from '~/constants';
+import Desktop from '~/components/Desktop/Desktop';
+import { useTheme } from '~/contexts/ThemeContext';
 ```
 
-**Why test-only?** Create React App doesn't support webpack path aliases without ejecting or using tools like CRACO. To keep this template simple and maintainable, path aliases are configured only for Jest tests.
+**Benefits:**
+- Cleaner imports without `../../../` chains
+- Easier refactoring when moving files
+- Consistent import style across the project
 
 Configured in:
 - `tsconfig.json` - TypeScript path resolution (IDE support)
 - `package.json` (jest config) - Jest module resolution (test runtime)
+- `config-overrides.js` - Webpack alias for runtime (via react-app-rewired)
 
 ### Changing All Text and Labels
 
@@ -297,8 +300,7 @@ To rename a feature (e.g., "Counter" → "Calculator"):
 - [API Documentation](./docs/API_DOCUMENTATION.md) - Hooks and utilities reference
 
 ### Project Info
-- [Architecture](./ARCHITECTURE.md) - System design and decisions
-- [Recent Improvements](./docs/RECENT_IMPROVEMENTS.md) - Latest changes
+- [Architecture](./docs/ARCHITECTURE.md) - System design and decisions
 - [Enhancements Summary](./docs/ENHANCEMENTS_SUMMARY.md) - New features overview
 
 ## License

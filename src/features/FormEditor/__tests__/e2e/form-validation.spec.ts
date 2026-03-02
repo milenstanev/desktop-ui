@@ -20,7 +20,7 @@ const BUTTON_ROLE = 'button';
 const ADD_FORM_EDITOR_BUTTON_NAME = /add form editor/i;
 
 test.describe('FormEditor Validation', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, context }) => {
     const addFormButton = page.getByRole(BUTTON_ROLE, {
       name: ADD_FORM_EDITOR_BUTTON_NAME,
     });
@@ -28,11 +28,14 @@ test.describe('FormEditor Validation', () => {
     const formLoading = page.getByTestId(TEST_SELECTORS.FORM_LOADING);
     const firstNameInput = page.getByTestId(getFormFieldTestId('firstName'));
 
+    await context.clearCookies();
     await page.goto('/');
     await page.evaluate(() => {
       localStorage.clear();
+      sessionStorage.clear();
     });
     await page.reload();
+    await page.waitForLoadState('domcontentloaded');
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
 
     await addFormButton.click();

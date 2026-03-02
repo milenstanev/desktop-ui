@@ -9,12 +9,15 @@ const PAUSE_TIMER_BUTTON_NAME = /pause timer/i;
 const RESET_TIMER_BUTTON_NAME = /reset timer/i;
 
 test.describe('Timer feature', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, context }) => {
+    await context.clearCookies();
     await page.goto('/');
     await page.evaluate(() => {
       localStorage.clear();
+      sessionStorage.clear();
     });
     await page.reload();
+    await page.waitForLoadState('domcontentloaded');
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
   });
 

@@ -3,12 +3,15 @@ import { APP_STRINGS } from '~/constants';
 import { TEST_SELECTORS } from '~/testSelectors';
 
 test.describe('Basic app functionality', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, context }) => {
+    await context.clearCookies();
     await page.goto('/');
     await page.evaluate(() => {
       localStorage.clear();
+      sessionStorage.clear();
     });
     await page.reload();
+    await page.waitForLoadState('domcontentloaded');
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
   });
 

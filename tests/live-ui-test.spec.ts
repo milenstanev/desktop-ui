@@ -12,10 +12,16 @@ import { test, expect } from '@playwright/test';
 import { TEST_SELECTORS } from '~/testSelectors';
 
 test.describe('Live UI - Comprehensive Test', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, context }) => {
+    await context.clearCookies();
     await page.goto('/');
-    await page.evaluate(() => localStorage.clear());
+    await page.evaluate(() => {
+      localStorage.clear();
+      sessionStorage.clear();
+    });
     await page.reload();
+    await page.waitForLoadState('domcontentloaded');
+    await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
   });
 
   test('Application loads successfully', async ({ page }) => {

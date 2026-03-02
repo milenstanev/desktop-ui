@@ -182,5 +182,4 @@ This ensures that when you modify your validation rules, field components, or fo
 - [REFACTOR.md](./REFACTOR.md) - Implementation details
 - [FIELD_REFS.md](./FIELD_REFS.md) - forwardRef usage examples
 - [UNIT_TESTS.md](./UNIT_TESTS.md) - Unit test documentation
-- [Running E2E Tests](../../docs/RUNNING_E2E_TESTS.md) - E2E setup guide
 - [Best Practices](../../docs/BEST_PRACTICES.md) - Testing guidelines

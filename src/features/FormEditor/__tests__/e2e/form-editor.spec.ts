@@ -5,12 +5,15 @@ const BUTTON_ROLE = 'button';
 const ADD_FORM_EDITOR_BUTTON_NAME = /add form editor/i;
 
 test.describe('FormEditor feature', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, context }) => {
+    await context.clearCookies();
     await page.goto('/');
     await page.evaluate(() => {
       localStorage.clear();
+      sessionStorage.clear();
     });
     await page.reload();
+    await page.waitForLoadState('domcontentloaded');
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
   });
 

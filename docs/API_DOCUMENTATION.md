@@ -397,7 +397,4 @@ To get the best experience:
 
 ## Additional Resources
 
-- [Recent Improvements](./RECENT_IMPROVEMENTS.md)
-- [Test Selectors](./TEST_SELECTORS.md)
-- [E2E Testing Guide](./E2E_TESTING_GUIDE.md)
 - [Main README](../README.md)
