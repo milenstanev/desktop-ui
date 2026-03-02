@@ -180,7 +180,7 @@ Timer: () => import('../features/Timer/Timer'),
 ### 14. Production Build Verification
 **What**: Verified production build succeeds with optimized bundle:
 - Main bundle: ~80.56 kB (gzipped)
-- Lazy chunks: 1-2 kB each (Notes, Timer, ComponentLazy2, etc.)
+- Lazy chunks: 1-2 kB each (Notes, Timer, Counter, FormEditor, SimpleExample, etc.)
 
 **Why**: Ensures the app is production-ready and lazy loading is working correctly.
 
@@ -247,3 +247,106 @@ Timer: () => import('../features/Timer/Timer'),
 8. **State management philosophy** (when to use Redux vs local state)
 9. **ARIA enhancements** for accessibility
 10. **Pre-commit workflow** with lint-staged and tests
+
+---
+
+## Recent Enhancements (2026)
+
+### 11. Theme System Expansion
+**Files**: `src/contexts/ThemeContext.tsx`, `src/index.css`, `src/app/Header.tsx`
+
+**What**: Expanded from light/dark toggle to dropdown with three themes:
+- Light (default)
+- Dark
+- Gradient (purple background with golden accents)
+
+**Why**: Provides more visual variety and demonstrates theme-specific styling patterns.
+
+---
+
+### 12. Layout Management Actions
+**File**: `src/components/Desktop/DesktopSlice.ts`
+
+**What**: Added three new actions:
+- `organizeGrid`: Arranges all windows in equal-sized grid (3×3 each)
+- `resetLayouts`: Resets windows to default positions (4×4 each, tiled 3 per row)
+- `removeAllWindows`: Clears all windows and layouts
+
+**Why**: Provides users with quick layout management controls without manual dragging.
+
+---
+
+### 13. Component Folder Restructuring
+**Moved**:
+- `Window` → `components/Window/`
+- `ErrorBoundary` → `components/ErrorBoundary/`
+- `Desktop` → `components/Desktop/` (from `features/`)
+
+**New**:
+- `components/Loader/` - Theme-aware loading spinner
+- `components/Icons/` - SVG icon components
+
+**Why**: Better organization, clearer distinction between features (user-facing) and components (infrastructure).
+
+---
+
+### 14. Lucide React Icons
+**File**: `src/app/Header.tsx`, `package.json`
+
+**What**: Added Lucide React icons to feature buttons, conditionally rendered only for gradient theme.
+
+**Why**: Enhances visual appeal of gradient theme without affecting light/dark themes.
+
+---
+
+### 15. Dynamic Grid Spacing
+**File**: `src/components/Desktop/Desktop.tsx`
+
+**What**: Grid `margin` and `containerPadding` adjust based on theme:
+- Light/Dark: [10, 10]
+- Gradient: [20, 20]
+
+**Why**: Gradient theme benefits from more breathing room to showcase its visual effects.
+
+---
+
+### 16. Enhanced Window Focus Styling
+**File**: `src/components/Window/Window.module.css`
+
+**What**: Focused windows now have animated gradient borders using `background-clip` and `linear-gradient`, with a thin 1px outline for clarity.
+
+**Why**: Provides clear visual feedback for focused windows without blur effects or size changes.
+
+---
+
+### 17. TypeScript Strict Configuration
+**File**: `tsconfig.json`
+
+**What**: Added strict compiler options:
+- `noUnusedLocals: true`
+- `noUnusedParameters: true`
+- `noImplicitReturns: true`
+
+**Why**: Catches unused code and ensures all code paths return values, improving code quality.
+
+---
+
+### 18. useCallback for Header Handlers
+**File**: `src/app/Header.tsx`
+
+**What**: All `dispatch` calls in `onClick` handlers wrapped in `useCallback` to prevent unnecessary re-renders.
+
+**Why**: Performance optimization - stable function references prevent child component re-renders.
+
+---
+
+### 19. Code Block Formatting Standard
+**File**: `src/app/Header.tsx`
+
+**What**: Consistent formatting for `useCallback` handlers:
+- Blank line after variable declarations (e.g., `const id = uuidv4();`)
+- Handlers ordered to match UI button order
+
+**Why**: Improves readability and maintainability.
+
+---

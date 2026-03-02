@@ -1,87 +1,200 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import {
+  Sparkles,
+  Calculator,
+  FileEdit,
+  StickyNote,
+  Timer,
+  RotateCcw,
+  X,
+  Grid3x3,
+} from 'lucide-react';
 import styles from './Header.module.css';
 import { useAppDispatch } from './hooks';
-import { addWindow } from '../features/Desktop/DesktopSlice';
-import { useTheme } from '../contexts/ThemeContext';
-import { APP_STRINGS } from '../constants';
+import {
+  addWindow,
+  resetLayouts,
+  removeAllWindows,
+  organizeGrid,
+} from '../components/Desktop/DesktopSlice';
+import { useTheme, Theme } from '../contexts/ThemeContext';
+import {
+  APP_STRINGS,
+  COMPONENT_NAMES,
+  REDUCER_NAMES,
+  THEME_STRINGS,
+  THEME_OPTIONS,
+} from '../constants';
+import { TEST_SELECTORS } from '../testSelectors';
 
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+
+  const handleThemeChange = useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>) => {
+      setTheme(event.target.value as Theme);
+    },
+    [setTheme]
+  );
+
+  const handleAddSimpleExample = useCallback(() => {
+    const id = uuidv4();
+
+    dispatch(
+      addWindow({
+        id,
+        name: COMPONENT_NAMES.SIMPLE_EXAMPLE,
+        lazyLoadComponent: 'SimpleExample',
+        layout: undefined,
+      })
+    );
+  }, [dispatch]);
+
+  const handleAddCounter = useCallback(() => {
+    const id = uuidv4();
+
+    dispatch(
+      addWindow({
+        id,
+        name: COMPONENT_NAMES.COUNTER,
+        lazyLoadComponent: 'Counter',
+        layout: undefined,
+        lazyLoadReducerName: REDUCER_NAMES.COUNTER,
+      })
+    );
+  }, [dispatch]);
+
+  const handleAddFormEditor = useCallback(() => {
+    const id = uuidv4();
+
+    dispatch(
+      addWindow({
+        id,
+        name: COMPONENT_NAMES.FORM_EDITOR,
+        lazyLoadComponent: 'FormEditor',
+        layout: undefined,
+      })
+    );
+  }, [dispatch]);
+
+  const handleAddNotes = useCallback(() => {
+    const id = uuidv4();
+
+    dispatch(
+      addWindow({
+        id,
+        name: COMPONENT_NAMES.NOTES,
+        lazyLoadComponent: 'Notes',
+        layout: undefined,
+        lazyLoadReducerName: REDUCER_NAMES.NOTES,
+      })
+    );
+  }, [dispatch]);
+
+  const handleAddTimer = useCallback(() => {
+    const id = uuidv4();
+
+    dispatch(
+      addWindow({
+        id,
+        name: COMPONENT_NAMES.TIMER,
+        lazyLoadComponent: 'Timer',
+        layout: undefined,
+      })
+    );
+  }, [dispatch]);
+
+  const handleOrganizeGrid = useCallback(() => {
+    dispatch(organizeGrid());
+  }, [dispatch]);
+
+  const handleResetLayout = useCallback(() => {
+    dispatch(resetLayouts());
+  }, [dispatch]);
+
+  const handleRemoveAllWindows = useCallback(() => {
+    dispatch(removeAllWindows());
+  }, [dispatch]);
 
   return (
     <header className={styles.header}>
-      <h1>{APP_STRINGS.HEADING_TITLE}</h1>
-      <div>
-        <button type="button" onClick={toggleTheme} aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}>
-          {theme === 'light' ? 'Dark' : 'Light'} mode
+      <div className={styles.headerContent}>
+        <h1 data-testid={TEST_SELECTORS.APP_HEADING}>
+          {APP_STRINGS.HEADING_TITLE}
+        </h1>
+        <div className={styles.themeControl}>
+          <label htmlFor="theme-select" className={styles.themeLabel}>
+            {THEME_STRINGS.SELECT_THEME_LABEL}:
+          </label>
+          <select
+            id="theme-select"
+            value={theme}
+            onChange={handleThemeChange}
+            className={styles.themeSelect}
+            aria-label={THEME_STRINGS.SELECT_THEME_LABEL}
+          >
+            {THEME_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <div className={styles.separator} aria-hidden="true"></div>
+          <button
+            onClick={handleOrganizeGrid}
+            className={styles.organizeButton}
+            title={APP_STRINGS.ORGANIZE_GRID_BUTTON}
+            aria-label={APP_STRINGS.ORGANIZE_GRID_BUTTON}
+          >
+            <Grid3x3 size={16} />
+            {theme === 'gradient' && <span>Grid</span>}
+          </button>
+          <button
+            onClick={handleResetLayout}
+            className={styles.resetButton}
+            title={APP_STRINGS.RESET_LAYOUT_BUTTON}
+            aria-label={APP_STRINGS.RESET_LAYOUT_BUTTON}
+          >
+            <RotateCcw size={16} />
+            {theme === 'gradient' && <span>Reset</span>}
+          </button>
+          <button
+            onClick={handleRemoveAllWindows}
+            className={styles.closeAllButton}
+            title={APP_STRINGS.CLOSE_ALL_BUTTON}
+            aria-label={APP_STRINGS.CLOSE_ALL_BUTTON}
+          >
+            <X size={16} />
+            {theme === 'gradient' && <span>Close All</span>}
+          </button>
+        </div>
+      </div>
+      <div className={styles.buttonGroup}>
+        <button onClick={handleAddSimpleExample}>
+          {theme === 'gradient' && <Sparkles size={16} />}
+          <span>{APP_STRINGS.BUTTON_ADD_SIMPLE_EXAMPLE}</span>
         </button>
-        <button onClick={() => {
-        dispatch(addWindow({
-          id: uuidv4(),
-          name: 'Lazy 1',
-          lazyLoadComponent: 'ComponentLazy',
-          layout: undefined,
-        }));
-      }}>
-        {APP_STRINGS.BUTTON_ADD_LAZY_1}
-      </button>
-      <button
-        onClick={() => {
-        dispatch(addWindow({
-          id: uuidv4(),
-          name: 'Lazy 2',
-          lazyLoadComponent: 'ComponentLazy2',
-          layout: undefined,
-          lazyLoadReducerName: 'ComponentLazy2Reducer',
-        }));
-      }}>
-        {APP_STRINGS.BUTTON_ADD_LAZY_2}
-      </button>
-      <button onClick={() => {
-        const id = uuidv4();
-        dispatch(addWindow({
-          id,
-          name: 'Lazy 3',
-          lazyLoadComponent: 'ComponentLazy3',
-          layout: {
-            lg: { i: id, x: 0, y: 0, w: 4, h: 2.3, },
-            md: { i: id, x: 0, y: 0, w: 4, h: 2.3, },
-            sm: { i: id, x: 0, y: 0, w: 4, h: 2, }
-          },
-        }));
-      }}>
-        {APP_STRINGS.BUTTON_ADD_LAZY_3}
-      </button>
-      <button
-        onClick={() => {
-          dispatch(addWindow({
-            id: uuidv4(),
-            name: 'Notes',
-            lazyLoadComponent: 'Notes',
-            layout: undefined,
-            lazyLoadReducerName: 'NotesReducer',
-          }));
-        }}
-      >
-        {APP_STRINGS.BUTTON_ADD_NOTES}
-      </button>
-      <button
-        onClick={() => {
-          dispatch(addWindow({
-            id: uuidv4(),
-            name: 'Timer',
-            lazyLoadComponent: 'Timer',
-            layout: undefined,
-          }));
-        }}
-      >
-        {APP_STRINGS.BUTTON_ADD_TIMER}
-      </button>
+        <button onClick={handleAddCounter}>
+          {theme === 'gradient' && <Calculator size={16} />}
+          <span>{APP_STRINGS.BUTTON_ADD_COUNTER}</span>
+        </button>
+        <button onClick={handleAddFormEditor}>
+          {theme === 'gradient' && <FileEdit size={16} />}
+          <span>{APP_STRINGS.BUTTON_ADD_FORM_EDITOR}</span>
+        </button>
+        <button onClick={handleAddNotes}>
+          {theme === 'gradient' && <StickyNote size={16} />}
+          <span>{APP_STRINGS.BUTTON_ADD_NOTES}</span>
+        </button>
+        <button onClick={handleAddTimer}>
+          {theme === 'gradient' && <Timer size={16} />}
+          <span>{APP_STRINGS.BUTTON_ADD_TIMER}</span>
+        </button>
       </div>
     </header>
   );
-}
+};
 
 export default Header;

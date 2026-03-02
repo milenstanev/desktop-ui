@@ -3,35 +3,42 @@
 ## High-Level Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                                  App (ThemeProvider)                          │
-│  ┌───────────────────────────────────────────────────────────────────────┐  │
-│  │                         Redux Store (reducerManager)                     │  │
-│  │  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐  (lazy: Notes, …)  │  │
-│  │  │   Desktop   │  │ ComponentLazy2│  │   Notes     │  ← injected on open │  │
-│  │  │ (always)    │  │ (on demand)  │  │ (on demand) │  ← removed on close  │  │
-│  │  └─────────────┘  └──────────────┘  └─────────────┘                      │  │
-│  └───────────────────────────────────────────────────────────────────────┘  │
-│  ┌────────────┐  ┌─────────────────────────────────────┐  ┌──────────────┐   │
-│  │  Header    │  │  Desktop (grid)                     │  │ FooterTaskbar│   │
-│  │  + theme   │  │  ┌───────┐ ┌───────┐ ┌───────┐     │  │              │   │
-│  │  + buttons │  │  │Window │ │Window │ │Window │ …   │  └──────────────┘   │
-│  └────────────┘  │  │+Error │ │+Error │ │+Error │     │                     │
-│                  │  │Boundary│ │Boundary│ │Boundary│     │                     │
-│                  │  │ lazy  │ │ lazy  │ │ lazy  │     │                     │
-│                  │  │ comp  │ │ comp  │ │ comp  │     │                     │
-│                  │  └───────┘ └───────┘ └───────┘     │                     │
-│                  └─────────────────────────────────────┘                     │
-└─────────────────────────────────────────────────────────────────────────────┘
-         │                        │
-         ▼                        ▼
-   localStorage              componentLoader
-   (layouts, theme)          (dynamic imports)
+┌───────────────────────────────────────────────────────────────────────────┐
+│                     App (ThemeProvider + Redux)                           │
+│  ┌─────────────────────────────────────────────────────────────────────┐  │
+│  │                   Redux Store (reducerManager)                      │  │
+│  │  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐                 │  │
+│  │  │   Desktop   │  │    Counter   │  │    Notes    │  ← lazy loaded  │  │
+│  │  │  (always)   │  │ (on demand)  │  │ (on demand) │  ← injected     │  │
+│  │  └─────────────┘  └──────────────┘  └─────────────┘  ← removed      │  │
+│  └─────────────────────────────────────────────────────────────────────┘  │
+│                                                                           │
+│  ┌────────────────────────────────────────────────────────────────────┐   │
+│  │ <header>  Header (theme selector + feature buttons)                │   │
+│  └────────────────────────────────────────────────────────────────────┘   │
+│  ┌────────────────────────────────────────────────────────────────────┐   │
+│  │ <main>    Desktop (grid layout)                                    │   │
+│  │           ┌───────┐ ┌───────┐ ┌───────┐                            │   │
+│  │           │Window │ │Window │ │Window │                            │   │
+│  │           │ Error │ │ Error │ │ Error │                            │   │
+│  │           │Bound. │ │Bound. │ │Bound. │                            │   │
+│  │           │ lazy  │ │ lazy  │ │ lazy  │                            │   │
+│  │           │ comp  │ │ comp  │ │ comp  │                            │   │
+│  │           └───────┘ └───────┘ └───────┘                            │   │
+│  └────────────────────────────────────────────────────────────────────┘   │
+│  ┌────────────────────────────────────────────────────────────────────┐   │
+│  │ <footer>  FooterTaskbar                                            │   │
+│  └────────────────────────────────────────────────────────────────────┘   │
+└───────────────────────────────────────────────────────────────────────────┘
+              │                          │
+              ▼                          ▼
+        localStorage              componentLoader
+      (layouts, theme)           (dynamic imports)
 ```
 
 ## Overview
 
-Desktop UI is a feature-based React app that mimics a desktop environment with draggable windows. Each window can load its own component and Redux slice lazily, keeping the initial bundle small. The app supports window focus, keyboard shortcuts, light/dark theme, and multiple feature components (Notes, Timer, and lazy-loaded counters).
+Desktop UI is a feature-based React app that mimics a desktop environment with draggable windows. Each window can load its own component and Redux slice lazily, keeping the initial bundle small. The app supports window focus, keyboard shortcuts, three themes (Light, Dark, Gradient), layout management controls, responsive breakpoints (XL/LG/MD/SM), and multiple feature components (Notes, Timer, Counter, FormEditor with mock API, SimpleExample).
 
 ## Key Concepts
 
@@ -41,8 +48,8 @@ Redux uses a custom reducer manager (`reducerManager.ts`) that supports adding a
 
 ```
 Desktop (always loaded)
-  └── ComponentLazy2 (injected when window opens)
-  └── ComponentLazy3 (injected when window opens)
+  └── Counter (injected when window opens)
+  └── FormEditor (injected when window opens)
   └── Notes (NotesReducer, injected when Notes window opens)
   └── Timer (no Redux – local state only)
 ```
@@ -53,7 +60,21 @@ Components are loaded via `React.lazy` and the `componentLoader` map. Each windo
 
 ### Local Storage Persistence
 
-Window positions and layouts are persisted to `localStorage`. A middleware subscribes to relevant actions and saves state after each change, keeping reducers pure. Theme preference (light/dark) is also stored in `localStorage`.
+Window positions and layouts are persisted to `localStorage`. A middleware (`desktopStorageMiddleware`) subscribes to relevant actions and saves state after each change, keeping reducers pure. Theme preference (light/dark/gradient) is also stored in `localStorage`.
+
+**CRITICAL: Action Registration**
+
+Any action that modifies `desktopWindows` or `layouts` in `DesktopSlice` MUST be registered in `src/middleware/desktopStorageMiddleware.ts`. Without registration, changes will not persist and will be lost on page reload.
+
+Currently registered actions:
+- `addWindow` - Adds a new window
+- `removeWindow` - Removes a window
+- `updateLayouts` - Updates layouts after drag/resize
+- `resetLayouts` - Resets all layouts to defaults
+- `organizeGrid` - Organizes windows in grid
+- `removeAllWindows` - Clears all windows
+
+When adding new actions, import and add them to the middleware's if condition.
 
 ### Error Boundaries
 
@@ -67,9 +88,30 @@ The Desktop slice tracks `focusedWindowId`. Clicking a window’s header (title 
 
 - **Escape** and **Cmd+W** / **Ctrl+W** close the currently focused window (and clean up its lazy reducer when applicable).
 
-### Theme (Light / Dark)
+### Responsive Layout Breakpoints
 
-`ThemeContext` provides `theme`, `setTheme`, and `toggleTheme`. The choice is persisted in `localStorage` and applied via `data-theme` on the document root; CSS variables (`--bg`, `--text`, `--border`) drive the look. The header has a “Dark mode” / “Light mode” toggle.
+The grid layout adapts to different screen sizes:
+- **XL (>1920px)**: 12 columns, 3 windows per row (4 cols each)
+- **LG (1200-1920px)**: 12 columns, 3 windows per row (4 cols each)
+- **MD (996-1200px)**: 8 columns, 2 windows per row (4 cols each)
+- **SM (<996px)**: 2 columns, 1 window per row (full width)
+
+### Layout Controls
+
+The header provides layout management buttons:
+- **Organize Grid**: Arranges all windows in equal-sized grid (3 per row on XL, 4 per row on LG, 3 cols × 3 rows each)
+- **Reset Layout**: Resets window positions and sizes to defaults (3 per row on XL, 2 per row on LG, 4 cols × 4 rows each)
+- **Close All**: Removes all windows and clears layouts
+
+### Theme System
+
+`ThemeContext` provides `theme` and `setTheme`. Three themes available via dropdown:
+- **Light**: Clean white background with blue accents
+- **Dark**: Dark background with brighter blue accents
+- **Gradient**: Purple gradient background with golden accents
+
+The theme is persisted in `localStorage` and applied via `data-theme` on the document root. CSS variables (`--bg`, `--text`, `--border`) drive the styling. The gradient theme features larger grid gaps (20px vs 10px), icons on buttons (Lucide React), and golden focus borders.
+
 
 ### Drag Handle
 
@@ -83,25 +125,28 @@ UI strings used in the header and tests live in `src/constants.ts`: `APP_STRINGS
 
 Feature components live in `src/features/<Name>/` with their own folder, optional Redux slice, unit tests (`*.test.tsx`), and E2E coverage in `tests/*.spec.ts`.
 
-| Feature       | Path                    | Redux              | Description                    |
-| ------------- | ----------------------- | ------------------ | ------------------------------ |
-| Desktop       | `features/Desktop/`     | DesktopSlice       | Grid, windows list, layouts   |
-| ComponentLazy | `components/`           | –                  | Simple counter (legacy)        |
-| ComponentLazy2| `features/ComponentLazy2/` | ComponentLazy2Slice | Counter with lazy reducer  |
-| ComponentLazy3| `features/ComponentLazy3/` | –                | Demo window                    |
-| Notes         | `features/Notes/`       | NotesSlice         | Add/remove text notes          |
-| Timer         | `features/Timer/`       | –                  | Stopwatch (Start/Pause/Reset)  |
+| Feature       | Path                       | Redux              | Description                    |
+| ------------- | -------------------------- | ------------------ | ------------------------------ |
+| Desktop       | `components/Desktop/`      | DesktopSlice       | Grid, windows list, layouts    |
+| SimpleExample | `features/SimpleExample/`  | –                  | Basic example component        |
+| Counter       | `features/Counter/`        | CounterSlice       | Counter with lazy reducer      |
+| FormEditor    | `features/FormEditor/`     | –                  | Form with API integration      |
+| Notes         | `features/Notes/`          | NotesSlice         | Add/remove text notes          |
+| Timer         | `features/Timer/`          | –                  | Stopwatch (Start/Pause/Reset)  |
 
 See `docs/FEATURE_COMPONENTS.md` for how to add new features.
 
 ## Data Flow
 
-1. **Open window**: `addWindow` → Desktop slice (sets `focusedWindowId`) → layout persisted via middleware
-2. **Load lazy component**: `lazy()` + `useLazyLoadReducer` → reducer injected, component rendered
+1. **Open window**: `addWindow` → Desktop slice (sets `focusedWindowId`, calculates position) → layout persisted via middleware
+2. **Load lazy component**: `lazy()` + `useLazyLoadReducer` → reducer injected, component rendered (shows Loader during load)
 3. **Close window**: `removeWindow` (or Escape / Cmd+W) → if last instance of that slice, reducer removed
 4. **Persist layout**: Drag/resize → `updateLayouts` → middleware saves to localStorage
-5. **Focus window**: Click header → `setFocus(id)` → window reordered and styled as focused
-6. **Theme**: Toggle in header → ThemeContext updates → `data-theme` + localStorage updated
+5. **Focus window**: Click header → `setFocus(id)` → window reordered and styled with gradient border
+6. **Theme**: Select in dropdown → ThemeContext updates → `data-theme` + localStorage updated
+7. **Organize grid**: `organizeGrid` → all windows arranged in equal-sized grid → persisted
+8. **Reset layout**: `resetLayouts` → windows repositioned with default sizes → persisted
+9. **Close all**: `removeAllWindows` → all windows removed, layouts cleared, focus cleared
 
 ## File Roles
 
@@ -111,12 +156,18 @@ See `docs/FEATURE_COMPONENTS.md` for how to add new features.
 | `lazyLoadReducer.ts`   | Helpers to inject/remove reducers                 |
 | `componentLoader.ts`   | Map of lazy component names to dynamic imports    |
 | `useLazyLoadReducer`   | Hook to inject a feature’s reducer on mount       |
-| `DesktopSlice`         | Windows list, layouts, `focusedWindowId`         |
-| `ThemeContext.tsx`     | Light/dark theme state and persistence           |
+| `DesktopSlice`         | Windows list, layouts, `focusedWindowId`, layout actions (organizeGrid, resetLayouts, removeAllWindows) |
+| `ThemeContext.tsx`     | Theme state (light/dark/gradient) and persistence |
 | `constants.ts`         | APP_STRINGS (UI copy), APP_TEST (test selectors) |
-| `middleware/desktopStorageMiddleware.ts` | Persist Desktop state to localStorage    |
+| `middleware/desktopStorageMiddleware.ts` | Persist Desktop state to localStorage (MUST register all Desktop actions here) |
 | `features/Notes/`      | Notes feature (slice + component + tests)         |
 | `features/Timer/`      | Timer feature (component + tests, no slice)       |
+| `components/Desktop/`  | Desktop grid with layout management and dynamic spacing |
+| `components/Window/`   | Window wrapper with gradient borders and close button |
+| `components/ErrorBoundary/` | Error boundary for each window               |
+| `components/Desktop/config.ts` | Default window sizes and presets         |
+| `components/Loader/`   | SVG-based loading spinner (theme-aware)           |
+| `components/Icons/`    | SVG icon components (CloseIcon)                   |
 
 ## Why This Structure?
 

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { RootState } from '../../app/store';
-import useLazyLoadReducer from '../../hooks/useLazyLoadReducer';
+import { useAppDispatch, useAppSelector } from '~/app/hooks';
+import { RootState } from '~/app/store';
+import useLazyLoadReducer from '~/hooks/useLazyLoadReducer';
 import featureReducer, { addNote, removeNote } from './NotesSlice';
 import styles from './Notes.module.css';
+import { NOTES_STRINGS, FORM_TYPES } from '~/constants';
+import { TEST_SELECTORS, getNoteItemTestId } from '~/testSelectors';
 
 const EMPTY_ITEMS: string[] = [];
 
@@ -16,8 +18,10 @@ interface NotesProps {
 const Notes: React.FC<NotesProps> = ({ lazyLoadReducerName }) => {
   useLazyLoadReducer({ lazyLoadReducerName, featureReducer });
   const dispatch = useAppDispatch();
-  const items = useAppSelector((state: RootState) =>
-    (state[lazyLoadReducerName] as { items?: string[] } | undefined)?.items ?? EMPTY_ITEMS
+  const items = useAppSelector(
+    (state: RootState) =>
+      (state[lazyLoadReducerName] as { items?: string[] } | undefined)?.items ??
+      EMPTY_ITEMS
   );
   const [input, setInput] = useState('');
 
@@ -28,30 +32,38 @@ const Notes: React.FC<NotesProps> = ({ lazyLoadReducerName }) => {
   };
 
   return (
-    <div className={styles.notes} data-testid="notes-feature">
+    <div className={styles.notes} data-testid={TEST_SELECTORS.NOTES_CONTAINER}>
       <form onSubmit={handleSubmit} className={styles.form}>
         <input
-          type="text"
+          type={FORM_TYPES.TEXT}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="New note..."
-          aria-label="New note"
+          placeholder={NOTES_STRINGS.PLACEHOLDER}
+          aria-label={NOTES_STRINGS.NEW_NOTE_ARIA_LABEL}
           className={styles.input}
         />
-        <button type="submit" aria-label="Add note">
-          Add
+        <button type="submit" aria-label={NOTES_STRINGS.ADD_ARIA_LABEL}>
+          {NOTES_STRINGS.ADD_BUTTON}
         </button>
       </form>
-      <ul className={styles.list} aria-label="Notes list">
+      <ul
+        className={styles.list}
+        aria-label={NOTES_STRINGS.NOTES_LIST_ARIA_LABEL}
+        data-testid={TEST_SELECTORS.NOTES_LIST}
+      >
         {items.map((item, i) => (
-          <li key={`${i}-${item}`} className={styles.item}>
+          <li
+            key={`${i}-${item}`}
+            className={styles.item}
+            data-testid={getNoteItemTestId(i)}
+          >
             <span>{item}</span>
             <button
               type="button"
               onClick={() => dispatch(removeNote(i))}
-              aria-label={`Remove note: ${item}`}
+              aria-label={`${NOTES_STRINGS.REMOVE_NOTE_ARIA_LABEL_PREFIX} ${item}`}
             >
-              Remove
+              {NOTES_STRINGS.REMOVE_BUTTON}
             </button>
           </li>
         ))}

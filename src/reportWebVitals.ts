@@ -1,3 +1,10 @@
+/**
+ * Web Vitals Performance Monitoring
+ *
+ * Reports Core Web Vitals metrics for performance monitoring.
+ * Learn more: https://web.dev/vitals/
+ */
+
 import { ReportHandler } from 'web-vitals';
 
 const reportWebVitals = (onPerfEntry?: ReportHandler) => {

@@ -22,18 +22,13 @@ This document suggests enhancements for the Desktop UI project. Each feature inc
 
 ---
 
-### 1.2 Window Focus & Z-Index
+### 1.2 Window Focus & Z-Index ✅ IMPLEMENTED
 
-**Description**: Bring a window to front when clicked; show visual focus state (border/header highlight).
+**Description**: Bring a window to front when clicked; show visual focus state with gradient border.
 
-**Details**:
-- Track `focusedWindowId` in Desktop slice
-- On window header click, set focus and bring to front (z-index or grid order)
-- Style focused vs unfocused windows differently
+**Status**: Implemented with animated gradient borders, z-index management, and theme-specific styling.
 
-**Why**: Users need to know which window is active, especially when overlapping.
-
-**Effort**: Small (1 day)
+**Implementation**: See `DesktopSlice.ts` (focusedWindowId tracking), `Window.tsx` (focus handlers), and `Window.module.css` (gradient border animations).
 
 ---
 
@@ -52,22 +47,38 @@ This document suggests enhancements for the Desktop UI project. Each feature inc
 
 ---
 
-### 1.4 Keyboard Shortcuts
+### 1.4 Keyboard Shortcuts ✅ PARTIALLY IMPLEMENTED
 
 **Description**: Shortcuts for common actions (close window, focus next, minimize, etc.).
 
-**Details**:
-- `Escape`: Close focused window
-- `Cmd/Ctrl + W`: Close focused window
+**Status**: Implemented `Escape` and `Cmd/Ctrl + W` to close focused window.
+
+**Remaining**:
 - `Cmd/Ctrl + M`: Minimize focused window
 - `Cmd/Ctrl + 1/2/3`: Focus window by index
 - Add shortcut cheatsheet in Help or Settings
 
-**Why**: Power users rely on keyboard for speed.
+**Implementation**: See `Desktop.tsx` (keyboard event listener).
 
-**Effort**: Small–Medium (1–2 days)
+**Effort for remaining**: Small (1 day)
 
 ---
+
+### 1.5 Layout Management Controls ✅ IMPLEMENTED
+
+**Description**: Quick controls for managing window layouts.
+
+**Status**: Implemented with three control buttons in header.
+
+**Details**:
+- **Organize Grid**: Arranges all windows in equal-sized grid (3×3 each, 4 per row)
+- **Reset Layout**: Resets windows to default positions (4×4 each, tiled 3 per row)
+- **Close All**: Removes all windows and clears layouts
+
+**Implementation**: See `DesktopSlice.ts` (organizeGrid, resetLayouts, removeAllWindows actions), `Header.tsx` (control buttons).
+
+---
+
 
 ## 2. Taskbar & System UI
 
@@ -92,7 +103,7 @@ This document suggests enhancements for the Desktop UI project. Each feature inc
 
 **Details**:
 - Replace or complement header buttons with a dropdown
-- Shows ComponentLazy1, 2, 3 (and future apps)
+- Shows SimpleExample, Counter, FormEditor, Notes, Timer (and future features)
 - Click to add window
 
 **Why**: Cleaner UI as the number of component types grows.
@@ -117,18 +128,19 @@ This document suggests enhancements for the Desktop UI project. Each feature inc
 
 ## 3. Theming & Appearance
 
-### 3.1 Dark / Light Theme Toggle
+### 3.1 Theme System ✅ IMPLEMENTED
 
-**Description**: Let users switch between light and dark themes.
+**Description**: Let users switch between multiple themes.
+
+**Status**: Implemented with three themes (Light, Dark, Gradient) via dropdown selector.
 
 **Details**:
 - CSS variables for colors
-- Toggle in header or settings
+- Dropdown in header with theme selector
 - Persist preference in localStorage
+- Gradient theme includes golden accents, larger grid gaps, and icons
 
-**Why**: Accessibility and comfort for long use.
-
-**Effort**: Small (1 day)
+**Implementation**: See `ThemeContext.tsx`, `index.css`, `Header.tsx`.
 
 ---
 
@@ -424,18 +436,18 @@ This document suggests enhancements for the Desktop UI project. Each feature inc
 
 ## Priority Matrix (Suggested)
 
-| Priority | Feature | Effort |
-|----------|---------|--------|
-| High | Window Focus & Z-Index | Small |
-| High | Taskbar Icons (clickable) | Medium |
-| High | E2E Tests in CI | Small |
-| High | Error Reporting (Sentry) | Small |
-| Medium | Window Minimize/Maximize | Medium |
-| Medium | Keyboard Shortcuts | Small–Medium |
-| Medium | Dark/Light Theme | Small |
-| Medium | Named Layouts / Workspaces | Medium |
-| Low | Plugin Registry | Medium |
-| Low | Virtualization | Large |
+| Priority | Feature | Status | Effort |
+|----------|---------|--------|--------|
+| ~~High~~ | ~~Window Focus & Z-Index~~ | ✅ Done | ~~Small~~ |
+| ~~Medium~~ | ~~Keyboard Shortcuts~~ | ✅ Partial | ~~Small–Medium~~ |
+| ~~Medium~~ | ~~Dark/Light Theme~~ | ✅ Done | ~~Small~~ |
+| High | Taskbar Icons (clickable) | Pending | Medium |
+| High | E2E Tests in CI | Pending | Small |
+| High | Error Reporting (Sentry) | Pending | Small |
+| Medium | Window Minimize/Maximize | Pending | Medium |
+| Medium | Named Layouts / Workspaces | Pending | Medium |
+| Low | Plugin Registry | Pending | Medium |
+| Low | Virtualization | Pending | Large |
 
 ---
 
