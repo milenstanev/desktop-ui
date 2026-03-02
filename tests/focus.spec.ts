@@ -3,8 +3,6 @@ import { TEST_SELECTORS } from '~/testSelectors';
 
 const ROLE_SELECTOR = `[role="${TEST_SELECTORS.WINDOW_ROLE}"]`;
 const CLASS_ATTRIBUTE = 'class';
-const BUTTON_ROLE = 'button';
-const ADD_TIMER_BUTTON_NAME = /add timer/i;
 
 test.describe('Window focus and keyboard shortcuts', () => {
   test.beforeEach(async ({ page, context }) => {
@@ -20,11 +18,11 @@ test.describe('Window focus and keyboard shortcuts', () => {
   });
 
   test('new window is automatically focused', async ({ page }) => {
-    const addTimerButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_TIMER_BUTTON_NAME,
+    const addTimerButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_TIMER,
     });
     const timerContainer = page.getByTestId(TEST_SELECTORS.TIMER_CONTAINER);
-    const timerDisplay = page.getByRole('timer');
+    const timerDisplay = page.getByRole(TEST_SELECTORS.ROLES.TIMER);
     const window1 = page.locator(ROLE_SELECTOR).first();
 
     await expect(addTimerButton).toBeVisible();
@@ -40,7 +38,7 @@ test.describe('Window focus and keyboard shortcuts', () => {
   });
 
   test('Escape key closes focused window', async ({ page }) => {
-    const addTimerButton = page.getByRole(BUTTON_ROLE, { name: ADD_TIMER_BUTTON_NAME });
+    const addTimerButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, { name: TEST_SELECTORS.BUTTONS.ADD_TIMER });
     await expect(addTimerButton).toBeVisible();
     await addTimerButton.click();
     await expect(page.locator(ROLE_SELECTOR)).toHaveCount(1);
@@ -51,7 +49,7 @@ test.describe('Window focus and keyboard shortcuts', () => {
   });
 
   test('Ctrl+W closes focused window', async ({ page }) => {
-    const addTimerButton = page.getByRole(BUTTON_ROLE, { name: ADD_TIMER_BUTTON_NAME });
+    const addTimerButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, { name: TEST_SELECTORS.BUTTONS.ADD_TIMER });
     await expect(addTimerButton).toBeVisible();
     await addTimerButton.click();
     await expect(page.locator(ROLE_SELECTOR)).toHaveCount(1);

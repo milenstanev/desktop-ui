@@ -129,6 +129,9 @@ const FormEditor: React.FC = () => {
   }, [errors, setFocus]);
 
   useEffect(() => {
+    // TODO: should be implemented with useRef instead local variable
+    let isMounted = true;
+
     const fetchAllData = async () => {
       try {
         const [users, schema] = await Promise.all([
@@ -136,18 +139,27 @@ const FormEditor: React.FC = () => {
           fetchFormSchema(),
         ]);
 
+        if (!isMounted) return;
+
         const user = users[0];
         setFormData(user);
         setFormSchema(schema);
         reset(user);
       } catch (error) {
+        if (!isMounted) return;
         setAsyncError(true);
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     void fetchAllData();
+
+    return () => {
+      isMounted = false;
+    };
   }, [reset]);
 
   useEffect(() => {

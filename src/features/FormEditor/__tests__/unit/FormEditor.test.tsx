@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import FormEditor from '~/features/FormEditor/FormEditor';
 import * as mockApi from '~/utils/mockApi';
@@ -87,7 +87,9 @@ describe('FormEditor', () => {
   });
 
   it('fetches and displays form data', async () => {
-    render(<FormEditor />);
+    await act(async () => {
+      render(<FormEditor />);
+    });
 
     await waitFor(() => {
       expect(
@@ -100,7 +102,9 @@ describe('FormEditor', () => {
   });
 
   it('renders all form fields from schema', async () => {
-    render(<FormEditor />);
+    await act(async () => {
+      render(<FormEditor />);
+    });
 
     await waitFor(() => {
       expect(
@@ -122,7 +126,9 @@ describe('FormEditor', () => {
   });
 
   it('populates form with fetched user data', async () => {
-    render(<FormEditor />);
+    await act(async () => {
+      render(<FormEditor />);
+    });
 
     await waitFor(() => {
       expect(
@@ -146,7 +152,9 @@ describe('FormEditor', () => {
   });
 
   it('submits form with updated data', async () => {
-    render(<FormEditor />);
+    await act(async () => {
+      render(<FormEditor />);
+    });
 
     await waitFor(() => {
       expect(
@@ -181,7 +189,9 @@ describe('FormEditor', () => {
         )
     );
 
-    render(<FormEditor />);
+    await act(async () => {
+      render(<FormEditor />);
+    });
 
     await waitFor(() => {
       expect(
@@ -200,7 +210,9 @@ describe('FormEditor', () => {
   });
 
   it('calls updateUser API on form submission', async () => {
-    render(<FormEditor />);
+    await act(async () => {
+      render(<FormEditor />);
+    });
 
     await waitFor(() => {
       expect(
@@ -217,7 +229,9 @@ describe('FormEditor', () => {
   });
 
   it('formats field labels correctly', async () => {
-    render(<FormEditor />);
+    await act(async () => {
+      render(<FormEditor />);
+    });
 
     await waitFor(() => {
       expect(
@@ -239,7 +253,9 @@ describe('FormEditor', () => {
   });
 
   it('resets form after successful submission', async () => {
-    render(<FormEditor />);
+    await act(async () => {
+      render(<FormEditor />);
+    });
 
     await waitFor(() => {
       expect(
@@ -264,7 +280,9 @@ describe('FormEditor', () => {
   });
 
   it('renders submit button with correct text', async () => {
-    render(<FormEditor />);
+    await act(async () => {
+      render(<FormEditor />);
+    });
 
     await waitFor(() => {
       expect(

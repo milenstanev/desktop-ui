@@ -47,7 +47,7 @@ describe('Window', () => {
         <span>{TEST_CONTENT.CONTENT}</span>
       </Window>
     );
-    const windowEl = screen.getByRole(TEST_SELECTORS.APPLICATION_ROLE, {
+    const windowEl = screen.getByRole(TEST_SELECTORS.WINDOW_ROLE, {
       name: WINDOW_ROLE_REGEX,
     });
     expect(windowEl.className).toMatch(
@@ -66,7 +66,7 @@ describe('Window', () => {
         <span>{TEST_CONTENT.CONTENT}</span>
       </Window>
     );
-    const windowEl = screen.getByRole(TEST_SELECTORS.APPLICATION_ROLE, {
+    const windowEl = screen.getByRole(TEST_SELECTORS.WINDOW_ROLE, {
       name: WINDOW_ROLE_REGEX,
     });
     expect(windowEl.className).not.toMatch(

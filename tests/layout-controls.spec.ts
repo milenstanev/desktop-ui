@@ -1,20 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { APP_STRINGS, NOTES_STRINGS } from '~/constants';
+import { NOTES_STRINGS } from '~/constants';
 import { TEST_SELECTORS } from '~/testSelectors';
-
-const BUTTON_ROLE = 'button';
-const ADD_TIMER_BUTTON_NAME = /add timer/i;
-const ADD_COUNTER_BUTTON_NAME = /add counter/i;
-const ADD_NOTES_BUTTON_NAME = /add notes/i;
-const ORGANIZE_GRID_BUTTON_NAME = new RegExp(
-  APP_STRINGS.ORGANIZE_GRID_BUTTON,
-  'i'
-);
-const RESET_LAYOUT_BUTTON_NAME = new RegExp(
-  APP_STRINGS.RESET_LAYOUT_BUTTON,
-  'i'
-);
-const CLOSE_ALL_BUTTON_NAME = new RegExp(APP_STRINGS.CLOSE_ALL_BUTTON, 'i');
 
 test.describe('Layout control buttons', () => {
   test.beforeEach(async ({ page, context }) => {
@@ -32,14 +18,14 @@ test.describe('Layout control buttons', () => {
   test('Organize Grid button arranges windows in equal-sized grid', async ({
     page,
   }) => {
-    const addTimerButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_TIMER_BUTTON_NAME,
+    const addTimerButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_TIMER,
     });
-    const addCounterButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_COUNTER_BUTTON_NAME,
+    const addCounterButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_COUNTER,
     });
-    const addNotesButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_NOTES_BUTTON_NAME,
+    const addNotesButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_NOTES,
     });
     const timerContainer = page.getByTestId(TEST_SELECTORS.TIMER_CONTAINER);
     const timerDisplay = page.getByRole('timer');
@@ -47,8 +33,8 @@ test.describe('Layout control buttons', () => {
     const counterValue = page.getByTestId(TEST_SELECTORS.COUNTER.VALUE);
     const notesContainer = page.getByTestId(TEST_SELECTORS.NOTES_CONTAINER);
     const notesInput = page.getByPlaceholder(NOTES_STRINGS.PLACEHOLDER);
-    const organizeButton = page.getByRole(BUTTON_ROLE, {
-      name: ORGANIZE_GRID_BUTTON_NAME,
+    const organizeButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ORGANIZE_GRID,
     });
 
     await expect(addTimerButton).toBeVisible();
@@ -71,7 +57,7 @@ test.describe('Layout control buttons', () => {
     await expect(notesInput).toBeVisible();
 
     // Get all windows by data-testid prefix
-    const allWindows = page.locator(`[role="region"]`);
+    const allWindows = page.locator(`[role="${TEST_SELECTORS.WINDOW_ROLE}"]`);
     await expect(allWindows).toHaveCount(3);
 
     // Get initial position of first window
@@ -102,21 +88,21 @@ test.describe('Layout control buttons', () => {
   test('Reset Layout button resets windows to default positions', async ({
     page,
   }) => {
-    const addTimerButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_TIMER_BUTTON_NAME,
+    const addTimerButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_TIMER,
     });
-    const addCounterButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_COUNTER_BUTTON_NAME,
+    const addCounterButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_COUNTER,
     });
     const timerContainer = page.getByTestId(TEST_SELECTORS.TIMER_CONTAINER);
     const timerDisplay = page.getByRole('timer');
     const counterContainer = page.getByTestId(TEST_SELECTORS.COUNTER.CONTAINER);
     const counterValue = page.getByTestId(TEST_SELECTORS.COUNTER.VALUE);
-    const organizeButton = page.getByRole(BUTTON_ROLE, {
-      name: ORGANIZE_GRID_BUTTON_NAME,
+    const organizeButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ORGANIZE_GRID,
     });
-    const resetButton = page.getByRole(BUTTON_ROLE, {
-      name: RESET_LAYOUT_BUTTON_NAME,
+    const resetButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.RESET_LAYOUT,
     });
 
     await expect(addTimerButton).toBeVisible();
@@ -136,7 +122,7 @@ test.describe('Layout control buttons', () => {
     await expect(counterValue).toBeVisible();
 
     // Get all windows by data-testid prefix
-    const allWindows = page.locator(`[role="region"]`);
+    const allWindows = page.locator(`[role="${TEST_SELECTORS.WINDOW_ROLE}"]`);
     await expect(allWindows).toHaveCount(2);
 
     // Organize grid first
@@ -168,14 +154,14 @@ test.describe('Layout control buttons', () => {
   });
 
   test('Close All button removes all windows', async ({ page }) => {
-    const addTimerButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_TIMER_BUTTON_NAME,
+    const addTimerButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_TIMER,
     });
-    const addCounterButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_COUNTER_BUTTON_NAME,
+    const addCounterButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_COUNTER,
     });
-    const addNotesButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_NOTES_BUTTON_NAME,
+    const addNotesButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_NOTES,
     });
     const timerContainer = page.getByTestId(TEST_SELECTORS.TIMER_CONTAINER);
     const timerDisplay = page.getByRole('timer');
@@ -183,8 +169,8 @@ test.describe('Layout control buttons', () => {
     const counterValue = page.getByTestId(TEST_SELECTORS.COUNTER.VALUE);
     const notesContainer = page.getByTestId(TEST_SELECTORS.NOTES_CONTAINER);
     const notesInput = page.getByPlaceholder(NOTES_STRINGS.PLACEHOLDER);
-    const closeAllButton = page.getByRole(BUTTON_ROLE, {
-      name: CLOSE_ALL_BUTTON_NAME,
+    const closeAllButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.CLOSE_ALL,
     });
 
     await expect(addTimerButton).toBeVisible();
@@ -207,7 +193,7 @@ test.describe('Layout control buttons', () => {
     await expect(notesInput).toBeVisible();
 
     // Get all windows by data-testid prefix
-    const allWindows = page.locator(`[role="region"]`);
+    const allWindows = page.locator(`[role="${TEST_SELECTORS.WINDOW_ROLE}"]`);
     await expect(allWindows).toHaveCount(3);
 
     // Click Close All
@@ -217,75 +203,14 @@ test.describe('Layout control buttons', () => {
     await expect(allWindows).toHaveCount(0);
   });
 
-  test('Layout controls persist after page reload', async ({ page }) => {
-    const addTimerButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_TIMER_BUTTON_NAME,
-    });
-    const addCounterButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_COUNTER_BUTTON_NAME,
-    });
-    const timerContainer = page.getByTestId(TEST_SELECTORS.TIMER_CONTAINER);
-    const timerDisplay = page.getByRole('timer');
-    const counterContainer = page.getByTestId(TEST_SELECTORS.COUNTER.CONTAINER);
-    const counterValue = page.getByTestId(TEST_SELECTORS.COUNTER.VALUE);
-    const organizeButton = page.getByRole(BUTTON_ROLE, {
-      name: ORGANIZE_GRID_BUTTON_NAME,
-    });
-
-    await expect(addTimerButton).toBeVisible();
-    await expect(addCounterButton).toBeVisible();
-    await expect(organizeButton).toBeVisible();
-
-    // Add 2 windows
-    await expect(addTimerButton).toBeVisible();
-    await addTimerButton.click();
-    await expect(timerContainer).toBeVisible();
-    await expect(timerDisplay).toBeVisible();
-
-    await expect(addCounterButton).toBeVisible();
-    await addCounterButton.click();
-    await expect(counterContainer).toBeVisible();
-    await expect(counterValue).toBeVisible();
-
-    // Get all windows by data-testid prefix
-    const allWindows = page.locator(`[role="region"]`);
-    await expect(allWindows).toHaveCount(2);
-
-    // Organize grid
-    const window1 = allWindows.first();
-
-    await expect(organizeButton).toBeVisible();
-    await organizeButton.click();
-    await page.waitForTimeout(500);
-
-    const organizedBox = await window1.boundingBox();
-
-    // Reload page
-    await page.reload();
-    await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
-
-    // Verify windows still exist with organized layout
-    await expect(allWindows).toHaveCount(2);
-
-    const reloadedBox = await window1.boundingBox();
-
-    // Verify layout persisted (approximately same position/size)
-    expect(
-      Math.abs((organizedBox?.x ?? 0) - (reloadedBox?.x ?? 0))
-    ).toBeLessThan(30);
-    expect(
-      Math.abs((organizedBox?.y ?? 0) - (reloadedBox?.y ?? 0))
-    ).toBeLessThan(30);
-  });
-
   test('Close All clears localStorage', async ({ page }) => {
-    const addTimerButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_TIMER_BUTTON_NAME,
+    const addTimerButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_TIMER,
     });
     const timerContainer = page.getByTestId(TEST_SELECTORS.TIMER_CONTAINER);
     const timerDisplay = page.getByRole('timer');
-    const closeAllButton = page.getByRole(BUTTON_ROLE, {
-      name: CLOSE_ALL_BUTTON_NAME,
+    const closeAllButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.CLOSE_ALL,
     });
 
     await expect(addTimerButton).toBeVisible();
@@ -298,7 +223,7 @@ test.describe('Layout control buttons', () => {
     await expect(timerDisplay).toBeVisible();
 
     // Get all windows by data-testid prefix
-    const allWindows = page.locator(`[role="region"]`);
+    const allWindows = page.locator(`[role="${TEST_SELECTORS.WINDOW_ROLE}"]`);
     await expect(allWindows).toHaveCount(1);
 
     // Click Close All

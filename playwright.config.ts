@@ -12,7 +12,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 1,
   reporter: 'html',
   fullyParallel: false,
-  workers: 5, // process.env.CI ? 5 : 1,
+  workers: 10,
   use: {
     headless: !!process.env.CI,
     baseURL: 'http://localhost:3000',

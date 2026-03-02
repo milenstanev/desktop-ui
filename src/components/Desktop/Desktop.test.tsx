@@ -142,7 +142,9 @@ describe('Desktop Component - Reducer Cleanup', () => {
     renderDesktop(store);
 
     // Dispatch removeAllWindows
-    store.dispatch(removeAllWindows());
+    await act(async () => {
+      store.dispatch(removeAllWindows());
+    });
 
     // Wait for useEffect to run and clean up all reducers
     await waitFor(
@@ -211,7 +213,9 @@ describe('Desktop Component - Reducer Cleanup', () => {
     renderDesktop(store);
 
     // Dispatch removeAllWindows
-    store.dispatch(removeAllWindows());
+    await act(async () => {
+      store.dispatch(removeAllWindows());
+    });
 
     // Wait for cleanup
     await waitFor(
@@ -244,9 +248,11 @@ describe('Desktop Component - Reducer Cleanup', () => {
     renderDesktop(store);
 
     // Dispatch removeAllWindows - should not throw
-    expect(() => {
-      store.dispatch(removeAllWindows());
-    }).not.toThrow();
+    await act(async () => {
+      expect(() => {
+        store.dispatch(removeAllWindows());
+      }).not.toThrow();
+    });
 
     // Wait to ensure no errors
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -298,7 +304,9 @@ describe('Desktop Component - Reducer Cleanup', () => {
     renderDesktop(store);
 
     // Remove first Counter window
-    store.dispatch({ type: 'Desktop/removeWindow', payload: 'counter-1' });
+    await act(async () => {
+      store.dispatch({ type: 'Desktop/removeWindow', payload: 'counter-1' });
+    });
 
     // Wait a bit for useEffect to run
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -307,7 +315,9 @@ describe('Desktop Component - Reducer Cleanup', () => {
     expect(removeSpy).not.toHaveBeenCalledWith(REDUCER_NAMES.COUNTER);
 
     // Remove the Notes window
-    store.dispatch({ type: 'Desktop/removeWindow', payload: 'notes-1' });
+    await act(async () => {
+      store.dispatch({ type: 'Desktop/removeWindow', payload: 'notes-1' });
+    });
 
     // Wait for cleanup
     await waitFor(
@@ -322,7 +332,9 @@ describe('Desktop Component - Reducer Cleanup', () => {
     expect(removeSpy).toHaveBeenCalledTimes(1);
 
     // Remove the last Counter window
-    store.dispatch({ type: 'Desktop/removeWindow', payload: 'counter-2' });
+    await act(async () => {
+      store.dispatch({ type: 'Desktop/removeWindow', payload: 'counter-2' });
+    });
 
     // Wait for cleanup
     await waitFor(
@@ -382,17 +394,23 @@ describe('Desktop Component - Reducer Cleanup', () => {
     renderDesktop(store);
 
     // Remove first window
-    store.dispatch({ type: 'Desktop/removeWindow', payload: 'counter-1' });
+    await act(async () => {
+      store.dispatch({ type: 'Desktop/removeWindow', payload: 'counter-1' });
+    });
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(removeSpy).not.toHaveBeenCalled();
 
     // Remove second window
-    store.dispatch({ type: 'Desktop/removeWindow', payload: 'counter-2' });
+    await act(async () => {
+      store.dispatch({ type: 'Desktop/removeWindow', payload: 'counter-2' });
+    });
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(removeSpy).not.toHaveBeenCalled();
 
     // Remove third (last) window
-    store.dispatch({ type: 'Desktop/removeWindow', payload: 'counter-3' });
+    await act(async () => {
+      store.dispatch({ type: 'Desktop/removeWindow', payload: 'counter-3' });
+    });
 
     // Wait for cleanup
     await waitFor(

@@ -2,9 +2,6 @@ import { test, expect } from '@playwright/test';
 import { NOTES_STRINGS } from '~/constants';
 import { TEST_SELECTORS, getNoteItemTestId } from '~/testSelectors';
 
-const BUTTON_ROLE = 'button';
-const ADD_NOTES_BUTTON_NAME = /add notes/i;
-
 test.describe('Notes feature', () => {
   test.beforeEach(async ({ page, context }) => {
     await context.clearCookies();
@@ -19,8 +16,8 @@ test.describe('Notes feature', () => {
   });
 
   test('opens Notes window and shows notes UI', async ({ page }) => {
-    const addNotesButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_NOTES_BUTTON_NAME,
+    const addNotesButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_NOTES,
     });
     const notesContainer = page.getByTestId(TEST_SELECTORS.NOTES_CONTAINER);
     const placeholder = page.getByPlaceholder(NOTES_STRINGS.PLACEHOLDER);
@@ -36,8 +33,8 @@ test.describe('Notes feature', () => {
   });
 
   test('can add a note in the Notes window', async ({ page }) => {
-    const addNotesButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_NOTES_BUTTON_NAME,
+    const addNotesButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_NOTES,
     });
     const notesContainer = page.getByTestId(TEST_SELECTORS.NOTES_CONTAINER);
     const noteInput = page.getByPlaceholder(NOTES_STRINGS.PLACEHOLDER);

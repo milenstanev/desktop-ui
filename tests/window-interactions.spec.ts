@@ -3,9 +3,9 @@ import { NOTES_STRINGS } from '~/constants';
 import { TEST_SELECTORS } from '~/testSelectors';
 import { LOCAL_STORAGE_LAYOUT_KEY } from '~/components/Desktop/config';
 
-const BUTTON_ROLE = 'button';
-const ADD_COUNTER_BUTTON_NAME = /add counter/i;
-const ADD_NOTES_BUTTON_NAME = /add notes/i;
+
+
+
 
 test.describe('Window positioning and state management', () => {
   test.beforeEach(async ({ page, context }) => {
@@ -23,8 +23,8 @@ test.describe('Window positioning and state management', () => {
   test('layout persists to localStorage after drag and survives reload', async ({
     page,
   }) => {
-    const addCounterButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_COUNTER_BUTTON_NAME,
+    const addCounterButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_COUNTER,
     });
     const counterContainer = page.getByTestId(TEST_SELECTORS.COUNTER.CONTAINER);
     const counterValue = page.getByTestId(TEST_SELECTORS.COUNTER.VALUE);
@@ -117,8 +117,8 @@ test.describe('Window positioning and state management', () => {
   test('updateLayouts action saves to localStorage via middleware', async ({
     page,
   }) => {
-    const addCounterButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_COUNTER_BUTTON_NAME,
+    const addCounterButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_COUNTER,
     });
     const counterContainer = page.getByTestId(TEST_SELECTORS.COUNTER.CONTAINER);
     const counterValue = page.getByTestId(TEST_SELECTORS.COUNTER.VALUE);
@@ -206,11 +206,11 @@ test.describe('Window positioning and state management', () => {
   test('removeWindow action updates localStorage and cleans up layouts', async ({
     page,
   }) => {
-    const addCounterButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_COUNTER_BUTTON_NAME,
+    const addCounterButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_COUNTER,
     });
-    const addNotesButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_NOTES_BUTTON_NAME,
+    const addNotesButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_NOTES,
     });
     const counterContainer = page.getByTestId(TEST_SELECTORS.COUNTER.CONTAINER);
     const counterValue = page.getByTestId(TEST_SELECTORS.COUNTER.VALUE);
@@ -257,7 +257,7 @@ test.describe('Window positioning and state management', () => {
     expect(layouts.lg.length).toBe(2);
 
     // Close first window (tests YOUR removeWindow action)
-    const closeButton = windows.first().getByRole(BUTTON_ROLE, {
+    const closeButton = windows.first().getByRole(TEST_SELECTORS.ROLES.BUTTON, {
       name: /close/i,
     });
     await closeButton.click();
@@ -283,11 +283,11 @@ test.describe('Window positioning and state management', () => {
   test.skip('focusedWindowId updates when clicking window (YOUR setFocus action)', async ({
     page,
   }) => {
-    const addCounterButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_COUNTER_BUTTON_NAME,
+    const addCounterButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_COUNTER,
     });
-    const addNotesButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_NOTES_BUTTON_NAME,
+    const addNotesButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_NOTES,
     });
     const counterContainer = page.getByTestId(TEST_SELECTORS.COUNTER.CONTAINER);
     const counterValue = page.getByTestId(TEST_SELECTORS.COUNTER.VALUE);
@@ -352,8 +352,8 @@ test.describe('Window positioning and state management', () => {
   test('drag handle allows drag but close button does not (YOUR draggableHandle config)', async ({
     page,
   }) => {
-    const addCounterButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_COUNTER_BUTTON_NAME,
+    const addCounterButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_COUNTER,
     });
     const counterContainer = page.getByTestId(TEST_SELECTORS.COUNTER.CONTAINER);
     const counterValue = page.getByTestId(TEST_SELECTORS.COUNTER.VALUE);
@@ -374,7 +374,7 @@ test.describe('Window positioning and state management', () => {
     await expect(dragHandle).toBeVisible();
 
     // Verify close button is NOT in drag handle
-    const closeButton = window.getByRole(BUTTON_ROLE, { name: /close/i });
+    const closeButton = window.getByRole(TEST_SELECTORS.ROLES.BUTTON, { name: /close/i });
     await expect(closeButton).toBeVisible();
 
     // Click close button should remove window, not drag it

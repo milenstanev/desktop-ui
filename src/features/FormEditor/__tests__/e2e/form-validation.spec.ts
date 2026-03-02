@@ -16,13 +16,10 @@ import {
  * - Form submission blocking when validation fails
  */
 
-const BUTTON_ROLE = 'button';
-const ADD_FORM_EDITOR_BUTTON_NAME = /add form editor/i;
-
 test.describe('FormEditor Validation', () => {
   test.beforeEach(async ({ page, context }) => {
-    const addFormButton = page.getByRole(BUTTON_ROLE, {
-      name: ADD_FORM_EDITOR_BUTTON_NAME,
+    const addFormButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_FORM_EDITOR,
     });
     const formEditor = page.getByTestId(TEST_SELECTORS.FORM_EDITOR);
     const formLoading = page.getByTestId(TEST_SELECTORS.FORM_LOADING);
@@ -128,11 +125,19 @@ test.describe('FormEditor Validation', () => {
     await expect(roleSelect).toBeVisible();
     await expect(submitButton).toBeVisible();
 
-    await expect(roleSelect).toBeVisible();
-    await roleSelect.selectOption('');
+    // First select a valid option
+    await roleSelect.selectOption('admin');
+    
+    // Then clear the selection by setting it back to empty (using JavaScript since the disabled option can't be selected)
+    await roleSelect.evaluate((select: HTMLSelectElement) => {
+      select.value = '';
+    });
+    
+    // Try to submit with empty required field
     await expect(submitButton).toBeVisible();
     await submitButton.click();
 
+    // Verify validation error appears
     await expect(roleError).toBeVisible();
     await expect(roleSelect).toHaveAttribute('aria-invalid', 'true');
   });

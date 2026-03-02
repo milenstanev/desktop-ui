@@ -69,6 +69,54 @@ export const TEST_SELECTORS = {
   KEYBOARD: {
     ESCAPE: 'Escape',
     CTRL_W: 'Control+KeyW',
+    META_W: 'Meta+KeyW',
+  },
+
+  // Button labels and roles (for getByRole selectors)
+  BUTTONS: {
+    ADD_COUNTER: /add counter/i,
+    ADD_NOTES: /add notes/i,
+    ADD_TIMER: /add timer/i,
+    ADD_FORM_EDITOR: /add form editor/i,
+    ADD_SIMPLE_EXAMPLE: /add simple example/i,
+    ORGANIZE_GRID: /organize/i,
+    RESET_LAYOUT: /reset window layouts/i,
+    CLOSE_ALL: /close all/i,
+    CLOSE_WINDOW: /close window/i,
+    START_TIMER: /start/i,
+    PAUSE_TIMER: /pause/i,
+    RESET_TIMER: /reset timer/i,
+  },
+
+  // Form field names
+  FORM_FIELDS: {
+    FIRST_NAME: 'firstName',
+    LAST_NAME: 'lastName',
+    AGE: 'age',
+    IS_ACTIVE: 'isActive',
+    ROLE: 'role',
+  },
+
+  // Input types
+  INPUT_TYPES: {
+    TEXT: 'text',
+    NUMBER: 'number',
+    CHECKBOX: 'checkbox',
+  },
+
+  // Roles
+  ROLES: {
+    HEADING: 'heading',
+    BUTTON: 'button',
+    TIMER: 'timer',
+    ALERT: 'alert',
+  },
+
+  // Theme values
+  THEMES: {
+    LIGHT: 'light',
+    DARK: 'dark',
+    GRADIENT: 'gradient',
   },
 } as const;
 
