@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 interface FeatureState {
   value: number;
@@ -9,7 +9,7 @@ const initialState: FeatureState = {
 };
 
 const featureSlice = createSlice({
-  name: 'ComponentLazy2',
+  name: 'Counter',
   initialState,
   reducers: {
     increment: (state) => {
@@ -18,11 +18,8 @@ const featureSlice = createSlice({
     decrement: (state) => {
       state.value -= 1;
     },
-    incrementByAmount: (state, action: PayloadAction<number>) => {
-      state.value += action.payload;
-    },
   },
 });
 
-export const { increment, decrement, incrementByAmount } = featureSlice.actions;
+export const { increment, decrement } = featureSlice.actions;
 export default featureSlice.reducer;

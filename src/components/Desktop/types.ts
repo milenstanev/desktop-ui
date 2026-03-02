@@ -1,7 +1,7 @@
 import { Layout } from 'react-grid-layout';
-import { ComponentNames } from '../../utils/componentLoader';
+import { ComponentNames } from '~/utils/componentLoader';
 
-export type LayoutBreakpoint = 'lg' | 'md' | 'sm';
+export type LayoutBreakpoint = 'xl' | 'lg' | 'md' | 'sm';
 
 export type WindowLayout = {
   [key in LayoutBreakpoint]: Layout;
@@ -13,4 +13,4 @@ export type DesktopUIWindow = {
   lazyLoadComponent?: ComponentNames;
   layout: WindowLayout | undefined;
   lazyLoadReducerName?: string | undefined;
-}
+};

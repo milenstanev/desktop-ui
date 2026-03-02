@@ -1,4 +1,5 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
+import { ERROR_BOUNDARY_STRINGS } from '~/constants';
 
 interface Props {
   children: ReactNode;
@@ -9,6 +10,9 @@ interface State {
   hasError: boolean;
   error?: Error;
 }
+
+const ERROR_BOUNDARY_FALLBACK_CLASS = 'error-boundary-fallback';
+const ALERT_ROLE = 'alert';
 
 class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
@@ -21,7 +25,11 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Uncaught error:', error, errorInfo);
+    console.error(
+      ERROR_BOUNDARY_STRINGS.CONSOLE_ERROR_PREFIX,
+      error,
+      errorInfo
+    );
     this.setState({ hasError: true, error });
   }
 
@@ -34,11 +42,11 @@ class ErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       const { error } = this.state;
       return (
-        <div role="alert" className="error-boundary-fallback">
-          <h2>Something went wrong</h2>
+        <div role={ALERT_ROLE} className={ERROR_BOUNDARY_FALLBACK_CLASS}>
+          <h2>{ERROR_BOUNDARY_STRINGS.TITLE}</h2>
           {error && <p>{error.toString()}</p>}
           <button type="button" onClick={this.handleReset}>
-            Try again
+            {ERROR_BOUNDARY_STRINGS.BUTTON_TRY_AGAIN}
           </button>
         </div>
       );
