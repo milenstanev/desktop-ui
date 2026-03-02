@@ -8,12 +8,15 @@ import { createReducerManager } from '~/utils/reducerManager';
 import { COMPONENT_NAMES, REDUCER_NAMES } from '~/constants';
 
 // Mock react-grid-layout
-jest.mock('react-grid-layout', () => ({
-  Responsive: ({ children }: { children: React.ReactNode }) => (
+jest.mock('react-grid-layout', () => {
+  const MockResponsive = ({ children }: { children: React.ReactNode }) => (
     <div data-testid="grid-layout">{children}</div>
-  ),
-  WidthProvider: (component: React.ComponentType) => component,
-}));
+  );
+  return {
+    Responsive: MockResponsive,
+    WidthProvider: (component: React.ComponentType) => component,
+  };
+});
 
 // Mock Window component
 jest.mock('../Window/Window', () => ({

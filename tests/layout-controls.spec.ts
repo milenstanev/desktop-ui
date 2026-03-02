@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { APP_STRINGS, NOTES_STRINGS } from '~/constants';
-import { TEST_SELECTORS, getWindowTestId } from '~/testSelectors';
+import { TEST_SELECTORS } from '~/testSelectors';
 
 const BUTTON_ROLE = 'button';
 const ADD_TIMER_BUTTON_NAME = /add timer/i;
@@ -124,7 +124,6 @@ test.describe('Layout control buttons', () => {
 
     // Organize grid first
     const window1 = allWindows.first();
-    const initialBox = await window1.boundingBox();
 
     await organizeButton.click();
     await page.waitForTimeout(500);
@@ -223,7 +222,6 @@ test.describe('Layout control buttons', () => {
 
     // Organize grid
     const window1 = allWindows.first();
-    const initialBox = await window1.boundingBox();
 
     await organizeButton.click();
     await page.waitForTimeout(500);

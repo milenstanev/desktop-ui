@@ -8,7 +8,7 @@
  * reducer (see app/store.ts).
  */
 import { Reducer } from '@reduxjs/toolkit';
-import type { StoreWithReducerManager } from '../app/store';
+import type { StoreWithReducerManager } from '~/app/store';
 
 /**
  * Lazy Load Reducer

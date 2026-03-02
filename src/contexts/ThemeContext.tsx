@@ -25,7 +25,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { LOCAL_STORAGE_THEME_KEY } from '../components/Desktop/config';
+import { LOCAL_STORAGE_THEME_KEY } from '~/components/Desktop/config';
 
 /**
  * Available theme options

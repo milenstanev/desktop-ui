@@ -144,8 +144,9 @@ export const updateUser = async (
 
 /**
  * Mock API: Simulate error (for testing error handling)
+ * Reserved for future error handling tests
  */
-export const simulateApiError = async (): Promise<never> => {
-  await delay(300);
-  throw new Error(API_ERROR_MESSAGES.SIMULATED_ERROR);
-};
+// export const simulateApiError = async (): Promise<never> => {
+//   await delay(300);
+//   throw new Error(API_ERROR_MESSAGES.SIMULATED_ERROR);
+// };

@@ -29,6 +29,7 @@
     "test:e2e": "playwright test",
     "test:live": "./test-live-ui.sh",
     "test:live:stability": "./live-stability-test.sh",
+    "test:memory": "playwright test --grep @memory",
     "test:memory:chaos": "playwright test tests/memory-system-hammer.spec.ts --config=playwright.memory.config.ts",
     "test:memory:hammer": "playwright test tests/memory-system-hammer.spec.ts --config=playwright.memory.config.ts",
     "test:memory:forever": "./run-memory-chaos-forever.sh",

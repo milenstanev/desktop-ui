@@ -7,12 +7,12 @@ import DesktopSlice, {
   resetLayouts,
   removeAllWindows,
   organizeGrid,
-} from '../components/Desktop/DesktopSlice';
+} from '~/components/Desktop/DesktopSlice';
 import {
   LOCAL_STORAGE_DESKTOP_KEY,
   LOCAL_STORAGE_LAYOUT_KEY,
-} from '../components/Desktop/config';
-import { COMPONENT_NAMES } from '../constants';
+} from '~/components/Desktop/config';
+import { COMPONENT_NAMES } from '~/constants';
 
 describe('desktopStorageMiddleware', () => {
   let store: ReturnType<typeof configureStore>;

@@ -5,11 +5,14 @@
  * Measures memory growth over thousands of operations.
  *
  * This is the REAL memory leak test.
+ * 
+ * Run manually with: npm run test:memory
+ * Excluded from CI due to long execution time.
  */
 
 import { test, expect } from '@playwright/test';
-import { TEST_SELECTORS, getWindowTestId } from '../src/testSelectors';
-import { ComponentNames } from '../src/utils/componentLoader';
+import { TEST_SELECTORS } from '~/testSelectors';
+import { ComponentNames } from '~/utils/componentLoader';
 
 async function getMemoryUsage(page: any) {
   return await page.evaluate(() => {
@@ -29,7 +32,7 @@ function formatBytes(bytes: number): string {
   return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
 }
 
-test.describe('Memory Endurance Test', () => {
+test.describe('Memory Endurance Test', { tag: '@memory' }, () => {
   test('ENDURANCE: 10,000 operations without refresh (max 1000 windows)', async ({
     page,
   }) => {

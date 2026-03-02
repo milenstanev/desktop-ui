@@ -6,13 +6,13 @@ import {
   resetLayouts,
   removeAllWindows,
   organizeGrid,
-} from '../components/Desktop/DesktopSlice';
+} from '~/components/Desktop/DesktopSlice';
 import {
   LOCAL_STORAGE_DESKTOP_KEY,
   LOCAL_STORAGE_LAYOUT_KEY,
-} from '../components/Desktop/config';
-import type { RootState } from '../app/store';
-import { MIDDLEWARE_STRINGS } from '../constants';
+} from '~/components/Desktop/config';
+import type { RootState } from '~/app/store';
+import { MIDDLEWARE_STRINGS } from '~/constants';
 
 const DESKTOP_SLICE_NAME = 'Desktop';
 const WINDOWS_PROPERTY = 'desktopWindows';

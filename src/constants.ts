@@ -129,24 +129,26 @@ export const FORM_TYPES = {
   SELECT: 'select',
 } as const;
 
-export const HTTP_METHODS = {
-  GET: 'GET',
-  POST: 'POST',
-  PUT: 'PUT',
-  DELETE: 'DELETE',
-} as const;
+// Reserved for future API integration
+// export const HTTP_METHODS = {
+//   GET: 'GET',
+//   POST: 'POST',
+//   PUT: 'PUT',
+//   DELETE: 'DELETE',
+// } as const;
 
-export const CONTENT_TYPES = {
-  JSON: 'application/json',
-} as const;
+// export const CONTENT_TYPES = {
+//   JSON: 'application/json',
+// } as const;
 
 export const MIDDLEWARE_STRINGS = {
   PERSIST_ERROR: 'Failed to persist desktop state to localStorage',
 } as const;
 
-export const DOM_EVENTS = {
-  KEYDOWN: 'keydown',
-} as const;
+// Reserved for future use
+// export const DOM_EVENTS = {
+//   KEYDOWN: 'keydown',
+// } as const;
 
 export const VALIDATION_MESSAGES = {
   FIRST_NAME_REQUIRED: 'First name is required',
@@ -171,13 +173,14 @@ export const FORM_FIELD_LABELS = {
   ROLE: 'Role',
 } as const;
 
-export const FORM_FIELD_NAMES = {
-  FIRST_NAME: 'firstName',
-  LAST_NAME: 'lastName',
-  AGE: 'age',
-  IS_ACTIVE: 'isActive',
-  ROLE: 'role',
-} as const;
+// Reserved for future form field mapping
+// export const FORM_FIELD_NAMES = {
+//   FIRST_NAME: 'firstName',
+//   LAST_NAME: 'lastName',
+//   AGE: 'age',
+//   IS_ACTIVE: 'isActive',
+//   ROLE: 'role',
+// } as const;
 
 export const SELECT_FIELD_STRINGS = {
   PLACEHOLDER_PREFIX: 'Select',

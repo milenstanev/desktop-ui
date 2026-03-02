@@ -43,8 +43,10 @@
   background-color: rgba(255, 255, 255, 0.3);
 }
 
-/* Base button class for all header control buttons */
-.headerControlButton {
+/* Base button styles are applied via composes in specific button classes */
+
+/* Organize button with green theme */
+.organizeButton {
   display: inline-flex;
   align-items: center;
   gap: 0.4em;
@@ -59,17 +61,12 @@
   transition: all 0.2s ease;
 }
 
-.headerControlButton:active {
+.organizeButton:active {
   transform: translateY(0);
 }
 
-.headerControlButton svg {
+.organizeButton svg {
   flex-shrink: 0;
-}
-
-/* Organize button - extends base with green theme */
-.organizeButton {
-  composes: headerControlButton;
 }
 
 .organizeButton:hover {
@@ -100,9 +97,28 @@
   box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
 }
 
-/* Reset button - extends base with blue theme */
+/* Reset button with blue theme */
 .resetButton {
-  composes: headerControlButton;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.4em 0.8em;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background-color: var(--bg);
+  color: var(--text);
+  font-size: 0.85em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resetButton:active {
+  transform: translateY(0);
+}
+
+.resetButton svg {
+  flex-shrink: 0;
 }
 
 .resetButton:hover {
@@ -133,9 +149,28 @@
   box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
 }
 
-/* Close all button - extends base with red/danger theme */
+/* Close all button with red/danger theme */
 .closeAllButton {
-  composes: headerControlButton;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.4em 0.8em;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background-color: var(--bg);
+  color: var(--text);
+  font-size: 0.85em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.closeAllButton:active {
+  transform: translateY(0);
+}
+
+.closeAllButton svg {
+  flex-shrink: 0;
 }
 
 .closeAllButton:hover {

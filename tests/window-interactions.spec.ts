@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { NOTES_STRINGS } from '~/constants';
-import { TEST_SELECTORS, getWindowTestId } from '~/testSelectors';
+import { TEST_SELECTORS } from '~/testSelectors';
 import { LOCAL_STORAGE_LAYOUT_KEY } from '~/components/Desktop/config';
 
 const BUTTON_ROLE = 'button';

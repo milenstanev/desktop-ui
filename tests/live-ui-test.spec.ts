@@ -9,7 +9,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { TEST_SELECTORS, getWindowTestId } from '../src/testSelectors';
+import { TEST_SELECTORS } from '~/testSelectors';
 
 test.describe('Live UI - Comprehensive Test', () => {
   test.beforeEach(async ({ page }) => {

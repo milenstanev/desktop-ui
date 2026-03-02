@@ -17,16 +17,16 @@ import {
   resetLayouts,
   removeAllWindows,
   organizeGrid,
-} from '../components/Desktop/DesktopSlice';
-import { useTheme, Theme } from '../contexts/ThemeContext';
+} from '~/components/Desktop/DesktopSlice';
+import { useTheme, Theme } from '~/contexts/ThemeContext';
 import {
   APP_STRINGS,
   COMPONENT_NAMES,
   REDUCER_NAMES,
   THEME_STRINGS,
   THEME_OPTIONS,
-} from '../constants';
-import { TEST_SELECTORS } from '../testSelectors';
+} from '~/constants';
+import { TEST_SELECTORS } from '~/testSelectors';
 
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();

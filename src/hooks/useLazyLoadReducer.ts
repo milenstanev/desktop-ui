@@ -27,8 +27,8 @@
  */
 import { useEffect } from 'react';
 import { useStore } from 'react-redux';
-import { lazyLoadReducer } from '../utils/lazyLoadReducer';
-import type { StoreWithReducerManager } from '../app/store';
+import { lazyLoadReducer } from '~/utils/lazyLoadReducer';
+import type { StoreWithReducerManager } from '~/app/store';
 import type { Reducer } from '@reduxjs/toolkit';
 
 /**
