@@ -1,14 +1,20 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import ErrorBoundary from './ErrorBoundary';
+import { ERROR_BOUNDARY_STRINGS } from '~/constants';
+
+const TEST_ERROR_MESSAGE = 'Test error';
+const TEST_CHILD_CONTENT = 'Child content';
+const BUTTON_ROLE = 'button';
+const TRY_AGAIN_BUTTON_REGEX = /try again/i;
+const CONSOLE_METHOD = 'error';
 
 const Throw = () => {
-  throw new Error('Test error');
+  throw new Error(TEST_ERROR_MESSAGE);
 };
 
 describe('ErrorBoundary', () => {
   beforeEach(() => {
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, CONSOLE_METHOD).mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -18,10 +24,10 @@ describe('ErrorBoundary', () => {
   it('renders children when no error', () => {
     render(
       <ErrorBoundary>
-        <span>Child content</span>
+        <span>{TEST_CHILD_CONTENT}</span>
       </ErrorBoundary>
     );
-    expect(screen.getByText('Child content')).toBeInTheDocument();
+    expect(screen.getByText(TEST_CHILD_CONTENT)).toBeInTheDocument();
   });
 
   it('renders fallback when child throws', () => {
@@ -30,8 +36,10 @@ describe('ErrorBoundary', () => {
         <Throw />
       </ErrorBoundary>
     );
-    expect(screen.getByText('Something went wrong')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /try again/i })).toBeInTheDocument();
+    expect(screen.getByText(ERROR_BOUNDARY_STRINGS.TITLE)).toBeInTheDocument();
+    expect(
+      screen.getByRole(BUTTON_ROLE, { name: TRY_AGAIN_BUTTON_REGEX })
+    ).toBeInTheDocument();
   });
 
   it('calls onReset when Try again is clicked', () => {
@@ -41,7 +49,7 @@ describe('ErrorBoundary', () => {
         <Throw />
       </ErrorBoundary>
     );
-    screen.getByRole('button', { name: /try again/i }).click();
+    screen.getByRole(BUTTON_ROLE, { name: TRY_AGAIN_BUTTON_REGEX }).click();
     expect(onReset).toHaveBeenCalled();
   });
 });
