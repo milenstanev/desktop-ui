@@ -9,7 +9,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { TEST_SELECTORS } from '../src/testSelectors';
+import { TEST_SELECTORS, getWindowTestId } from '../src/testSelectors';
 
 test.describe('Live UI - Comprehensive Test', () => {
   test.beforeEach(async ({ page }) => {
@@ -133,7 +133,7 @@ test.describe('Live UI - Comprehensive Test', () => {
     await expect(timerContainer).toBeVisible();
 
     // Check initial time
-    const timerDisplay = timerContainer.locator('[role="timer"]');
+    const timerDisplay = timerContainer.getByRole('timer');
     await expect(timerDisplay).toHaveText('00:00');
 
     // Start timer
@@ -217,7 +217,7 @@ test.describe('Live UI - Comprehensive Test', () => {
     ).toBeVisible();
 
     // Count windows
-    const windows = page.locator('[data-testid*="window-container"]');
+    const windows = page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`);
     await expect(windows).toHaveCount(3);
 
     // Close first window
@@ -239,13 +239,13 @@ test.describe('Live UI - Comprehensive Test', () => {
 
     // Get window element
     const windowElement = page
-      .locator('[data-testid*="window-container"]')
+      .locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`)
       .first();
     const initialBox = await windowElement.boundingBox();
     expect(initialBox).not.toBeNull();
 
     // Try to drag window (drag by header)
-    const windowHeader = windowElement.locator('[class*="header"]').first();
+    const windowHeader = windowElement.getByTestId(TEST_SELECTORS.WINDOW_HEADER);
     await windowHeader.hover();
     await page.mouse.down();
     await page.mouse.move(initialBox!.x + 100, initialBox!.y + 100);
@@ -268,7 +268,7 @@ test.describe('Live UI - Comprehensive Test', () => {
     await page.getByRole('button', { name: /add timer/i }).click();
 
     // Wait for windows
-    await expect(page.locator('[data-testid*="window-container"]')).toHaveCount(
+    await expect(page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`)).toHaveCount(
       3
     );
 
@@ -286,7 +286,7 @@ test.describe('Live UI - Comprehensive Test', () => {
     await resetBtn.click();
 
     // Verify all windows are removed
-    await expect(page.locator('[data-testid*="window-container"]')).toHaveCount(
+    await expect(page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`)).toHaveCount(
       0
     );
   });
@@ -300,7 +300,7 @@ test.describe('Live UI - Comprehensive Test', () => {
 
     // Press Escape to close window
     await page.keyboard.press('Escape');
-    await expect(page.locator('[data-testid*="window-container"]')).toHaveCount(
+    await expect(page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`)).toHaveCount(
       0
     );
 
@@ -317,7 +317,7 @@ test.describe('Live UI - Comprehensive Test', () => {
     } else {
       await page.keyboard.press('Control+KeyW');
     }
-    await expect(page.locator('[data-testid*="window-container"]')).toHaveCount(
+    await expect(page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`)).toHaveCount(
       0
     );
   });
@@ -333,7 +333,7 @@ test.describe('Live UI - Comprehensive Test', () => {
     await expect(timerContainer).toBeVisible();
 
     // Check timer has proper ARIA attributes
-    const timerDisplay = timerContainer.locator('[role="timer"]');
+    const timerDisplay = timerContainer.getByRole('timer');
     await expect(timerDisplay).toHaveAttribute('aria-live', 'polite');
 
     // Check buttons have aria-labels

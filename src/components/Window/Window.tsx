@@ -3,7 +3,7 @@ import ErrorBoundary from '~/components/ErrorBoundary/ErrorBoundary';
 import CloseIcon from '~/components/Icons/CloseIcon';
 import styles from './Window.module.css';
 import { WINDOW_STRINGS, KEYBOARD_SHORTCUTS, LAYOUT_CONFIG } from '~/constants';
-import { TEST_SELECTORS } from '~/testSelectors';
+import { TEST_SELECTORS, getWindowTestId } from '~/testSelectors';
 
 interface WindowProps {
   id: string;
@@ -30,6 +30,7 @@ const Window: React.FC<WindowProps> = memo(
           : WINDOW_STRINGS.WINDOW_ARIA_LABEL
       }
       onClick={onFocus}
+      data-testid={getWindowTestId(id)}
     >
       <header
         className={styles.header}
@@ -49,6 +50,7 @@ const Window: React.FC<WindowProps> = memo(
             ? `${FOCUS_WINDOW_LABEL_PREFIX}${name}`
             : WINDOW_STRINGS.FOCUS_ARIA_LABEL
         }
+        data-testid={TEST_SELECTORS.WINDOW_HEADER}
       >
         <div
           className={`${LAYOUT_CONFIG.DRAG_HANDLE_CLASS} ${styles.headerDrag}`}

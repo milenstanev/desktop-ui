@@ -1,9 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { APP_STRINGS, NOTES_STRINGS } from '~/constants';
-import { TEST_SELECTORS } from '~/testSelectors';
+import { TEST_SELECTORS, getWindowTestId } from '~/testSelectors';
 
 const BUTTON_ROLE = 'button';
-const ROLE_SELECTOR = `[role="${TEST_SELECTORS.APPLICATION_ROLE}"]`;
 const ADD_TIMER_BUTTON_NAME = /add timer/i;
 const ADD_COUNTER_BUTTON_NAME = /add counter/i;
 const ADD_NOTES_BUTTON_NAME = /add notes/i;
@@ -48,7 +47,6 @@ test.describe('Layout control buttons', () => {
     const organizeButton = page.getByRole(BUTTON_ROLE, {
       name: ORGANIZE_GRID_BUTTON_NAME,
     });
-    const windows = page.locator(ROLE_SELECTOR);
 
     // Add 3 windows
     await addTimerButton.click();
@@ -63,35 +61,22 @@ test.describe('Layout control buttons', () => {
     await expect(notesContainer).toBeVisible();
     await expect(notesInput).toBeVisible();
 
-    // Verify 3 windows exist
-    await expect(windows).toHaveCount(3);
+    // Get all windows by data-testid prefix
+    const allWindows = page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`);
+    await expect(allWindows).toHaveCount(3);
 
-    // Get initial positions
-    const window1 = windows.first();
+    // Get initial position of first window
+    const window1 = allWindows.first();
     const initialBox1 = await window1.boundingBox();
 
     // Click Organize Grid
     await organizeButton.click();
 
-    // Wait for layout to actually change by checking bounding box
-    await page.waitForFunction(
-      (initialBox) => {
-        const el = document.querySelector('[role="application"]');
-        if (!el) return false;
-        const newBox = el.getBoundingClientRect();
-        return (
-          newBox.x !== initialBox?.x ||
-          newBox.y !== initialBox.y ||
-          newBox.width !== initialBox.width ||
-          newBox.height !== initialBox.height
-        );
-      },
-      initialBox1,
-      { timeout: 5000 }
-    );
+    // Wait for layout to change
+    await page.waitForTimeout(500);
 
     // Verify windows are still visible
-    await expect(windows).toHaveCount(3);
+    await expect(allWindows).toHaveCount(3);
 
     // Verify layout changed (position or size should differ)
     const newBox1 = await window1.boundingBox();
@@ -123,7 +108,6 @@ test.describe('Layout control buttons', () => {
     const resetButton = page.getByRole(BUTTON_ROLE, {
       name: RESET_LAYOUT_BUTTON_NAME,
     });
-    const windows = page.locator(ROLE_SELECTOR);
 
     // Add 2 windows
     await addTimerButton.click();
@@ -134,50 +118,25 @@ test.describe('Layout control buttons', () => {
     await expect(counterContainer).toBeVisible();
     await expect(counterValue).toBeVisible();
 
-    // Verify 2 windows exist
-    await expect(windows).toHaveCount(2);
+    // Get all windows by data-testid prefix
+    const allWindows = page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`);
+    await expect(allWindows).toHaveCount(2);
 
     // Organize grid first
-    const window1 = windows.first();
+    const window1 = allWindows.first();
     const initialBox = await window1.boundingBox();
 
     await organizeButton.click();
-
-    // Wait for layout to change by checking bounding box changed
-    await page.waitForFunction(
-      (box) => {
-        const el = document.querySelector('[role="application"]');
-        if (!el) return false;
-        const newBox = el.getBoundingClientRect();
-        return (
-          newBox.x !== box.x || newBox.y !== box.y || newBox.width !== box.width
-        );
-      },
-      initialBox,
-      { timeout: 5000 }
-    );
+    await page.waitForTimeout(500);
 
     const organizedBox = await window1.boundingBox();
 
     // Click Reset Layout
     await resetButton.click();
-
-    // Wait for layout to change again
-    await page.waitForFunction(
-      (box) => {
-        const el = document.querySelector('[role="application"]');
-        if (!el) return false;
-        const newBox = el.getBoundingClientRect();
-        return (
-          newBox.x !== box.x || newBox.y !== box.y || newBox.width !== box.width
-        );
-      },
-      organizedBox,
-      { timeout: 5000 }
-    );
+    await page.waitForTimeout(500);
 
     // Verify windows are still visible
-    await expect(windows).toHaveCount(2);
+    await expect(allWindows).toHaveCount(2);
 
     // Verify layout changed from organized state
     const resetBox = await window1.boundingBox();
@@ -209,7 +168,6 @@ test.describe('Layout control buttons', () => {
     const closeAllButton = page.getByRole(BUTTON_ROLE, {
       name: CLOSE_ALL_BUTTON_NAME,
     });
-    const windows = page.locator(ROLE_SELECTOR);
 
     // Add 3 windows
     await addTimerButton.click();
@@ -224,14 +182,15 @@ test.describe('Layout control buttons', () => {
     await expect(notesContainer).toBeVisible();
     await expect(notesInput).toBeVisible();
 
-    // Verify 3 windows exist
-    await expect(windows).toHaveCount(3);
+    // Get all windows by data-testid prefix
+    const allWindows = page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`);
+    await expect(allWindows).toHaveCount(3);
 
     // Click Close All
     await closeAllButton.click();
 
     // Verify all windows are removed (auto-waits)
-    await expect(windows).toHaveCount(0);
+    await expect(allWindows).toHaveCount(0);
   });
 
   test('Layout controls persist after page reload', async ({ page }) => {
@@ -248,7 +207,6 @@ test.describe('Layout control buttons', () => {
     const organizeButton = page.getByRole(BUTTON_ROLE, {
       name: ORGANIZE_GRID_BUTTON_NAME,
     });
-    const windows = page.locator(ROLE_SELECTOR);
 
     // Add 2 windows
     await addTimerButton.click();
@@ -259,25 +217,16 @@ test.describe('Layout control buttons', () => {
     await expect(counterContainer).toBeVisible();
     await expect(counterValue).toBeVisible();
 
+    // Get all windows by data-testid prefix
+    const allWindows = page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`);
+    await expect(allWindows).toHaveCount(2);
+
     // Organize grid
-    const window1 = windows.first();
+    const window1 = allWindows.first();
     const initialBox = await window1.boundingBox();
 
     await organizeButton.click();
-
-    // Wait for layout to change
-    await page.waitForFunction(
-      (box) => {
-        const el = document.querySelector('[role="application"]');
-        if (!el) return false;
-        const newBox = el.getBoundingClientRect();
-        return (
-          newBox.x !== box.x || newBox.y !== box.y || newBox.width !== box.width
-        );
-      },
-      initialBox,
-      { timeout: 5000 }
-    );
+    await page.waitForTimeout(500);
 
     const organizedBox = await window1.boundingBox();
 
@@ -286,7 +235,7 @@ test.describe('Layout control buttons', () => {
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
 
     // Verify windows still exist with organized layout
-    await expect(windows).toHaveCount(2);
+    await expect(allWindows).toHaveCount(2);
 
     const reloadedBox = await window1.boundingBox();
 
@@ -308,27 +257,27 @@ test.describe('Layout control buttons', () => {
     const closeAllButton = page.getByRole(BUTTON_ROLE, {
       name: CLOSE_ALL_BUTTON_NAME,
     });
-    const windows = page.locator(ROLE_SELECTOR);
 
     // Add windows
     await addTimerButton.click();
     await expect(timerContainer).toBeVisible();
     await expect(timerDisplay).toBeVisible();
 
-    // Verify window exists
-    await expect(windows).toHaveCount(1);
+    // Get all windows by data-testid prefix
+    const allWindows = page.locator(`[data-testid^="${TEST_SELECTORS.WINDOW_PREFIX}"]`);
+    await expect(allWindows).toHaveCount(1);
 
     // Click Close All
     await closeAllButton.click();
 
     // Wait for windows to be removed
-    await expect(windows).toHaveCount(0);
+    await expect(allWindows).toHaveCount(0);
 
     // Reload page
     await page.reload();
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
 
     // Verify no windows after reload (localStorage was cleared)
-    await expect(windows).toHaveCount(0);
+    await expect(allWindows).toHaveCount(0);
   });
 });

@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { NOTES_STRINGS } from '~/constants';
-import { TEST_SELECTORS } from '~/testSelectors';
+import { TEST_SELECTORS, getWindowTestId } from '~/testSelectors';
 import { LOCAL_STORAGE_LAYOUT_KEY } from '~/components/Desktop/config';
 
 const BUTTON_ROLE = 'button';
@@ -320,9 +320,8 @@ test.describe('Window positioning and state management', () => {
 
     expect(parseInt(window2ZIndex)).toBeGreaterThan(parseInt(window1ZIndex));
 
-    // Click first window's inner element (triggers YOUR setFocus action)
-    const window1Inner = window1.locator('[role="application"]');
-    await window1Inner.click();
+    // Click first window to trigger focus
+    await window1.click();
 
     // Small wait for Redux state to update
     await page.waitForTimeout(100);

@@ -8,7 +8,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { TEST_SELECTORS } from '../src/testSelectors';
+import { TEST_SELECTORS, getWindowTestId } from '../src/testSelectors';
 import { ComponentNames } from '../src/utils/componentLoader';
 
 async function getMemoryUsage(page: any) {
@@ -66,7 +66,7 @@ test.describe('Memory Endurance Test', () => {
     for (let i = 0; i < 10000; i++) {
       try {
         const windowCount = await page
-          .locator('[aria-label="Close window"]')
+          .getByTestId(TEST_SELECTORS.WINDOW_CLOSE_BUTTON)
           .count();
 
         // Stop adding windows after 1000 total created
@@ -75,7 +75,7 @@ test.describe('Memory Endurance Test', () => {
           if (windowCount > 0) {
             const randomIndex = Math.floor(Math.random() * windowCount);
             await page
-              .locator('[aria-label="Close window"]')
+              .getByTestId(TEST_SELECTORS.WINDOW_CLOSE_BUTTON)
               .nth(randomIndex)
               .click();
             totalRemoved++;
@@ -86,7 +86,7 @@ test.describe('Memory Endurance Test', () => {
           // Keep 3-15 windows at all times
           if (windowCount > 15) {
             // Force remove
-            await page.locator('[aria-label="Close window"]').first().click();
+            await page.getByTestId(TEST_SELECTORS.WINDOW_CLOSE_BUTTON).first().click();
             totalRemoved++;
           } else if (windowCount < 3) {
             // Force add - pick random component type
@@ -107,12 +107,12 @@ test.describe('Memory Endurance Test', () => {
           } else if (action < 0.8) {
             // 40%: Remove random window
             const closeButtons = await page
-              .locator('[aria-label="Close window"]')
+              .getByTestId(TEST_SELECTORS.WINDOW_CLOSE_BUTTON)
               .count();
             if (closeButtons > 0) {
               const randomIndex = Math.floor(Math.random() * closeButtons);
               await page
-                .locator('[aria-label="Close window"]')
+                .getByTestId(TEST_SELECTORS.WINDOW_CLOSE_BUTTON)
                 .nth(randomIndex)
                 .click();
               totalRemoved++;
@@ -135,7 +135,7 @@ test.describe('Memory Endurance Test', () => {
           const memory = await getMemoryUsage(page);
           memorySnapshots.push(memory.usedJSHeapSize);
           const currentWindows = await page
-            .locator('[aria-label="Close window"]')
+            .getByTestId(TEST_SELECTORS.WINDOW_CLOSE_BUTTON)
             .count();
           const growth = memory.usedJSHeapSize - initialMemory.usedJSHeapSize;
           console.log(

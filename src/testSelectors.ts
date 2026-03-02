@@ -39,6 +39,7 @@ export const TEST_SELECTORS = {
   },
 
   // Window component
+  WINDOW_PREFIX: 'window-',
   WINDOW_CONTAINER: 'window-container',
   WINDOW_HEADER: 'window-header',
   WINDOW_CONTENT: 'window-content',
@@ -89,4 +90,11 @@ export const getFormErrorTestId = (fieldName: string): string => {
  */
 export const getNoteItemTestId = (index: number): string => {
   return `${TEST_SELECTORS.NOTES_ITEM_PREFIX}${index}`;
+};
+
+/**
+ * Helper function to generate window test IDs
+ */
+export const getWindowTestId = (windowId: string): string => {
+  return `${TEST_SELECTORS.WINDOW_PREFIX}${windowId}`;
 };
