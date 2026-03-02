@@ -128,9 +128,10 @@ const FormEditor: React.FC = () => {
     }
   }, [errors, setFocus]);
 
+  const isMountedRef = useRef(true);
+
   useEffect(() => {
-    // TODO: should be implemented with useRef instead local variable
-    let isMounted = true;
+    isMountedRef.current = true;
 
     const fetchAllData = async () => {
       try {
@@ -139,17 +140,17 @@ const FormEditor: React.FC = () => {
           fetchFormSchema(),
         ]);
 
-        if (!isMounted) return;
+        if (!isMountedRef.current) return;
 
         const user = users[0];
         setFormData(user);
         setFormSchema(schema);
         reset(user);
       } catch (error) {
-        if (!isMounted) return;
+        if (!isMountedRef.current) return;
         setAsyncError(true);
       } finally {
-        if (isMounted) {
+        if (isMountedRef.current) {
           setIsLoading(false);
         }
       }
@@ -158,7 +159,7 @@ const FormEditor: React.FC = () => {
     void fetchAllData();
 
     return () => {
-      isMounted = false;
+      isMountedRef.current = false;
     };
   }, [reset]);
 

@@ -27,7 +27,7 @@
     "test": "react-app-rewired test",
     "test:unit": "react-scripts test --watchAll=false",
     "test:e2e": "playwright test",
-    "test:memory": "playwright test --grep @memory",
+    "test:memory": "playwright test --grep @memory --timeout=3600000",
     "test:memory:forever": "./run-memory-chaos-forever.sh",
     "test:e2e:ui": "playwright test --ui",
     "test:all": "npm run test:unit && npm run test:e2e",

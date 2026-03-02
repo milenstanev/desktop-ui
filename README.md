@@ -292,6 +292,7 @@ To rename a feature (e.g., "Counter" → "Calculator"):
 ### Getting Started
 - [Configuration](./docs/CONFIGURATION.md) - Environment variables and settings
 - [Best Practices](./docs/BEST_PRACTICES.md) - Code quality guidelines
+- [Debugging](./docs/DEBUGGING.md) - Breakpoint debugging in WebStorm, VS Code
 
 ### Features & Guides
 - [PWA Guide](./docs/PWA_GUIDE.md) - Progressive Web App setup
