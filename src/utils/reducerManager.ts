@@ -25,7 +25,9 @@ export interface ReducerManager {
   remove: (key: string) => void;
 }
 
-export function createReducerManager(initialReducers: { [key: string]: Reducer }): ReducerManager {
+export function createReducerManager(initialReducers: {
+  [key: string]: Reducer;
+}): ReducerManager {
   const reducers = { ...initialReducers };
   let combinedReducer = combineReducers(reducers);
   let keysToRemove: string[] = [];
@@ -36,7 +38,7 @@ export function createReducerManager(initialReducers: { [key: string]: Reducer }
     reduce: (state: any, action: any) => {
       if (keysToRemove.length > 0) {
         state = { ...state };
-        keysToRemove.forEach(key => delete state[key]);
+        keysToRemove.forEach((key) => delete state[key]);
         keysToRemove = [];
       }
       return combinedReducer(state, action);

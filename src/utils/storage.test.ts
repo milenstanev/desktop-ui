@@ -1,27 +1,50 @@
 import { safeParseJson } from './storage';
 
+const TEST_KEYS = {
+  MISSING: 'missing',
+  KEY: 'key',
+} as const;
+
+const TEST_VALUES = {
+  DEFAULT: 'default',
+  FALLBACK: 'fallback',
+  NOT_JSON: 'not json',
+  STRING: 'string',
+  ZERO: 0,
+} as const;
+
+const TEST_OBJECT = { a: 1 };
+const EMPTY_OBJECT = {};
+const TYPE_NUMBER = 'number';
+
 describe('safeParseJson', () => {
   beforeEach(() => {
     localStorage.clear();
   });
 
   it('returns fallback when key does not exist', () => {
-    expect(safeParseJson('missing', 'default')).toBe('default');
+    expect(safeParseJson(TEST_KEYS.MISSING, TEST_VALUES.DEFAULT)).toBe(
+      TEST_VALUES.DEFAULT
+    );
   });
 
   it('parses valid JSON', () => {
-    localStorage.setItem('key', JSON.stringify({ a: 1 }));
-    expect(safeParseJson('key', {})).toEqual({ a: 1 });
+    localStorage.setItem(TEST_KEYS.KEY, JSON.stringify(TEST_OBJECT));
+    expect(safeParseJson(TEST_KEYS.KEY, EMPTY_OBJECT)).toEqual(TEST_OBJECT);
   });
 
   it('returns fallback on parse error', () => {
-    localStorage.setItem('key', 'not json');
-    expect(safeParseJson('key', 'fallback')).toBe('fallback');
+    localStorage.setItem(TEST_KEYS.KEY, TEST_VALUES.NOT_JSON);
+    expect(safeParseJson(TEST_KEYS.KEY, TEST_VALUES.FALLBACK)).toBe(
+      TEST_VALUES.FALLBACK
+    );
   });
 
   it('returns fallback when validator rejects', () => {
-    localStorage.setItem('key', JSON.stringify('string'));
-    const validator = (v: unknown): v is number => typeof v === 'number';
-    expect(safeParseJson('key', 0, validator)).toBe(0);
+    localStorage.setItem(TEST_KEYS.KEY, JSON.stringify(TEST_VALUES.STRING));
+    const validator = (v: unknown): v is number => typeof v === TYPE_NUMBER;
+    expect(safeParseJson(TEST_KEYS.KEY, TEST_VALUES.ZERO, validator)).toBe(
+      TEST_VALUES.ZERO
+    );
   });
 });

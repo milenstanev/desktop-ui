@@ -1,23 +1,34 @@
 /**
- * Dynamic reducer injection: attach a feature's Redux slice when its window mounts,
+ * Dynamic Reducer Injection Utilities
+ *
+ * Attach a feature's Redux slice when its window mounts,
  * and detach when the last window of that type unmounts.
- *
- * - lazyLoadReducer(store, key, reducer): registers the reducer under `key` with
- *   the store's reducer manager and replaces the store's root reducer with the
- *   manager's current reduce function. Redux's store.replaceReducer() is what
- *   makes the new root reducer active. Called from useLazyLoadReducer when a
- *   feature component mounts.
- *
- * - removeLazyLoadedReducer(store, key): removes the reducer for `key` and
- *   replaces the root reducer again so the slice's state is no longer in the
- *   tree. Called from Desktop when the last window using that slice is closed.
  *
  * The store must be created with the reducer manager's reduce as the root
  * reducer (see app/store.ts).
  */
 import { Reducer } from '@reduxjs/toolkit';
-import type { StoreWithReducerManager } from '../app/store';
+import type { StoreWithReducerManager } from '~/app/store';
 
+/**
+ * Lazy Load Reducer
+ *
+ * Registers a reducer under the specified key with the store's reducer manager
+ * and replaces the store's root reducer with the manager's current reduce function.
+ * Redux's store.replaceReducer() makes the new root reducer active.
+ *
+ * Called from useLazyLoadReducer when a feature component mounts.
+ *
+ * @param store - Redux store with reducer manager
+ * @param key - Unique key for the reducer (must match slice name)
+ * @param reducer - The Redux reducer to inject
+ *
+ * @example
+ * ```typescript
+ * lazyLoadReducer(store, 'counter', counterReducer);
+ * // Now state.counter is available
+ * ```
+ */
 export function lazyLoadReducer(
   store: StoreWithReducerManager,
   key: string,
@@ -29,6 +40,23 @@ export function lazyLoadReducer(
   }
 }
 
+/**
+ * Remove Lazy Loaded Reducer
+ *
+ * Removes the reducer for the specified key and replaces the root reducer
+ * so the slice's state is no longer in the tree.
+ *
+ * Called from Desktop when the last window using that slice is closed.
+ *
+ * @param store - Redux store with reducer manager
+ * @param key - Key of the reducer to remove
+ *
+ * @example
+ * ```typescript
+ * removeLazyLoadedReducer(store, 'counter');
+ * // Now state.counter is undefined
+ * ```
+ */
 export function removeLazyLoadedReducer(
   store: StoreWithReducerManager,
   key: string

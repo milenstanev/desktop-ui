@@ -1,0 +1,5 @@
+build/
+node_modules/
+**/__tests__/e2e/
+*.spec.ts
+*.spec.tsx

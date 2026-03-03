@@ -8,16 +8,18 @@
  * then replaceReducer(manager.reduce) to apply the new root reducer.
  */
 import { configureStore, EnhancedStore } from '@reduxjs/toolkit';
-import { createReducerManager } from '../utils/reducerManager';
-import DesktopReducer from '../features/Desktop/DesktopSlice';
-import { desktopStorageMiddleware } from '../middleware/desktopStorageMiddleware';
-import type { ReducerManager } from '../utils/reducerManager';
+import { createReducerManager } from '~/utils/reducerManager';
+import DesktopReducer from '~/components/Desktop/DesktopSlice';
+import { desktopStorageMiddleware } from '~/middleware/desktopStorageMiddleware';
+import type { ReducerManager } from '~/utils/reducerManager';
 
 export interface StoreWithReducerManager extends EnhancedStore {
   reducerManager: ReducerManager;
 }
 
-export function setupStore(preloadedState?: Record<string, unknown>): StoreWithReducerManager {
+export function setupStore(
+  preloadedState?: Record<string, unknown>
+): StoreWithReducerManager {
   const reducerManager = createReducerManager({
     Desktop: DesktopReducer,
   });
