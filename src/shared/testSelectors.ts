@@ -46,7 +46,7 @@ export const TEST_SELECTORS = {
   WINDOW_CLOSE_BUTTON: 'window-close-button',
 
   // Test constants
-  PAGE_TITLE: 'React App',
+  PAGE_TITLE: 'Desktop UI – Modular React Starter',
   HEADING_SELECTOR: 'H1',
   APPLICATION_ROLE: 'application',
   WINDOW_ROLE: 'region',
