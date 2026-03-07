@@ -5,6 +5,7 @@ import { TEST_SELECTORS } from '~/shared/testSelectors';
 const THEME_VALUES = {
   LIGHT: 'light',
   DARK: 'dark',
+  GRADIENT: 'gradient',
 } as const;
 
 const BUTTON_TEXT = {
@@ -46,14 +47,14 @@ describe('ThemeContext', () => {
     localStorage.clear();
   });
 
-  it('defaults to light theme', () => {
+  it('defaults to gradient theme', () => {
     render(
       <ThemeProvider>
         <TestConsumer />
       </ThemeProvider>
     );
     expect(screen.getByTestId(TEST_SELECTORS.THEME_DISPLAY)).toHaveTextContent(
-      THEME_VALUES.LIGHT
+      THEME_VALUES.GRADIENT
     );
   });
 
@@ -64,7 +65,7 @@ describe('ThemeContext', () => {
       </ThemeProvider>
     );
     expect(screen.getByTestId(TEST_SELECTORS.THEME_DISPLAY)).toHaveTextContent(
-      THEME_VALUES.LIGHT
+      THEME_VALUES.GRADIENT
     );
     await act(async () => {
       screen.getByText(BUTTON_TEXT.SET_DARK).click();
@@ -91,7 +92,7 @@ describe('ThemeContext', () => {
       </ThemeProvider>
     );
     expect(screen.getByTestId(TEST_SELECTORS.THEME_DISPLAY)).toHaveTextContent(
-      THEME_VALUES.LIGHT
+      THEME_VALUES.GRADIENT
     );
     await act(async () => {
       screen.getByText(BUTTON_TEXT.TOGGLE).click();
@@ -99,7 +100,7 @@ describe('ThemeContext', () => {
     await waitFor(() => {
       expect(
         screen.getByTestId(TEST_SELECTORS.THEME_DISPLAY)
-      ).toHaveTextContent(THEME_VALUES.DARK);
+      ).toHaveTextContent(THEME_VALUES.LIGHT);
     });
     await act(async () => {
       screen.getByText(BUTTON_TEXT.TOGGLE).click();
@@ -107,7 +108,7 @@ describe('ThemeContext', () => {
     await waitFor(() => {
       expect(
         screen.getByTestId(TEST_SELECTORS.THEME_DISPLAY)
-      ).toHaveTextContent(THEME_VALUES.LIGHT);
+      ).toHaveTextContent(THEME_VALUES.DARK);
     });
   });
 
@@ -119,7 +120,7 @@ describe('ThemeContext', () => {
     );
     expect(
       document.documentElement.getAttribute(DOM_ATTRIBUTES.DATA_THEME)
-    ).toBe(THEME_VALUES.LIGHT);
+    ).toBe(THEME_VALUES.GRADIENT);
     await act(async () => {
       screen.getByText(BUTTON_TEXT.SET_DARK).click();
     });

@@ -14,6 +14,18 @@ import {
 } from '~/features/Desktop/config';
 import { COMPONENT_NAMES } from '~/shared/constants';
 
+jest.mock('~/features/Desktop/config', () => {
+  const actual = jest.requireActual('~/features/Desktop/config');
+  return {
+    ...actual,
+    INITIAL_STATE_CONFIG: {
+      ...actual.INITIAL_STATE_CONFIG,
+      initialWindows: [],
+      initialLayouts: { xl: [], lg: [], md: [], sm: [] },
+    },
+  };
+});
+
 describe('desktopStorageMiddleware', () => {
   let store: ReturnType<typeof configureStore>;
 

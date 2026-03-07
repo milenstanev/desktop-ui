@@ -33,11 +33,11 @@ test.describe('Live UI - Comprehensive Test', () => {
   });
 
   test('Theme switching works', async ({ page }) => {
-    // Check initial theme
+    // Check initial theme (gradient is default)
     const html = page.locator('html');
     await expect(html).toHaveAttribute(
       'data-theme',
-      TEST_SELECTORS.THEMES.LIGHT
+      TEST_SELECTORS.THEMES.GRADIENT
     );
 
     // Find and click theme selector

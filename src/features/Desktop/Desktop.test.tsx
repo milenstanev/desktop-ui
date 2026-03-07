@@ -7,6 +7,18 @@ import { ThemeProvider } from '~/core/contexts/ThemeContext';
 import { createReducerManager } from '~/core/utils/reducerManager';
 import { COMPONENT_NAMES, REDUCER_NAMES } from '~/shared/constants';
 
+jest.mock('./config', () => {
+  const actual = jest.requireActual('./config');
+  return {
+    ...actual,
+    INITIAL_STATE_CONFIG: {
+      ...actual.INITIAL_STATE_CONFIG,
+      initialWindows: [],
+      initialLayouts: { xl: [], lg: [], md: [], sm: [] },
+    },
+  };
+});
+
 // Mock react-grid-layout
 jest.mock('react-grid-layout', () => {
   const MockResponsive = ({ children }: { children: React.ReactNode }) => (

@@ -5,6 +5,7 @@ import {
   LOCAL_STORAGE_LAYOUT_KEY,
   LOCAL_STORAGE_DESKTOP_KEY,
   defaultWindowsPositions,
+  INITIAL_STATE_CONFIG,
 } from './config';
 import { safeParseJson } from '~/shared/utils/storage';
 
@@ -64,14 +65,21 @@ function isLayouts(value: unknown): value is Layouts {
 }
 
 const defaultLayouts: Layouts = { xl: [], lg: [], md: [], sm: [] };
-const desktopWindows = safeParseJson<DesktopUIWindow[]>(
+
+const storedWindows = safeParseJson<DesktopUIWindow[]>(
   LOCAL_STORAGE_DESKTOP_KEY,
   [],
   isDesktopUIWindowArray
 );
+
+const hasStoredWindows = storedWindows.length > 0;
+const desktopWindows: DesktopUIWindow[] = hasStoredWindows
+  ? storedWindows
+  : INITIAL_STATE_CONFIG.initialWindows;
+
 const rawLayouts = safeParseJson<Layouts>(
   LOCAL_STORAGE_LAYOUT_KEY,
-  defaultLayouts,
+  hasStoredWindows ? defaultLayouts : INITIAL_STATE_CONFIG.initialLayouts,
   isLayouts
 );
 // Migrate old layouts to include xl breakpoint
@@ -82,10 +90,12 @@ const layouts: Layouts = {
   sm: rawLayouts.sm || [],
 };
 
+const isFirstVisit = !hasStoredWindows;
 const initialState: State = {
   desktopWindows,
   layouts,
-  focusedWindowId: null,
+  focusedWindowId:
+    isFirstVisit && desktopWindows.length > 0 ? desktopWindows[0].id : null,
 };
 
 export const DesktopSlice = createSlice({
