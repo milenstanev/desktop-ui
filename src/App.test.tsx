@@ -1,20 +1,21 @@
-import { render, screen } from '@testing-library/react';
+/* eslint-disable testing-library/prefer-screen-queries -- screen import fails in Vercel build (RTL v16) */
+import { render } from '@testing-library/react';
 import App from './app/App';
 import { APP_TEST } from './shared/constants';
 
 test('renders desktop UI header and add window buttons', () => {
-  render(<App />);
+  const { getByRole } = render(<App />);
 
   expect(
-    screen.getByRole('heading', { name: APP_TEST.HEADING_TITLE })
+    getByRole('heading', { name: APP_TEST.HEADING_TITLE })
   ).toBeInTheDocument();
   expect(
-    screen.getByRole('button', { name: APP_TEST.BUTTON_ADD_SIMPLE_EXAMPLE })
+    getByRole('button', { name: APP_TEST.BUTTON_ADD_SIMPLE_EXAMPLE })
   ).toBeInTheDocument();
   expect(
-    screen.getByRole('button', { name: APP_TEST.BUTTON_ADD_COUNTER })
+    getByRole('button', { name: APP_TEST.BUTTON_ADD_COUNTER })
   ).toBeInTheDocument();
   expect(
-    screen.getByRole('button', { name: APP_TEST.BUTTON_ADD_FORM_EDITOR })
+    getByRole('button', { name: APP_TEST.BUTTON_ADD_FORM_EDITOR })
   ).toBeInTheDocument();
 });
