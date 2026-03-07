@@ -9,7 +9,7 @@
 This project aims to provide a scalable starting point for large React applications, emphasizing modular architecture, isolated state domains, and maintainable testing infrastructure.
 
 - **Modular architecture** – Feature-based structure, dynamic reducer injection, lazy loading
-- **Documentation** – [Architecture](./docs/ARCHITECTURE.md), [ADRs](./docs/decisions/), [Best Practices](./docs/BEST_PRACTICES.md), and [more](./docs/)
+- **Documentation** – [Architecture](./docs/ARCHITECTURE.md), [ADRs](./docs/decisions/0001-dynamic-reducer-injection.md), [Best Practices](./docs/BEST_PRACTICES.md), and [full index](#-documentation)
 - **Testing infrastructure** – Jest, React Testing Library, Playwright E2E, memory/performance tests
 
 Built with React, TypeScript, and Redux. PWA-ready. → [Full docs index](#-documentation)
@@ -102,7 +102,7 @@ The main objectives were:
 ---
 
 ## 📂 Example Feature Module
-
+x
 Each feature is self-contained. When you add a new feature, follow this structure:
 
 ```
@@ -246,7 +246,7 @@ Use this as your foundation. The architecture, docs, and tests are there so you 
 - [Architecture Overview](./docs/ARCHITECTURE.md) – Patterns, structure, and design decisions
 - [Module System](./docs/FEATURE_COMPONENTS.md) – How to add and structure features
 - [State Management](./docs/MIDDLEWARE_PERSISTENCE.md) – Persistence and reducer injection  
-- [Architecture Decision Records](./docs/decisions/) – ADRs for key choices (reducer injection, storage, error boundaries)
+- [Architecture Decision Records](./docs/decisions/0001-dynamic-reducer-injection.md) – ADRs for key choices (reducer injection, storage, error boundaries)
 
 ### Development
 - [Best Practices](./docs/BEST_PRACTICES.md) – Code quality and conventions

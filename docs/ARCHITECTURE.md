@@ -1,6 +1,6 @@
 # Architecture
 
-This document describes the architectural patterns and design decisions behind the desktop-ui modular SPA experiment.
+This document describes the architectural patterns and design decisions behind the desktop-ui modular SPA starter.
 
 ---
 
@@ -167,7 +167,7 @@ See [ADR 0002: Local Storage Persistence](./decisions/0002-local-storage-persist
 Each window has its own error boundary to prevent cascading failures.
 
 **Implementation:**
-```typescript
+```tsx
 <ErrorBoundary key={window.id}>
   <LazyComponent />
 </ErrorBoundary>
@@ -191,18 +191,11 @@ See [ADR 0003: Error Boundary Per Window](./decisions/0003-error-boundary-per-wi
 
 ### Store Structure
 
-```typescript
-{
-  desktop: {
-    windows: Window[],      // Active windows
-    layouts: Layouts,       // Grid layouts per breakpoint
-    focusedWindowId: string | null
-  },
-  // Dynamic feature slices injected at runtime:
-  CounterReducer?: { value: number },
-  NotesReducer?: { notes: Note[] },
-  // ...
-}
+```plaintext
+desktop: { windows, layouts, focusedWindowId }
+CounterReducer?: { value: number }
+NotesReducer?: { notes: Note[] }
+// Dynamic feature slices injected at runtime
 ```
 
 ### State Flow
@@ -343,7 +336,7 @@ No changes to core store or routing required.
 
 ## Related Documentation
 
-- [Architecture Decision Records](./decisions/) - Detailed design decisions
+- [Architecture Decision Records](./decisions/0001-dynamic-reducer-injection.md) - Detailed design decisions
 - [Best Practices](./BEST_PRACTICES.md) - Code quality guidelines
 - [Feature Components](./FEATURE_COMPONENTS.md) - How to add features
 - [Middleware Persistence](./MIDDLEWARE_PERSISTENCE.md) - Persistence patterns
@@ -360,4 +353,4 @@ This architecture prioritizes:
 3. **Isolation** over tight integration
 4. **Long-term** over short-term gains
 
-It's an experiment in building large-scale React applications that remain maintainable as they grow.
+It demonstrates how to build large-scale React applications that remain maintainable as they grow.

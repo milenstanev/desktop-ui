@@ -1,7 +1,7 @@
 {
   "short_name": "Desktop UI",
-  "name": "Desktop UI - Modular React Starter",
-  "description": "A modular desktop-style UI starter template with dynamic reducers and lazy loading",
+  "name": "Desktop UI – Modular React Starter",
+  "description": "A starter template for scalable React applications with modular architecture, dynamic reducer injection, and testing infrastructure.",
   "icons": [
     {
       "src": "favicon.ico",
