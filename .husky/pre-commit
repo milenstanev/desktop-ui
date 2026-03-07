@@ -1,5 +1,8 @@
 # Run lint-staged for formatting and linting
 npx lint-staged
 
+# Run full lint
+npm run lint
+
 # Run unit tests
 npm run test:unit
