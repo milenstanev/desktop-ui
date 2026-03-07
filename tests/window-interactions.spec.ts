@@ -2,10 +2,7 @@ import { test, expect } from '@playwright/test';
 import { NOTES_STRINGS } from '~/shared/constants';
 import { TEST_SELECTORS } from '~/shared/testSelectors';
 import { LOCAL_STORAGE_LAYOUT_KEY } from '~/features/Desktop/config';
-
-
-
-
+import { closeAllWindows } from '~/tests/helpers';
 
 test.describe('Window positioning and state management', () => {
   test.beforeEach(async ({ page, context }) => {
@@ -18,6 +15,7 @@ test.describe('Window positioning and state management', () => {
     await page.reload();
     await page.waitForLoadState('domcontentloaded');
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
+    await closeAllWindows(page);
   });
 
   test('layout persists to localStorage after drag and survives reload', async ({
@@ -374,7 +372,9 @@ test.describe('Window positioning and state management', () => {
     await expect(dragHandle).toBeVisible();
 
     // Verify close button is NOT in drag handle
-    const closeButton = window.getByRole(TEST_SELECTORS.ROLES.BUTTON, { name: /close/i });
+    const closeButton = window.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: /close/i,
+    });
     await expect(closeButton).toBeVisible();
 
     // Click close button should remove window, not drag it

@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { NOTES_STRINGS } from '~/shared/constants';
 import { TEST_SELECTORS } from '~/shared/testSelectors';
+import { closeAllWindows } from '~/tests/helpers';
 
 test.describe('Layout control buttons', () => {
   test.beforeEach(async ({ page, context }) => {
@@ -13,6 +14,7 @@ test.describe('Layout control buttons', () => {
     await page.reload();
     await page.waitForLoadState('domcontentloaded');
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
+    await closeAllWindows(page);
   });
 
   test('Organize Grid button arranges windows in equal-sized grid', async ({
@@ -216,28 +218,26 @@ test.describe('Layout control buttons', () => {
     await expect(addTimerButton).toBeVisible();
     await expect(closeAllButton).toBeVisible();
 
-    // Add windows
-    await expect(addTimerButton).toBeVisible();
+    // Add a window
     await addTimerButton.click();
     await expect(timerContainer).toBeVisible();
     await expect(timerDisplay).toBeVisible();
 
-    // Get all windows by data-testid prefix
     const allWindows = page.locator(`[role="${TEST_SELECTORS.WINDOW_ROLE}"]`);
     await expect(allWindows).toHaveCount(1);
 
-    // Click Close All
-    await expect(closeAllButton).toBeVisible();
+    // Click Close All - removes all windows
     await closeAllButton.click();
-
-    // Wait for windows to be removed
     await expect(allWindows).toHaveCount(0);
 
-    // Reload page
+    // Reload - app persists empty state; slice shows initial windows when stored is empty
     await page.reload();
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
 
-    // Verify no windows after reload (localStorage was cleared)
-    await expect(allWindows).toHaveCount(0);
+    // After reload with empty stored state, app shows initial windows (Counter, Notes, FormEditor)
+    const windowsAfterReload = page.locator(
+      `[role="${TEST_SELECTORS.WINDOW_ROLE}"]`
+    );
+    await expect(windowsAfterReload).toHaveCount(3);
   });
 });

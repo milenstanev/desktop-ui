@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { TEST_SELECTORS } from '~/shared/testSelectors';
+import { closeAllWindows } from '~/tests/helpers';
 
 const ROLE_SELECTOR = `[role="${TEST_SELECTORS.WINDOW_ROLE}"]`;
 const CLASS_ATTRIBUTE = 'class';
@@ -15,6 +16,7 @@ test.describe('Window focus and keyboard shortcuts', () => {
     await page.reload();
     await page.waitForLoadState('domcontentloaded');
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
+    await closeAllWindows(page);
   });
 
   test('new window is automatically focused', async ({ page }) => {
@@ -38,7 +40,9 @@ test.describe('Window focus and keyboard shortcuts', () => {
   });
 
   test('Escape key closes focused window', async ({ page }) => {
-    const addTimerButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, { name: TEST_SELECTORS.BUTTONS.ADD_TIMER });
+    const addTimerButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_TIMER,
+    });
     await expect(addTimerButton).toBeVisible();
     await addTimerButton.click();
     await expect(page.locator(ROLE_SELECTOR)).toHaveCount(1);
@@ -49,7 +53,9 @@ test.describe('Window focus and keyboard shortcuts', () => {
   });
 
   test('Ctrl+W closes focused window', async ({ page }) => {
-    const addTimerButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, { name: TEST_SELECTORS.BUTTONS.ADD_TIMER });
+    const addTimerButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_TIMER,
+    });
     await expect(addTimerButton).toBeVisible();
     await addTimerButton.click();
     await expect(page.locator(ROLE_SELECTOR)).toHaveCount(1);
