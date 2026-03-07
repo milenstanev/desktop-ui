@@ -3,7 +3,7 @@ import {
   TEST_SELECTORS,
   getFormFieldTestId,
   getFormErrorTestId,
-} from '~/testSelectors';
+} from '~/shared/testSelectors';
 
 /**
  * E2E Tests for FormEditor Validation

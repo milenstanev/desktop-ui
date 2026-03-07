@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import App from './app/App';
-import { APP_TEST } from './constants';
+import { APP_TEST } from './shared/constants';
 
 test('renders desktop UI header and add window buttons', () => {
   render(<App />);

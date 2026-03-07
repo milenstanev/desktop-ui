@@ -4,10 +4,10 @@
 # Runs until you press Ctrl+C
 
 echo "========================================="
-echo "Memory Chaos Tests - CONTINUOUS MODE"
+echo "Memory Endurance Tests - CONTINUOUS MODE"
 echo "========================================="
 echo ""
-echo "Running chaos tests continuously..."
+echo "Running memory endurance tests continuously..."
 echo "Press Ctrl+C to stop"
 echo ""
 
@@ -22,8 +22,8 @@ while true; do
   echo "========================================="
   echo ""
   
-  # Run the chaos tests
-  npm run test:memory:chaos
+  # Run the memory endurance tests
+  npm run test:memory
   
   EXIT_CODE=$?
   

@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
-import { setupStore } from '~/app/store';
+import { setupStore } from '~/core/store';
 import Notes from '~/features/Notes/Notes';
-import { NOTES_STRINGS, COMPONENT_NAMES, REDUCER_NAMES } from '~/constants';
-import { TEST_SELECTORS } from '~/testSelectors';
+import { NOTES_STRINGS, COMPONENT_NAMES, REDUCER_NAMES } from '~/shared/constants';
+import { TEST_SELECTORS } from '~/shared/testSelectors';
 
 const BUTTON_ROLE = 'button';
 const ADD_NOTE_BUTTON_REGEX = /add note/i;
