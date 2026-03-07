@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TEST_SELECTORS, getFormFieldTestId } from '~/testSelectors';
+import { TEST_SELECTORS, getFormFieldTestId } from '~/shared/testSelectors';
 
 test.describe('FormEditor feature', () => {
   test.beforeEach(async ({ page, context }) => {

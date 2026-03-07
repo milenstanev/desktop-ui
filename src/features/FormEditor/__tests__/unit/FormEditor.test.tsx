@@ -1,16 +1,16 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import FormEditor from '~/features/FormEditor/FormEditor';
-import * as mockApi from '~/utils/mockApi';
-import { TEST_SELECTORS, getFormFieldTestId } from '~/testSelectors';
+import * as mockApi from '~/shared/utils/mockApi';
+import { TEST_SELECTORS, getFormFieldTestId } from '~/shared/testSelectors';
 import {
   VALIDATION_MESSAGES,
   MOCK_USER_DATA,
   ROLE_OPTIONS,
   FORM_FIELD_LABELS,
-} from '~/constants';
+} from '~/shared/constants';
 
-jest.mock('~/utils/mockApi');
+jest.mock('~/shared/utils/mockApi');
 
 const mockFetchUsers = mockApi.fetchUsers as jest.MockedFunction<
   typeof mockApi.fetchUsers

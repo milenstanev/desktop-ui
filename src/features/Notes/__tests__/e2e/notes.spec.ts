@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { NOTES_STRINGS } from '~/constants';
-import { TEST_SELECTORS, getNoteItemTestId } from '~/testSelectors';
+import { NOTES_STRINGS } from '~/shared/constants';
+import { TEST_SELECTORS, getNoteItemTestId } from '~/shared/testSelectors';
 
 test.describe('Notes feature', () => {
   test.beforeEach(async ({ page, context }) => {

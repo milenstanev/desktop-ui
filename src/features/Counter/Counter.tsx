@@ -1,10 +1,10 @@
 import React from 'react';
-import { useAppDispatch, useAppSelector } from '~/app/hooks';
-import { RootState } from '~/app/store';
+import { useAppDispatch, useAppSelector } from '~/core/hooks';
+import { RootState } from '~/core/store';
 import featureReducer, { decrement, increment } from './CounterSlice';
-import useLazyLoadReducer from '~/hooks/useLazyLoadReducer';
-import { COUNTER_STRINGS } from '~/constants';
-import { TEST_SELECTORS } from '~/testSelectors';
+import useLazyLoadReducer from '~/core/hooks/useLazyLoadReducer';
+import { COUNTER_STRINGS } from '~/shared/constants';
+import { TEST_SELECTORS } from '~/shared/testSelectors';
 import styles from './Counter.module.css';
 
 interface CounterProps {

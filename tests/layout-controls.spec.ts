@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { NOTES_STRINGS } from '~/constants';
-import { TEST_SELECTORS } from '~/testSelectors';
+import { NOTES_STRINGS } from '~/shared/constants';
+import { TEST_SELECTORS } from '~/shared/testSelectors';
 
 test.describe('Layout control buttons', () => {
   test.beforeEach(async ({ page, context }) => {

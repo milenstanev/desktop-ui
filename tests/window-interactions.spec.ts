@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { NOTES_STRINGS } from '~/constants';
-import { TEST_SELECTORS } from '~/testSelectors';
-import { LOCAL_STORAGE_LAYOUT_KEY } from '~/components/Desktop/config';
+import { NOTES_STRINGS } from '~/shared/constants';
+import { TEST_SELECTORS } from '~/shared/testSelectors';
+import { LOCAL_STORAGE_LAYOUT_KEY } from '~/features/Desktop/config';
 
 
 

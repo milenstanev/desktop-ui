@@ -1,38 +1,44 @@
 # FormEditor Feature
 
-A dynamic form component demonstrating React Hook Form integration with schema-driven validation.
+A **preview/demo** of form functionality: schema-driven form with React Hook Form, mock API, and validation. The actual form building blocks (TextField, NumberField, etc.) live in **`~/shared/forms`** so any feature can use forms.
 
 ## Structure
 
 ```
 FormEditor/
-├── FormEditor.tsx          # Main component with RHF integration
-├── FormEditor.module.css   # Styles including error states
-├── FormEditor.test.tsx     # Integration tests (10 tests)
-├── README.md               # This file
-└── FormFields/             # Reusable field components
-    ├── FieldError.tsx      # Shared error display component
-    ├── TextField.tsx       # Text input with forwardRef
-    ├── TextField.test.tsx  # 6 tests
-    ├── NumberField.tsx     # Number input with forwardRef
-    ├── NumberField.test.tsx # 6 tests
-    ├── CheckboxField.tsx   # Checkbox with forwardRef
-    ├── CheckboxField.test.tsx # 6 tests
-    ├── SelectField.tsx     # Select dropdown with forwardRef
-    ├── SelectField.test.tsx # 8 tests
-    └── index.ts            # Barrel export
+├── FormEditor.tsx          # Preview component – schema-driven form using ~/shared/forms
+├── FormEditor.module.css   # Submit button + gradient theme overrides (base styles in shared/forms)
+├── __tests__/
+│   ├── unit/FormEditor.test.tsx
+│   └── e2e/
+├── README.md
+└── VALIDATION_TESTS.md
+```
+
+Shared form components (used by FormEditor and any other feature):
+
+```
+src/shared/forms/
+├── TextField.tsx, NumberField.tsx, CheckboxField.tsx, SelectField.tsx
+├── FieldError.tsx
+├── forms.module.css        # Base form field styles
+├── index.ts
+├── README.md
+└── __tests__/             # Unit tests for field components
 ```
 
 ## Key Features
 
-- **Schema-driven validation** - Validation rules defined in `mockApi.ts`
-- **React Hook Form** - Optimized re-renders and built-in validation
-- **Lazy-loaded** - RHF library only loads when feature is used (~8.84KB chunk)
-- **Shared error component** - `FieldError.tsx` used by all field components
-- **forwardRef support** - All field components support refs for programmatic control
-- **Auto-focus errors** - First error field receives focus after validation fails
-- **Accessibility** - `aria-invalid`, `role="alert"`, proper label associations
-- **Mock API** - Works without backend, easy to replace with real API
+- **Preview of shared forms** – Uses `~/shared/forms` (TextField, NumberField, CheckboxField, SelectField)
+- **Schema-driven** – Validation and layout from mock API schema
+- **React Hook Form** – Optimized re-renders, lazy-loaded with feature
+- **Mock API** – fetchUsers, fetchFormSchema, updateUser (replace with real API)
+- **Accessibility** – aria-invalid, role="alert", label associations
+- **Theme support** – Gradient overrides in FormEditor.module.css
+
+## Usage
+
+FormEditor is loaded when the user clicks "Add Form Editor". Other features that need forms can import from `~/shared/forms` and build their own UI.
 
 ## Usage Example
 
@@ -46,23 +52,13 @@ case COMPONENT_NAMES.FORM_EDITOR:
 
 ## Testing
 
-**Unit Tests**: 36 tests across 5 test files
-- Field components: 24 tests
-- FormEditor integration: 10 tests
-- Mock API integration: ✓
-- Validation display: ✓
-- Form lifecycle: ✓
+**Unit tests**
+- FormEditor: `npm test -- --testPathPattern=FormEditor`
+- Shared form fields: `npm test -- --testPathPattern=shared/forms`
 
-**E2E Tests**: 18 tests across 2 test files
-- `tests/form-editor.spec.ts` - 6 tests (form loading, data population, editing)
-- `tests/form-validation.spec.ts` - 12 tests (validation behavior, error display, auto-focus)
-
-Run tests:
-```bash
-npm test -- --testPathPattern=FormEditor
-npx playwright test form-editor
-npx playwright test form-validation
-```
+**E2E**
+- `npx playwright test form-editor`
+- `npx playwright test form-validation`
 
 ## Validation Rules
 
@@ -86,29 +82,10 @@ export const fetchUsers = async (): Promise<UserData[]> => {
 ```
 
 ### Add New Field Type
-1. Create new field component in `FormFields/` (use `FieldError` for error display)
-2. Add to `FormFields/index.ts`
-3. Add case in `FormEditor.tsx` `renderFormField()`
-4. Update `FORM_TYPES` in `src/constants.ts`
-
-Example:
-```typescript
-import FieldError from './FieldError';
-
-const MyField = forwardRef<HTMLInputElement, MyFieldProps>(
-  ({ name, label, register, errors }, ref) => {
-    const { ref: registerRef, ...registerRest } = register(name);
-    
-    return (
-      <div className={styles.formItem}>
-        <label htmlFor={name}>{label}</label>
-        <input {...registerRest} ref={/* merge refs */} />
-        <FieldError error={errors?.[name]} />
-      </div>
-    );
-  }
-);
-```
+1. Create the field component in **`~/shared/forms/`** (use `FieldError` for errors, styles from `forms.module.css`).
+2. Export it from `~/shared/forms/index.ts`.
+3. Add a case in `FormEditor.tsx` `renderFormField()` for the preview.
+4. Update `FORM_TYPES` in `~/shared/constants.ts`.
 
 ### Modify Validation
 Update the `validation` property in `MOCK_SCHEMA` in `src/utils/mockApi.ts`:
@@ -126,8 +103,6 @@ firstName: {
 
 ## Related Documentation
 
-- [REFACTOR.md](./REFACTOR.md) - Implementation details and refactoring guide
-- [FIELD_REFS.md](./FIELD_REFS.md) - forwardRef usage examples
-- [UNIT_TESTS.md](./UNIT_TESTS.md) - Unit test documentation
 - [VALIDATION_TESTS.md](./VALIDATION_TESTS.md) - E2E validation test documentation
+- [~/shared/forms/README.md](../../shared/forms/README.md) - Shared form components
 - [Mock API Guide](../../docs/MOCK_API.md) - API integration guide
