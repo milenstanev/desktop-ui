@@ -10,12 +10,14 @@
 
 import { test, expect } from '@playwright/test';
 import { TEST_SELECTORS } from '~/shared/testSelectors';
+import { closeAllWindows } from '~/tests/helpers';
 
 test.describe('Live UI - Comprehensive Test', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
+    await closeAllWindows(page);
   });
 
   test('Application loads successfully', async ({ page }) => {
@@ -33,11 +35,11 @@ test.describe('Live UI - Comprehensive Test', () => {
   });
 
   test('Theme switching works', async ({ page }) => {
-    // Check initial theme
+    // Check initial theme (gradient is default)
     const html = page.locator('html');
     await expect(html).toHaveAttribute(
       'data-theme',
-      TEST_SELECTORS.THEMES.LIGHT
+      TEST_SELECTORS.THEMES.GRADIENT
     );
 
     // Find and click theme selector

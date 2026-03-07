@@ -4,6 +4,7 @@ import {
   getFormFieldTestId,
   getFormErrorTestId,
 } from '~/shared/testSelectors';
+import { closeAllWindows } from '~/tests/helpers';
 
 /**
  * E2E Tests for FormEditor Validation
@@ -34,6 +35,7 @@ test.describe('FormEditor Validation', () => {
     await page.reload();
     await page.waitForLoadState('domcontentloaded');
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
+    await closeAllWindows(page);
 
     await expect(addFormButton).toBeVisible();
     await addFormButton.click();
@@ -127,12 +129,12 @@ test.describe('FormEditor Validation', () => {
 
     // First select a valid option
     await roleSelect.selectOption('admin');
-    
+
     // Then clear the selection by setting it back to empty (using JavaScript since the disabled option can't be selected)
     await roleSelect.evaluate((select: HTMLSelectElement) => {
       select.value = '';
     });
-    
+
     // Try to submit with empty required field
     await expect(submitButton).toBeVisible();
     await submitButton.click();

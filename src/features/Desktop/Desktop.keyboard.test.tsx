@@ -8,6 +8,18 @@ import { ThemeProvider } from '~/core/contexts/ThemeContext';
 import { KEYBOARD_SHORTCUTS, REDUCER_NAMES } from '~/shared/constants';
 import { TEST_SELECTORS } from '~/shared/testSelectors';
 
+jest.mock('./config', () => {
+  const actual = jest.requireActual('./config');
+  return {
+    ...actual,
+    INITIAL_STATE_CONFIG: {
+      ...actual.INITIAL_STATE_CONFIG,
+      initialWindows: [],
+      initialLayouts: { xl: [], lg: [], md: [], sm: [] },
+    },
+  };
+});
+
 const DESKTOP_SLICE_NAME = 'Desktop';
 const WINDOWS_PROPERTY = 'desktopWindows';
 const FOCUSED_WINDOW_PROPERTY = 'focusedWindowId';

@@ -25,7 +25,10 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import { LOCAL_STORAGE_THEME_KEY } from '~/features/Desktop/config';
+import {
+  LOCAL_STORAGE_THEME_KEY,
+  INITIAL_STATE_CONFIG,
+} from '~/features/Desktop/config';
 
 /**
  * Available theme options
@@ -53,7 +56,7 @@ function getStoredTheme(): Theme {
   } catch {
     // ignore
   }
-  return THEME_VALUES.LIGHT;
+  return INITIAL_STATE_CONFIG.defaultTheme;
 }
 
 /**

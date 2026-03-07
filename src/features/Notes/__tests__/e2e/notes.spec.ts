@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { NOTES_STRINGS } from '~/shared/constants';
 import { TEST_SELECTORS, getNoteItemTestId } from '~/shared/testSelectors';
+import { closeAllWindows } from '~/tests/helpers';
 
 test.describe('Notes feature', () => {
   test.beforeEach(async ({ page, context }) => {
@@ -13,6 +14,7 @@ test.describe('Notes feature', () => {
     await page.reload();
     await page.waitForLoadState('domcontentloaded');
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
+    await closeAllWindows(page);
   });
 
   test('opens Notes window and shows notes UI', async ({ page }) => {

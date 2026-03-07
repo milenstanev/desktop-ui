@@ -80,6 +80,7 @@ The main objectives were:
 
 ## ⚙️ How It Works (Quick Overview)
 
+
 1. The application boots with a minimal core.
 2. Features are dynamically loaded when required.
 3. Each feature injects its own reducer into the store.

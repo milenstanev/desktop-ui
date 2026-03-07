@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { TEST_SELECTORS, getFormFieldTestId } from '~/shared/testSelectors';
+import { closeAllWindows } from '~/tests/helpers';
 
 test.describe('FormEditor feature', () => {
   test.beforeEach(async ({ page, context }) => {
@@ -12,10 +13,13 @@ test.describe('FormEditor feature', () => {
     await page.reload();
     await page.waitForLoadState('domcontentloaded');
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
+    await closeAllWindows(page);
   });
 
   test('opens FormEditor window and loads form', async ({ page }) => {
-    const addFormButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, { name: TEST_SELECTORS.BUTTONS.ADD_FORM_EDITOR });
+    const addFormButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_FORM_EDITOR,
+    });
     await expect(addFormButton).toBeVisible();
     await addFormButton.click();
 
@@ -45,7 +49,9 @@ test.describe('FormEditor feature', () => {
   });
 
   test('form fields are populated with mock data', async ({ page }) => {
-    const addFormButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, { name: TEST_SELECTORS.BUTTONS.ADD_FORM_EDITOR });
+    const addFormButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_FORM_EDITOR,
+    });
     await expect(addFormButton).toBeVisible();
     await addFormButton.click();
 
@@ -73,7 +79,9 @@ test.describe('FormEditor feature', () => {
   });
 
   test('can edit form fields', async ({ page }) => {
-    const addFormButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, { name: TEST_SELECTORS.BUTTONS.ADD_FORM_EDITOR });
+    const addFormButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_FORM_EDITOR,
+    });
     await expect(addFormButton).toBeVisible();
     await addFormButton.click();
 
@@ -116,7 +124,9 @@ test.describe('FormEditor feature', () => {
   });
 
   test('can submit form successfully', async ({ page }) => {
-    const addFormButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, { name: TEST_SELECTORS.BUTTONS.ADD_FORM_EDITOR });
+    const addFormButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_FORM_EDITOR,
+    });
     await expect(addFormButton).toBeVisible();
     await addFormButton.click();
 
@@ -149,7 +159,9 @@ test.describe('FormEditor feature', () => {
   });
 
   test('submit button is disabled while submitting', async ({ page }) => {
-    const addFormButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, { name: TEST_SELECTORS.BUTTONS.ADD_FORM_EDITOR });
+    const addFormButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_FORM_EDITOR,
+    });
     await expect(addFormButton).toBeVisible();
     await addFormButton.click();
 
@@ -181,8 +193,12 @@ test.describe('FormEditor feature', () => {
 
   test('shows loading state initially', async ({ page }) => {
     await page.goto('/');
+    await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
+    await closeAllWindows(page);
 
-    const addFormButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, { name: TEST_SELECTORS.BUTTONS.ADD_FORM_EDITOR });
+    const addFormButton = page.getByRole(TEST_SELECTORS.ROLES.BUTTON, {
+      name: TEST_SELECTORS.BUTTONS.ADD_FORM_EDITOR,
+    });
     await expect(addFormButton).toBeVisible();
     await addFormButton.click();
 
