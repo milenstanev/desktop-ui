@@ -11,22 +11,22 @@ import {
   Grid3x3,
 } from 'lucide-react';
 import styles from './Header.module.css';
-import { useAppDispatch } from './hooks';
+import { useAppDispatch } from '~/core/hooks';
 import {
   addWindow,
   resetLayouts,
   removeAllWindows,
   organizeGrid,
-} from '~/components/Desktop/DesktopSlice';
-import { useTheme, Theme } from '~/contexts/ThemeContext';
+} from '~/features/Desktop/DesktopSlice';
+import { useTheme, Theme } from '~/core/contexts/ThemeContext';
 import {
   APP_STRINGS,
   COMPONENT_NAMES,
   REDUCER_NAMES,
   THEME_STRINGS,
   THEME_OPTIONS,
-} from '~/constants';
-import { TEST_SELECTORS } from '~/testSelectors';
+} from '~/shared/constants';
+import { TEST_SELECTORS } from '~/shared/testSelectors';
 
 const Header: React.FC = () => {
   const dispatch = useAppDispatch();

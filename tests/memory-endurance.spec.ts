@@ -11,8 +11,8 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { TEST_SELECTORS } from '~/testSelectors';
-import { ComponentNames } from '~/utils/componentLoader';
+import { TEST_SELECTORS } from '~/shared/testSelectors';
+import { ComponentNames } from '~/core/utils/componentLoader';
 
 async function getMemoryUsage(page: any) {
   return await page.evaluate(() => {

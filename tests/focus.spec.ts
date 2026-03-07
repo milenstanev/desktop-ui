@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TEST_SELECTORS } from '~/testSelectors';
+import { TEST_SELECTORS } from '~/shared/testSelectors';
 
 const ROLE_SELECTOR = `[role="${TEST_SELECTORS.WINDOW_ROLE}"]`;
 const CLASS_ATTRIBUTE = 'class';

@@ -1,9 +1,9 @@
 import { render, screen, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { setupStore } from '~/app/store';
+import { setupStore } from '~/core/store';
 import Counter from '~/features/Counter/Counter';
-import { COUNTER_STRINGS, COMPONENT_NAMES, REDUCER_NAMES } from '~/constants';
-import { TEST_SELECTORS } from '~/testSelectors';
+import { COUNTER_STRINGS, COMPONENT_NAMES, REDUCER_NAMES } from '~/shared/constants';
+import { TEST_SELECTORS } from '~/shared/testSelectors';
 
 const INITIAL_VALUE = '0';
 const INCREMENTED_VALUE = '1';

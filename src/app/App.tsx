@@ -1,9 +1,9 @@
 import { Provider } from 'react-redux';
-import { ThemeProvider } from '~/contexts/ThemeContext';
+import { ThemeProvider } from '~/core/contexts/ThemeContext';
 import Header from './Header';
 import FooterTaskbar from './FooterTaskbar';
-import Desktop from '~/components/Desktop/Desktop';
-import { store } from './store';
+import Desktop from '~/features/Desktop/Desktop';
+import { store } from '~/core/store';
 
 function App() {
   return (

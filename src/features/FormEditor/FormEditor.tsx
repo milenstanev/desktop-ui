@@ -1,21 +1,21 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import styles from './FormEditor.module.css';
-import { FORM_EDITOR_STRINGS, FORM_TYPES } from '~/constants';
+import { FORM_EDITOR_STRINGS, FORM_TYPES } from '~/shared/constants';
 import {
   fetchUsers,
   fetchFormSchema,
   updateUser,
   FormSchema,
   UserData,
-} from '~/utils/mockApi';
-import { TEST_SELECTORS } from '~/testSelectors';
+} from '~/shared/utils/mockApi';
+import { TEST_SELECTORS } from '~/shared/testSelectors';
 import {
   TextField,
   NumberField,
   CheckboxField,
   SelectField,
-} from './FormFields';
+} from '~/shared/forms';
 
 const FormEditor: React.FC = () => {
   const [formSchema, setFormSchema] = useState<FormSchema | null>(null);

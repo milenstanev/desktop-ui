@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { APP_STRINGS } from '~/constants';
-import { TEST_SELECTORS } from '~/testSelectors';
+import { APP_STRINGS } from '~/shared/constants';
+import { TEST_SELECTORS } from '~/shared/testSelectors';
 
 test.describe('Basic app functionality', () => {
   test.beforeEach(async ({ page, context }) => {

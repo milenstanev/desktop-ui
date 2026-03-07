@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './Timer.module.css';
-import { TIMER_STRINGS } from '~/constants';
-import { TEST_SELECTORS } from '~/testSelectors';
+import { TIMER_STRINGS } from '~/shared/constants';
+import { TEST_SELECTORS } from '~/shared/testSelectors';
 
 interface TimerProps {
   windowId: string;

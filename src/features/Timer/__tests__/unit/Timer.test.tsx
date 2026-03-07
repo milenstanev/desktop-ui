@@ -1,7 +1,7 @@
 import { render, screen, act } from '@testing-library/react';
 import Timer from '~/features/Timer/Timer';
-import { TIMER_STRINGS, COMPONENT_NAMES } from '~/constants';
-import { TEST_SELECTORS } from '~/testSelectors';
+import { TIMER_STRINGS, COMPONENT_NAMES } from '~/shared/constants';
+import { TEST_SELECTORS } from '~/shared/testSelectors';
 
 const BUTTON_ROLE = 'button';
 const START_TIMER_BUTTON_REGEX = /start timer/i;

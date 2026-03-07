@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useAppDispatch, useAppSelector } from '~/app/hooks';
-import { RootState } from '~/app/store';
-import useLazyLoadReducer from '~/hooks/useLazyLoadReducer';
+import { useAppDispatch, useAppSelector } from '~/core/hooks';
+import { RootState } from '~/core/store';
+import useLazyLoadReducer from '~/core/hooks/useLazyLoadReducer';
 import featureReducer, { addNote, removeNote } from './NotesSlice';
 import styles from './Notes.module.css';
-import { NOTES_STRINGS, FORM_TYPES } from '~/constants';
-import { TEST_SELECTORS, getNoteItemTestId } from '~/testSelectors';
+import { NOTES_STRINGS, FORM_TYPES } from '~/shared/constants';
+import { TEST_SELECTORS, getNoteItemTestId } from '~/shared/testSelectors';
 
 const EMPTY_ITEMS: string[] = [];
 

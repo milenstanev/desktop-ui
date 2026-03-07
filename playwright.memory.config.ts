@@ -39,11 +39,10 @@ export default defineConfig({
     },
   ],
 
-  // Reuse existing server
   webServer: {
-    command: 'echo "Using existing server on port 3000"',
+    command: 'npx serve -s build -l 3000',
     port: 3000,
-    timeout: 1000,
-    reuseExistingServer: true,
+    timeout: 120 * 1000,
+    reuseExistingServer: !process.env.CI,
   },
 });
