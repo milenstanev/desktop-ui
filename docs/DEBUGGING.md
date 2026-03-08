@@ -131,7 +131,7 @@ If you already have the app running:
 
 ### Debug Redux Action
 
-1. Set breakpoint in `src/components/Desktop/DesktopSlice.ts`
+1. Set breakpoint in `src/features/Desktop/DesktopSlice.ts`
 2. Start debugging
 3. Trigger action (e.g., add window)
 4. Debugger pauses in reducer

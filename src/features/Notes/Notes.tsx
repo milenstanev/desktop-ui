@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '~/core/hooks';
 import { RootState } from '~/core/store';
 import useLazyLoadReducer from '~/core/hooks/useLazyLoadReducer';
@@ -16,20 +16,30 @@ interface NotesProps {
 }
 
 const Notes: React.FC<NotesProps> = ({ lazyLoadReducerName }) => {
-  useLazyLoadReducer({ lazyLoadReducerName, featureReducer });
-  const dispatch = useAppDispatch();
+  //region states
   const items = useAppSelector(
     (state: RootState) =>
       (state[lazyLoadReducerName] as { items?: string[] } | undefined)?.items ??
       EMPTY_ITEMS
   );
   const [input, setInput] = useState('');
+  //endregion
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    dispatch(addNote(input));
-    setInput('');
-  };
+  //region hooks
+  useLazyLoadReducer({ lazyLoadReducerName, featureReducer });
+  const dispatch = useAppDispatch();
+  //endregion
+
+  //region callbacks
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      dispatch(addNote(input));
+      setInput('');
+    },
+    [dispatch, input]
+  );
+  //endregion
 
   return (
     <div className={styles.notes} data-testid={TEST_SELECTORS.NOTES_CONTAINER}>

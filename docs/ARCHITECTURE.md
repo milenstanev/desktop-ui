@@ -30,7 +30,7 @@ src/
 │   ├── contexts/        # ThemeContext
 │   └── utils/           # reducerManager, lazyLoadReducer, componentLoader
 ├── shared/     → Reusable components & utilities
-│   ├── components/      # Window, ErrorBoundary, Icons, Loader
+│   ├── components/      # Window, ErrorBoundary, Icons, Loader, ComponentLoader
 │   ├── forms/           # Form field components (TextField, NumberField, etc.) – used by FormEditor and any feature with forms
 │   ├── utils/           # storage, mockApi
 │   ├── constants.ts
@@ -100,23 +100,29 @@ See [ADR 0001: Dynamic Reducer Injection](./decisions/0001-dynamic-reducer-injec
 
 ### 3. Lazy Loading & Code Splitting
 
-Features are loaded on demand using dynamic imports:
+Features are loaded on demand using dynamic imports and a cached lazy component registry:
 
-```typescript
-// componentLoader.ts
+```
+// src/core/utils/componentLoader.ts
 export const componentLoader = {
-  Counter: () => import('../features/Counter/Counter'),
-  FormEditor: () => import('../features/FormEditor/FormEditor'),
+  Counter: () => import('~/features/Counter/Counter'),
+  FormEditor: () => import('~/features/FormEditor/FormEditor'),
   // ...
 };
+
+// getLazyComponent() returns cached lazy components to avoid remounts on re-renders
+export function getLazyComponent(name: ComponentNames): LazyExoticComponent;
 ```
+
+The `ComponentLoader` component (`src/shared/components/ComponentLoader/`) wraps lazy components in `Suspense` with a loader fallback. Desktop uses it to render each window's content.
 
 **Loading Flow:**
 1. User clicks "Add Feature" button
 2. `addWindow` action dispatched with `lazyLoadComponent` key
-3. Component dynamically imported
-4. Reducer injected (if specified)
-5. Component rendered in window
+3. Desktop renders `<ComponentLoader componentName={...} ... />`
+4. Component dynamically imported via `getLazyComponent()` (cached per name)
+5. Reducer injected (if specified)
+6. Component rendered in window
 
 **Benefits:**
 - Reduced initial bundle size
@@ -135,7 +141,7 @@ export const componentLoader = {
 State persistence is handled by Redux middleware, keeping reducers pure.
 
 **Implementation:**
-```typescript
+```
 // desktopStorageMiddleware.ts
 if (
   addWindow.match(action) ||
@@ -167,7 +173,7 @@ See [ADR 0002: Local Storage Persistence](./decisions/0002-local-storage-persist
 Each window has its own error boundary to prevent cascading failures.
 
 **Implementation:**
-```tsx
+```
 <ErrorBoundary key={window.id}>
   <LazyComponent />
 </ErrorBoundary>
@@ -273,7 +279,7 @@ NotesReducer?: { notes: Note[] }
 
 1. Create feature folder under `src/features/`
 2. Implement component (optionally with Redux slice)
-3. Register in `componentLoader.ts`
+3. Register in `src/core/utils/componentLoader.ts`
 4. Add button in Header
 5. Write tests
 

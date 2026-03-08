@@ -181,7 +181,7 @@ describe('desktopStorageMiddleware', () => {
     expect(layouts.lg[1].x).toBe(3); // Second position
   });
 
-  it('persists when removeAllWindows is dispatched', () => {
+  it('removes Desktop keys from localStorage when removeAllWindows is dispatched', () => {
     store.dispatch(
       addWindow({
         id: 'test-1',
@@ -200,20 +200,13 @@ describe('desktopStorageMiddleware', () => {
       })
     );
 
-    // Remove all windows
+    expect(localStorage.getItem(LOCAL_STORAGE_DESKTOP_KEY)).toBeTruthy();
+    expect(localStorage.getItem(LOCAL_STORAGE_LAYOUT_KEY)).toBeTruthy();
+
     store.dispatch(removeAllWindows());
 
-    const savedWindows = localStorage.getItem(LOCAL_STORAGE_DESKTOP_KEY);
-    const savedLayouts = localStorage.getItem(LOCAL_STORAGE_LAYOUT_KEY);
-
-    const windows = JSON.parse(savedWindows!);
-    const layouts = JSON.parse(savedLayouts!);
-
-    // Verify empty state was persisted
-    expect(windows).toHaveLength(0);
-    expect(layouts.lg).toHaveLength(0);
-    expect(layouts.md).toHaveLength(0);
-    expect(layouts.sm).toHaveLength(0);
+    expect(localStorage.getItem(LOCAL_STORAGE_DESKTOP_KEY)).toBeNull();
+    expect(localStorage.getItem(LOCAL_STORAGE_LAYOUT_KEY)).toBeNull();
   });
 
   it('handles localStorage errors gracefully', () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import styles from './FormEditor.module.css';
 import { FORM_EDITOR_STRINGS, FORM_TYPES } from '~/shared/constants';
@@ -18,13 +18,16 @@ import {
 } from '~/shared/forms';
 
 const FormEditor: React.FC = () => {
+  //region states
   const [formSchema, setFormSchema] = useState<FormSchema | null>(null);
   const [formData, setFormData] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [asyncError, setAsyncError] = useState<boolean>(false);
+  //endregion
 
+  //region hooks
   const firstNameRef = useRef<HTMLInputElement>(null);
-
+  const isMountedRef = useRef(true);
   const {
     register,
     handleSubmit,
@@ -35,6 +38,32 @@ const FormEditor: React.FC = () => {
     mode: 'onSubmit',
     reValidateMode: 'onChange',
   });
+  //endregion
+
+  //region callbacks
+  const onSubmit = useCallback(
+    async (data: UserData) => {
+      if (!formData) return;
+      try {
+        const result = await updateUser(formData._id, data);
+        if (result.success) {
+          alert(FORM_EDITOR_STRINGS.ALERT_SUCCESS);
+          setFormData(result.user);
+          reset(result.user);
+        } else {
+          alert(FORM_EDITOR_STRINGS.ALERT_ERROR);
+        }
+      } catch (error) {
+        alert(
+          error instanceof Error
+            ? error.message
+            : FORM_EDITOR_STRINGS.ALERT_ERROR
+        );
+      }
+    },
+    [formData, reset]
+  );
+  //endregion
 
   const getFormattedLabel = (fieldName: string): string => {
     let label = fieldName.replace(/([a-z])([A-Z])/g, '$1 $2');
@@ -101,34 +130,12 @@ const FormEditor: React.FC = () => {
     }
   };
 
-  const onSubmit = async (data: UserData) => {
-    if (!formData) return;
-
-    try {
-      const result = await updateUser(formData._id, data);
-
-      if (result.success) {
-        alert(FORM_EDITOR_STRINGS.ALERT_SUCCESS);
-        setFormData(result.user);
-        reset(result.user);
-      } else {
-        alert(FORM_EDITOR_STRINGS.ALERT_ERROR);
-      }
-    } catch (error) {
-      alert(
-        error instanceof Error ? error.message : FORM_EDITOR_STRINGS.ALERT_ERROR
-      );
-    }
-  };
-
   useEffect(() => {
     if (Object.keys(errors).length > 0) {
       const firstErrorField = Object.keys(errors)[0] as keyof UserData;
       setFocus(firstErrorField);
     }
   }, [errors, setFocus]);
-
-  const isMountedRef = useRef(true);
 
   useEffect(() => {
     isMountedRef.current = true;

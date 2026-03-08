@@ -29,9 +29,15 @@ import {
 import { TEST_SELECTORS } from '~/shared/testSelectors';
 
 const Header: React.FC = () => {
-  const dispatch = useAppDispatch();
+  //region states
   const { theme, setTheme } = useTheme();
+  //endregion
 
+  //region hooks
+  const dispatch = useAppDispatch();
+  //endregion
+
+  //region callbacks
   const handleThemeChange = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
       setTheme(event.target.value as Theme);
@@ -117,6 +123,7 @@ const Header: React.FC = () => {
   const handleRemoveAllWindows = useCallback(() => {
     dispatch(removeAllWindows());
   }, [dispatch]);
+  //endregion
 
   return (
     <header className={styles.header}>

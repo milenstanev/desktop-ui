@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import styles from './Timer.module.css';
 import { TIMER_STRINGS } from '~/shared/constants';
 import { TEST_SELECTORS } from '~/shared/testSelectors';
@@ -16,9 +16,29 @@ const PAD_CHAR = '0';
 const TIME_SEPARATOR = ':';
 
 const Timer: React.FC<TimerProps> = () => {
+  //region states
   const [seconds, setSeconds] = useState(0);
   const [running, setRunning] = useState(false);
+  //endregion
+
+  //region hooks
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  //endregion
+
+  //region callbacks
+  const handleStart = useCallback(() => setRunning(true), []);
+  const handlePause = useCallback(() => setRunning(false), []);
+  const handleReset = useCallback(() => {
+    setRunning(false);
+    setSeconds(0);
+  }, []);
+  //endregion
+
+  const formatTime = (s: number) => {
+    const m = Math.floor(s / SECONDS_PER_MINUTE);
+    const sec = s % SECONDS_PER_MINUTE;
+    return `${m.toString().padStart(PAD_LENGTH, PAD_CHAR)}${TIME_SEPARATOR}${sec.toString().padStart(PAD_LENGTH, PAD_CHAR)}`;
+  };
 
   useEffect(() => {
     if (running) {
@@ -34,12 +54,6 @@ const Timer: React.FC<TimerProps> = () => {
     };
   }, [running]);
 
-  const formatTime = (s: number) => {
-    const m = Math.floor(s / SECONDS_PER_MINUTE);
-    const sec = s % SECONDS_PER_MINUTE;
-    return `${m.toString().padStart(PAD_LENGTH, PAD_CHAR)}${TIME_SEPARATOR}${sec.toString().padStart(PAD_LENGTH, PAD_CHAR)}`;
-  };
-
   return (
     <div className={styles.timer} data-testid={TEST_SELECTORS.TIMER_CONTAINER}>
       <div
@@ -52,7 +66,7 @@ const Timer: React.FC<TimerProps> = () => {
       <div className={styles.controls}>
         <button
           type="button"
-          onClick={() => setRunning(true)}
+          onClick={handleStart}
           disabled={running}
           aria-label={TIMER_STRINGS.START_ARIA_LABEL}
         >
@@ -60,7 +74,7 @@ const Timer: React.FC<TimerProps> = () => {
         </button>
         <button
           type="button"
-          onClick={() => setRunning(false)}
+          onClick={handlePause}
           disabled={!running}
           aria-label={TIMER_STRINGS.PAUSE_ARIA_LABEL}
         >
@@ -68,10 +82,7 @@ const Timer: React.FC<TimerProps> = () => {
         </button>
         <button
           type="button"
-          onClick={() => {
-            setRunning(false);
-            setSeconds(0);
-          }}
+          onClick={handleReset}
           aria-label={TIMER_STRINGS.RESET_ARIA_LABEL}
         >
           {TIMER_STRINGS.RESET_BUTTON}

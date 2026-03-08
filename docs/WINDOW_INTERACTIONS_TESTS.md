@@ -84,7 +84,7 @@ Smart, focused E2E tests that verify **YOUR custom implementation** - Redux inte
 **What it tests** (YOUR code):
 - YOUR `draggableHandle` configuration is correct
 - Close button is clickable without triggering drag
-- `removeWindow` action cleans up localStorage
+- `removeWindow` action cleans up layouts in localStorage; `removeAllWindows` removes the Desktop keys entirely
 
 **Why it matters**:
 - Tests YOUR react-grid-layout configuration
@@ -136,6 +136,10 @@ These tests follow a **"test your code, not libraries"** approach:
 - Your state structure is saved/restored correctly
 - Your focus management works
 - Your cleanup logic runs properly
+
+## Initial State and E2E Tests
+
+When the app loads with empty localStorage, `INITIAL_STATE_CONFIG` may add initial windows (Counter, Notes, FormEditor). Tests that assume no windows should call `closeAllWindows(page)` from `~/tests/helpers` in their `beforeEach` or at the start of the test. This clears all windows so tests run in a predictable state.
 
 ## Maintenance Notes
 

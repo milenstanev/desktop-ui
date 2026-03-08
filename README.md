@@ -102,7 +102,6 @@ The main objectives were:
 ---
 
 ## 📂 Example Feature Module
-x
 Each feature is self-contained. When you add a new feature, follow this structure:
 
 ```

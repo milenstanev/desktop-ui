@@ -17,7 +17,7 @@ This document provides an overview of the key APIs and utilities in the Desktop 
 
 Provides a reusable hook for handling keyboard shortcuts. Supports Escape and Cmd/Ctrl+W for closing windows.
 
-**Location:** `src/hooks/useKeyboardShortcuts.ts`
+**Location:** `src/core/hooks/useKeyboardShortcuts.ts`
 
 **Parameters:**
 - `onEscape?: () => void` - Callback function to execute when Escape is pressed
@@ -25,7 +25,7 @@ Provides a reusable hook for handling keyboard shortcuts. Supports Escape and Cm
 - `enabled?: boolean` - Whether the shortcuts are enabled (default: true)
 
 **Example:**
-```typescript
+```
 import { useKeyboardShortcuts } from '~/hooks/useKeyboardShortcuts';
 
 function MyComponent() {
@@ -41,14 +41,14 @@ function MyComponent() {
 
 Injects a feature's Redux reducer when the feature component mounts. The reducer is automatically added to the store's reducer manager.
 
-**Location:** `src/hooks/useLazyLoadReducer.ts`
+**Location:** `src/core/hooks/useLazyLoadReducer.ts`
 
 **Parameters:**
 - `lazyLoadReducerName: string` - Unique name for the reducer (must match the slice name)
 - `featureReducer: Reducer` - The Redux reducer to inject
 
 **Example:**
-```typescript
+```
 import useLazyLoadReducer from '~/hooks/useLazyLoadReducer';
 import counterReducer from './CounterSlice';
 
@@ -67,11 +67,11 @@ function Counter() {
 
 Typed version of Redux's `useDispatch` hook. Returns a dispatch function typed with `AppDispatch`.
 
-**Location:** `src/app/hooks.ts`
+**Location:** `src/core/hooks.ts`
 
 **Example:**
-```typescript
-import { useAppDispatch } from '~/app/hooks';
+```
+import { useAppDispatch } from '~/core/hooks';
 
 function MyComponent() {
   const dispatch = useAppDispatch();
@@ -83,11 +83,11 @@ function MyComponent() {
 
 Typed version of Redux's `useSelector` hook. Provides type-safe access to the Redux store state.
 
-**Location:** `src/app/hooks.ts`
+**Location:** `src/core/hooks.ts`
 
 **Example:**
-```typescript
-import { useAppSelector } from '~/app/hooks';
+```
+import { useAppSelector } from '~/core/hooks';
 
 function MyComponent() {
   const count = useAppSelector((state) => state.counter.value);
@@ -105,20 +105,7 @@ Access theme context from any component. Must be used within a `ThemeProvider`.
 - `setTheme: (theme: Theme) => void` - Set a specific theme
 - `toggleTheme: () => void` - Toggle between available themes
 
-**Example:**
-```typescript
-import { useTheme } from '~/contexts/ThemeContext';
-
-function ThemeToggle() {
-  const { theme, setTheme, toggleTheme } = useTheme();
-
-  return (
-    <button onClick={toggleTheme}>
-      Current theme: {theme}
-    </button>
-  );
-}
-```
+**Example:** `const { theme, setTheme, toggleTheme } = useTheme()` then use in JSX (e.g. `onClick={toggleTheme}`).
 
 ---
 
@@ -128,7 +115,7 @@ function ThemeToggle() {
 
 Centralized registry for lazy-loaded feature components. Each entry returns a dynamic import that enables code splitting.
 
-**Location:** `src/utils/componentLoader.ts`
+**Location:** `src/core/utils/componentLoader.ts`
 
 **Available Components:**
 - `SimpleExample`
@@ -137,23 +124,34 @@ Centralized registry for lazy-loaded feature components. Each entry returns a dy
 - `Notes`
 - `Timer`
 
-**Example:**
-```typescript
-import { componentLoader } from '~/utils/componentLoader';
+**getLazyComponent(componentName):** Returns a cached lazy component for the given name. Reuses the same component reference across renders to prevent unnecessary remounts and loader flashes (e.g. when focusing windows).
 
-const Component = React.lazy(componentLoader.Counter);
-```
+**Example:** `const LazyComponent = getLazyComponent('Counter')`
 
 **Adding a New Feature:**
 1. Add an entry to `componentLoader` with the component's dynamic import
 2. The component will be automatically code-split
 3. Use the key when creating windows in Desktop
 
+### ComponentLoader
+
+Reusable component that wraps a lazy-loaded feature in `Suspense` with a loader fallback. Used by Desktop to render each window's content.
+
+**Location:** `src/shared/components/ComponentLoader/ComponentLoader.tsx`
+
+**Props:**
+- `componentName: ComponentNames` - Key from componentLoader (e.g. 'Counter', 'Notes')
+- `windowId: string` - Window ID
+- `windowName: string` - Display name
+- `lazyLoadReducerName?: string` - Reducer name for lazy injection (optional)
+
+**Example:** Import ComponentLoader, pass componentName, windowId, windowName, lazyLoadReducerName.
+
 ### lazyLoadReducer
 
 Registers a reducer under the specified key with the store's reducer manager and replaces the store's root reducer.
 
-**Location:** `src/utils/lazyLoadReducer.ts`
+**Location:** `src/core/utils/lazyLoadReducer.ts`
 
 **Parameters:**
 - `store: StoreWithReducerManager` - Redux store with reducer manager
@@ -161,7 +159,7 @@ Registers a reducer under the specified key with the store's reducer manager and
 - `reducer: Reducer` - The Redux reducer to inject
 
 **Example:**
-```typescript
+```
 import { lazyLoadReducer } from '~/utils/lazyLoadReducer';
 
 lazyLoadReducer(store, 'counter', counterReducer);
@@ -172,14 +170,14 @@ lazyLoadReducer(store, 'counter', counterReducer);
 
 Removes the reducer for the specified key and replaces the root reducer so the slice's state is no longer in the tree.
 
-**Location:** `src/utils/lazyLoadReducer.ts`
+**Location:** `src/core/utils/lazyLoadReducer.ts`
 
 **Parameters:**
 - `store: StoreWithReducerManager` - Redux store with reducer manager
 - `key: string` - Key of the reducer to remove
 
 **Example:**
-```typescript
+```
 import { removeLazyLoadedReducer } from '~/utils/lazyLoadReducer';
 
 removeLazyLoadedReducer(store, 'counter');
@@ -190,7 +188,7 @@ removeLazyLoadedReducer(store, 'counter');
 
 Safely parse JSON from localStorage with fallback handling. Returns the fallback value on parse errors or invalid data.
 
-**Location:** `src/utils/storage.ts`
+**Location:** `src/shared/utils/storage.ts`
 
 **Type Parameters:**
 - `T` - Type of the expected data
@@ -203,7 +201,7 @@ Safely parse JSON from localStorage with fallback handling. Returns the fallback
 **Returns:** Parsed data of type T, or fallback if parsing fails
 
 **Example:**
-```typescript
+```
 import { safeParseJson } from '~/utils/storage';
 
 // Simple usage
@@ -218,7 +216,7 @@ const user = safeParseJson('user', null, isUserData);
 
 ### Mock API Functions
 
-**Location:** `src/utils/mockApi.ts`
+**Location:** `src/shared/utils/mockApi.ts`
 
 #### fetchUsers
 Fetches mock user data.
@@ -258,17 +256,7 @@ Wraps the application to provide theme context. Automatically applies theme to d
 - `children: React.ReactNode` - Child components to wrap
 
 **Example:**
-```typescript
-import { ThemeProvider } from '~/contexts/ThemeContext';
-
-function App() {
-  return (
-    <ThemeProvider>
-      <YourApp />
-    </ThemeProvider>
-  );
-}
-```
+Wrap your app in ThemeProvider.
 
 ---
 
@@ -278,10 +266,10 @@ function App() {
 
 Dynamic Redux reducer injection system that allows adding and removing reducers at runtime.
 
-**Location:** `src/utils/reducerManager.ts`
+**Location:** `src/core/utils/reducerManager.ts`
 
 **Interface:**
-```typescript
+```
 interface ReducerManager {
   getReducerMap: () => { [key: string]: Reducer };
   reduce: (state: any, action: any) => any;
@@ -296,7 +284,7 @@ interface ReducerManager {
 3. On remove(), queues keys for removal and strips them at the start of the next reduce() call
 
 **Example:**
-```typescript
+```
 import { createReducerManager } from '~/utils/reducerManager';
 
 const reducerManager = createReducerManager({
@@ -318,9 +306,9 @@ reducerManager.remove('counter');
 
 Type representing all available component names in the component loader.
 
-**Location:** `src/utils/componentLoader.ts`
+**Location:** `src/core/utils/componentLoader.ts`
 
-```typescript
+```
 type ComponentNames = 'SimpleExample' | 'Counter' | 'FormEditor' | 'Notes' | 'Timer';
 ```
 
@@ -330,7 +318,7 @@ Available theme options.
 
 **Location:** `src/contexts/ThemeContext.tsx`
 
-```typescript
+```
 type Theme = 'light' | 'dark' | 'gradient';
 ```
 
@@ -338,9 +326,9 @@ type Theme = 'light' | 'dark' | 'gradient';
 
 Redux store extended with reducer manager functionality.
 
-**Location:** `src/app/store.ts`
+**Location:** `src/core/store.ts`
 
-```typescript
+```
 interface StoreWithReducerManager extends EnhancedStore {
   reducerManager: ReducerManager;
 }
@@ -361,7 +349,7 @@ interface StoreWithReducerManager extends EnhancedStore {
 1. Create feature folder under `src/features/`
 2. Add component to `componentLoader`
 3. If feature needs state, create a slice and use `useLazyLoadReducer`
-4. Add test selectors to `src/testSelectors.ts`
+4. Add test selectors to `src/shared/testSelectors.ts`
 5. Write unit and E2E tests
 
 ### Working with localStorage
