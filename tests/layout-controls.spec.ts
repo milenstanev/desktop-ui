@@ -230,7 +230,7 @@ test.describe('Layout control buttons', () => {
     await closeAllButton.click();
     await expect(allWindows).toHaveCount(0);
 
-    // Reload - app persists empty state; slice shows initial windows when stored is empty
+    // Reload - Close All removes keys from localStorage; slice treats as first visit and shows initial windows
     await page.reload();
     await page.getByTestId(TEST_SELECTORS.APP_HEADING).waitFor();
 

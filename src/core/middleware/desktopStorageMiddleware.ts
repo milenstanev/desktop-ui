@@ -33,7 +33,7 @@ const LAYOUTS_PROPERTY = 'layouts';
  * - updateLayouts: Updates window layouts (drag/resize)
  * - resetLayouts: Resets all layouts to defaults
  * - organizeGrid: Organizes windows in equal-sized grid
- * - removeAllWindows: Removes all windows and clears layouts
+ * - removeAllWindows: Removes Desktop keys from localStorage (full reset)
  *
  * NOT registered (intentionally):
  * - setFocus: Focus state should not persist across page reloads.
@@ -54,7 +54,6 @@ export const desktopStorageMiddleware: Middleware<object, RootState> =
       addWindow.match(action) ||
       updateLayouts.match(action) ||
       resetLayouts.match(action) ||
-      removeAllWindows.match(action) ||
       organizeGrid.match(action)
     ) {
       const state = store.getState();
@@ -69,6 +68,13 @@ export const desktopStorageMiddleware: Middleware<object, RootState> =
           JSON.stringify(desktopWindows)
         );
         localStorage.setItem(LOCAL_STORAGE_LAYOUT_KEY, JSON.stringify(layouts));
+      } catch {
+        console.warn(MIDDLEWARE_STRINGS.PERSIST_ERROR);
+      }
+    } else if (removeAllWindows.match(action)) {
+      try {
+        localStorage.removeItem(LOCAL_STORAGE_DESKTOP_KEY);
+        localStorage.removeItem(LOCAL_STORAGE_LAYOUT_KEY);
       } catch {
         console.warn(MIDDLEWARE_STRINGS.PERSIST_ERROR);
       }

@@ -10,6 +10,10 @@ Free deployment options for the desktop-ui starter.
 4. Vercel auto-detects Create React App. Click **Deploy**.
 5. Your app will be live at `https://your-project.vercel.app`.
 
+**Project configuration** (`vercel.json`):
+- `installCommand: "npm install --legacy-peer-deps"` – used if you have peer dependency conflicts.
+- `ignoreCommand` – deploys only when pushing to `master`; other branches skip deployment.
+
 **Deploy on merge to master:**
 - With the repo connected, Vercel deploys **automatically** on every push to the production branch.
 - Set **Production Branch** to `master` (or `main`) in Project Settings → Git.

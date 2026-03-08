@@ -42,10 +42,10 @@ src/features/<FeatureName>/
 
 1. **Create feature folder**: `src/features/<Name>/` with component and `*.test.tsx`.
 
-2. **Register in componentLoader**: Add to `src/utils/componentLoader.ts`:
-   ```typescript
+2. **Register in componentLoader**: Add to `src/core/utils/componentLoader.ts`:
+   ```
    export const componentLoader = {
-     YourFeature: () => import('../features/YourFeature/YourFeature'),
+     YourFeature: () => import('~/features/YourFeature/YourFeature'),
    };
    ```
    ⚠️ **Important**: The key (e.g., `'YourFeature'`) must exactly match the `lazyLoadComponent` parameter you use in `addWindow()` calls.
@@ -57,7 +57,7 @@ src/features/<FeatureName>/
    - `YOUR_FEATURE_STRINGS`: Feature-specific UI text
 
 4. **Add Header button**: In `src/app/Header.tsx`:
-   ```typescript
+   ```
    const handleAddYourFeature = useCallback(() => {
      const id = uuidv4();
 
@@ -73,44 +73,22 @@ src/features/<FeatureName>/
    }, [dispatch]);
    ```
 
-5. **Add E2E spec**: Create `tests/<name>.spec.ts` for end-to-end testing. Use centralized test selectors from `src/testSelectors.ts` for all `data-testid` values.
+5. **Add E2E spec**: Create `tests/<name>.spec.ts` for end-to-end testing. Use centralized test selectors from `src/shared/testSelectors.ts` for all `data-testid` values. Call `closeAllWindows(page)` from `~/tests/helpers` when tests assume an empty initial state.
 
 ## Adding Desktop Actions (IMPORTANT!)
 
 If you need to add a new action to `DesktopSlice` that modifies windows or layouts:
 
-1. **Add the action** to `src/components/Desktop/DesktopSlice.ts`
-2. **Register it in middleware** at `src/middleware/desktopStorageMiddleware.ts`:
-   ```typescript
-   import { yourNewAction } from '../components/Desktop/DesktopSlice';
-   
-   if (
-     removeWindow.match(action) ||
-     yourNewAction.match(action) ||  // ← Add here
-     // ... other actions
-   ) {
-     // Persist to localStorage
-   }
-   ```
+1. **Add the action** to `src/features/Desktop/DesktopSlice.ts`
+2. **Register it in middleware** at `src/core/middleware/desktopStorageMiddleware.ts`: import the action and add `yourNewAction.match(action)` to the if condition.
 
 ⚠️ **WARNING**: If you don't register the action in the middleware, your changes won't be saved to localStorage and will be lost on page reload!
 
 ## Test Selectors
 
-All `data-testid` values are centralized in `src/testSelectors.ts`:
+All `data-testid` values are centralized in `src/shared/testSelectors.ts`:
 
-```typescript
-import { TEST_SELECTORS, getFormFieldTestId } from '../../testSelectors';
-
-// In component
-<form data-testid={TEST_SELECTORS.FORM_EDITOR}>
-  <input data-testid={getFormFieldTestId('firstName')} />
-</form>
-
-// In E2E test
-import { TEST_SELECTORS, getFormFieldTestId } from '../src/testSelectors';
-await page.getByTestId(TEST_SELECTORS.FORM_EDITOR).click();
-```
+Use `TEST_SELECTORS` and `getFormFieldTestId` from `~/shared/testSelectors` in both components and E2E tests.
 
 This ensures consistency and makes refactoring easier.
 

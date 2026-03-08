@@ -1,11 +1,4 @@
-import React, {
-  lazy,
-  useCallback,
-  Suspense,
-  useState,
-  useEffect,
-  useMemo,
-} from 'react';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useStore } from 'react-redux';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
@@ -14,8 +7,7 @@ import { useAppSelector, useAppDispatch } from '~/core/hooks';
 import { removeWindow, updateLayouts, setFocus } from './DesktopSlice';
 import { LayoutBreakpoint, DesktopUIWindow } from './types';
 import WindowComponent from '~/shared/components/Window/Window';
-import Loader from '~/shared/components/Loader/Loader';
-import { componentLoader, ComponentNames } from '~/core/utils/componentLoader';
+import ComponentLoader from '~/shared/components/ComponentLoader/ComponentLoader';
 import { removeLazyLoadedReducer } from '~/core/utils/lazyLoadReducer';
 import type { StoreWithReducerManager } from '~/core/store';
 import styles from './Desktop.module.css';
@@ -26,24 +18,34 @@ import { TEST_SELECTORS } from '~/shared/testSelectors';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-interface LazyLoadedComponentProps extends React.Attributes {
-  windowId: string;
-  windowName: string;
-  lazyLoadReducerName: string;
-}
-type LazyComponentType = React.ComponentType<LazyLoadedComponentProps>;
-
 const Desktop: React.FC = () => {
+  //region states
   const windows = useAppSelector((state) => state.Desktop.desktopWindows);
   const savedLayouts = useAppSelector((state) => state.Desktop.layouts);
   const focusedWindowId = useAppSelector(
     (state) => state.Desktop.focusedWindowId
   );
   const [breakpoint, setBreakpoint] = useState<LayoutBreakpoint>('lg');
+  //endregion
+
+  //region hooks
   const dispatch = useAppDispatch();
   const store = useStore();
   const { theme } = useTheme();
+  const prevReducersRef = React.useRef<Set<string>>(new Set());
 
+  useKeyboardShortcuts(
+    () => {
+      if (focusedWindowId) dispatch(removeWindow(focusedWindowId));
+    },
+    () => {
+      if (focusedWindowId) dispatch(removeWindow(focusedWindowId));
+    },
+    !!focusedWindowId
+  );
+  //endregion
+
+  //region memos
   const windowsSorted = useMemo(() => {
     if (!focusedWindowId) return windows;
     const focused = windows.find(
@@ -56,81 +58,6 @@ const Desktop: React.FC = () => {
     return [...rest, focused];
   }, [windows, focusedWindowId]);
 
-  const loadWindow = useCallback((componentName: ComponentNames) => {
-    const loader = componentLoader[componentName];
-
-    if (loader) {
-      return lazy(() =>
-        loader().then((module) => {
-          return { default: module.default as LazyComponentType };
-        })
-      );
-    } else {
-      throw new Error(
-        `${DESKTOP_STRINGS.ERROR_UNKNOWN_COMPONENT} ${componentName}`
-      );
-    }
-  }, []);
-
-  const handleRemoveWindow = useCallback(
-    (id: string) => {
-      dispatch(removeWindow(id));
-      // Note: Reducer cleanup is handled by the useEffect that tracks window changes
-    },
-    [dispatch]
-  );
-
-  // Centralized reducer cleanup: tracks window changes and cleans up unused reducers
-  const prevReducersRef = React.useRef<Set<string>>(new Set());
-
-  useEffect(() => {
-    // Collect current reducers in use
-    const currentReducers = new Set<string>();
-    windows.forEach((window: DesktopUIWindow) => {
-      if (window.lazyLoadReducerName) {
-        currentReducers.add(window.lazyLoadReducerName);
-      }
-    });
-
-    // Find reducers that are no longer in use
-    const reducersToRemove = Array.from(prevReducersRef.current).filter(
-      (reducerName) => !currentReducers.has(reducerName)
-    );
-
-    // Clean up unused reducers
-    reducersToRemove.forEach((reducerName) => {
-      removeLazyLoadedReducer(store as StoreWithReducerManager, reducerName);
-    });
-
-    // Update tracking for next render
-    prevReducersRef.current = currentReducers;
-  }, [windows, store]);
-
-  // Keyboard shortcuts for closing focused window
-  useKeyboardShortcuts(
-    // Escape key handler
-    () => {
-      if (focusedWindowId) {
-        dispatch(removeWindow(focusedWindowId));
-      }
-    },
-    // Cmd/Ctrl+W handler
-    () => {
-      if (focusedWindowId) {
-        dispatch(removeWindow(focusedWindowId));
-      }
-    },
-    // Only enabled when there's a focused window
-    !!focusedWindowId
-  );
-
-  const handleFocusWindow = useCallback(
-    (id: string) => {
-      dispatch(setFocus(id));
-    },
-    [dispatch]
-  );
-
   const gridMargin = useMemo<[number, number]>(() => {
     return theme === 'gradient' ? [20, 20] : [10, 10];
   }, [theme]);
@@ -138,6 +65,61 @@ const Desktop: React.FC = () => {
   const containerPadding = useMemo<[number, number]>(() => {
     return theme === 'gradient' ? [20, 20] : [10, 10];
   }, [theme]);
+
+  const windowStyles = useMemo(() => {
+    const map = new Map<string, React.CSSProperties>();
+    windowsSorted.forEach((w: DesktopUIWindow) => {
+      map.set(w.id, {
+        zIndex:
+          w.id === focusedWindowId
+            ? LAYOUT_CONFIG.Z_INDEX_FOCUSED
+            : LAYOUT_CONFIG.Z_INDEX_NORMAL,
+      });
+    });
+    return map;
+  }, [windowsSorted, focusedWindowId]);
+  //endregion
+
+  //region callbacks
+  const handleRemoveWindow = useCallback(
+    (id: string) => dispatch(removeWindow(id)),
+    [dispatch]
+  );
+
+  const handleFocusWindow = useCallback(
+    (id: string) => dispatch(setFocus(id)),
+    [dispatch]
+  );
+
+  const handleLayoutChange = useCallback(
+    (layout: ReactGridLayout.Layout[]) => {
+      dispatch(updateLayouts({ layout, breakpoint }));
+    },
+    [dispatch, breakpoint]
+  );
+
+  const handleBreakpointChange = useCallback(
+    (newBreakpoint: LayoutBreakpoint) => setBreakpoint(newBreakpoint),
+    []
+  );
+  //endregion
+
+  useEffect(() => {
+    const currentReducers = new Set<string>();
+    windows.forEach((window: DesktopUIWindow) => {
+      if (window.lazyLoadReducerName) {
+        currentReducers.add(window.lazyLoadReducerName);
+      }
+    });
+
+    const reducersToRemove = Array.from(prevReducersRef.current).filter(
+      (reducerName) => !currentReducers.has(reducerName)
+    );
+    reducersToRemove.forEach((reducerName) => {
+      removeLazyLoadedReducer(store as StoreWithReducerManager, reducerName);
+    });
+    prevReducersRef.current = currentReducers;
+  }, [windows, store]);
 
   return (
     <div
@@ -153,27 +135,13 @@ const Desktop: React.FC = () => {
         rowHeight={80}
         margin={gridMargin}
         containerPadding={containerPadding}
-        onDragStop={(layout) => {
-          dispatch(updateLayouts({ layout, breakpoint }));
-        }}
-        onResizeStop={(layout) => {
-          dispatch(updateLayouts({ layout, breakpoint }));
-        }}
-        onBreakpointChange={(newBreakpoint: LayoutBreakpoint) =>
-          setBreakpoint(newBreakpoint)
-        }
+        onDragStop={handleLayoutChange}
+        onResizeStop={handleLayoutChange}
+        onBreakpointChange={handleBreakpointChange}
         draggableHandle={`.${LAYOUT_CONFIG.DRAG_HANDLE_CLASS}`}
       >
         {windowsSorted.map((window: DesktopUIWindow) => (
-          <div
-            key={window.id}
-            style={{
-              zIndex:
-                window.id === focusedWindowId
-                  ? LAYOUT_CONFIG.Z_INDEX_FOCUSED
-                  : LAYOUT_CONFIG.Z_INDEX_NORMAL,
-            }}
-          >
+          <div key={window.id} style={windowStyles.get(window.id)}>
             <WindowComponent
               name={window.name}
               id={window.id}
@@ -182,14 +150,14 @@ const Desktop: React.FC = () => {
               isFocused={window.id === focusedWindowId}
               onFocus={() => handleFocusWindow(window.id)}
             >
-              <Suspense fallback={<Loader />}>
-                {window.lazyLoadComponent &&
-                  React.createElement(loadWindow(window.lazyLoadComponent), {
-                    windowId: window.id,
-                    windowName: window.name,
-                    lazyLoadReducerName: window.lazyLoadReducerName,
-                  } as LazyLoadedComponentProps)}
-              </Suspense>
+              {window.lazyLoadComponent && (
+                <ComponentLoader
+                  componentName={window.lazyLoadComponent}
+                  windowId={window.id}
+                  windowName={window.name}
+                  lazyLoadReducerName={window.lazyLoadReducerName}
+                />
+              )}
             </WindowComponent>
           </div>
         ))}

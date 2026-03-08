@@ -46,7 +46,7 @@ This document outlines the coding standards, best practices, and quality guideli
 ### ✅ Explicit Return Types for Public Functions
 
 **Good:**
-```typescript
+```
 const handleAddWindow = useCallback((): void => {
   dispatch(addWindow({ ... }));
 }, [dispatch]);
@@ -67,7 +67,7 @@ const handleAddWindow = useCallback((): void => {
 ### ✅ Functional Components with TypeScript
 
 **Pattern:**
-```typescript
+```
 const MyComponent: React.FC<Props> = ({ prop1, prop2 }) => {
   // Implementation
 };
@@ -78,21 +78,21 @@ export default MyComponent;
 ### ✅ Hooks Best Practices
 
 **useCallback for Event Handlers:**
-```typescript
+```
 const handleClick = useCallback(() => {
   dispatch(someAction());
 }, [dispatch]);
 ```
 
 **useMemo for Expensive Calculations:**
-```typescript
+```
 const sortedItems = useMemo(() => {
   return items.sort((a, b) => a.id - b.id);
 }, [items]);
 ```
 
 **useRef to Avoid Infinite Loops:**
-```typescript
+```
 const prevValueRef = useRef(value);
 
 useEffect(() => {
@@ -103,20 +103,17 @@ useEffect(() => {
 
 ### ✅ Lazy Loading Pattern
 
-**componentLoader.ts:**
-```typescript
+**componentLoader.ts** (`src/core/utils/componentLoader.ts`):
+
+```
 export const componentLoader = {
-  Counter: () => import('../features/Counter/Counter'),
-  Notes: () => import('../features/Notes/Notes'),
+  Counter: () => import('~/features/Counter/Counter'),
+  Notes: () => import('~/features/Notes/Notes'),
 };
+// getLazyComponent(name) returns cached lazy components to avoid remounts
 ```
 
-**Desktop.tsx:**
-```typescript
-const LazyComponent = lazy(() => loader().then(module => ({
-  default: module.default as ComponentType
-})));
-```
+**ComponentLoader** (`src/shared/components/ComponentLoader/`) wraps lazy features in `Suspense`. Desktop uses it to render window content.
 
 ### ✅ Error Boundaries Per Window
 
@@ -124,19 +121,9 @@ Each window is wrapped in `ErrorBoundary` to isolate failures. A bug in one feat
 
 ### ✅ No Inline Functions in JSX (Use useCallback)
 
-**Bad:**
-```typescript
-<button onClick={() => dispatch(action())}>Click</button>
-```
+**Bad:** `onClick={() => dispatch(action())}` inline in JSX
 
-**Good:**
-```typescript
-const handleClick = useCallback(() => {
-  dispatch(action());
-}, [dispatch]);
-
-<button onClick={handleClick}>Click</button>
-```
+**Good:** Wrap in useCallback: `const handleClick = useCallback(() => dispatch(action()), [dispatch])` then pass to `onClick={handleClick}`.
 
 ---
 
@@ -148,11 +135,7 @@ Use `createSlice`, `PayloadAction`, `configureStore` - never write action creato
 
 ### ✅ Typed Hooks
 
-**app/hooks.ts:**
-```typescript
-export const useAppDispatch = () => useDispatch<AppDispatch>();
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
-```
+**src/core/hooks.ts:** Export `useAppDispatch` and `useAppSelector` typed hooks.
 
 ### ✅ Dynamic Reducer Injection
 
@@ -160,7 +143,7 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 1. Component loads → inject reducer
 2. Last window closes → remove reducer
 
-**Implementation:** See `useLazyLoadReducer.ts` and `reducerManager.ts`
+**Implementation:** See `src/core/hooks/useLazyLoadReducer.ts` and `src/core/utils/reducerManager.ts`
 
 ### ✅ Middleware for Side Effects
 
@@ -202,7 +185,7 @@ Each feature is a separate chunk loaded on-demand.
 ### ✅ Avoid Unnecessary Re-renders
 
 **Pattern:** Stable references for empty arrays/objects
-```typescript
+```
 const EMPTY_ARRAY: string[] = [];
 const items = useAppSelector(state => state.items ?? EMPTY_ARRAY);
 ```
@@ -213,7 +196,7 @@ const items = useAppSelector(state => state.items ?? EMPTY_ARRAY);
 
 ### ✅ Test Coverage
 
-**Current:** 93 unit tests + 49 E2E tests
+**Current:** 90+ unit tests + 49 E2E tests
 
 **Required:**
 - Unit tests for all reducers
@@ -223,59 +206,17 @@ const items = useAppSelector(state => state.items ?? EMPTY_ARRAY);
 
 ### ✅ Testing Library Best Practices
 
-**Use semantic queries:**
-```typescript
-// Good
-screen.getByRole('button', { name: /add counter/i });
+**Use semantic queries:** `screen.getByRole('button', { name: /add counter/i })` not `container.querySelector('.button')`
 
-// Bad
-container.querySelector('.button');
-```
-
-**Use userEvent over fireEvent:**
-```typescript
-import userEvent from '@testing-library/user-event';
-
-await userEvent.click(button);
-```
+**Use userEvent over fireEvent** for interactions.
 
 ### ✅ Test Organization
 
-**Pattern:**
-```typescript
-describe('ComponentName', () => {
-  it('renders correctly', () => { ... });
-  it('handles user interaction', () => { ... });
-  it('handles edge cases', () => { ... });
-});
-```
+**Pattern:** Use `describe` / `it` blocks with clear test names.
 
 ### ✅ E2E Testing Best Practice
 
-**Always verify element visibility before interaction** to ensure tests fail early with clear error messages:
-
-```typescript
-// ✅ Good - Verify visibility first
-test('should edit form fields', async ({ page }) => {
-  const nameInput = page.getByTestId('name-input');
-  const submitButton = page.getByTestId('submit-button');
-  
-  // Verify elements exist and are visible
-  await expect(nameInput).toBeVisible();
-  await expect(submitButton).toBeVisible();
-  
-  // Now safe to interact
-  await nameInput.fill('John');
-  await submitButton.click();
-});
-
-// ❌ Bad - Direct interaction without verification
-test('should edit form fields', async ({ page }) => {
-  const nameInput = page.getByTestId('name-input');
-  
-  await nameInput.fill('John'); // May timeout if element doesn't exist
-});
-```
+**Always verify element visibility before interaction** with `await expect(el).toBeVisible()` before interacting.
 
 **Benefits:**
 - Tests fail immediately if elements don't exist (not after timeout)
@@ -367,7 +308,7 @@ npm outdated
 
 ### ✅ Formatting Rules
 
-See [CODE_FORMATTING_GUIDE.md](./CODE_FORMATTING_GUIDE.md) for detailed rules.
+See `.prettierrc` and `docs/CONFIGURATION.md` for formatting rules.
 
 **Key principles:**
 - Blank line after variable declarations
@@ -429,9 +370,9 @@ npm run format
 ### ✅ Pre-commit Hooks
 
 **Enforced:**
-1. ESLint (auto-fix)
-2. Prettier (auto-format)
-3. Unit tests (must pass)
+1. lint-staged (Prettier on staged files)
+2. Full ESLint (`npm run lint`)
+3. Unit tests (`npm run test:unit`)
 
 **File:** `.husky/pre-commit`
 
@@ -490,58 +431,18 @@ npm run format
 
 ### ❌ Don't Use Magic Numbers
 
-**Bad:**
-```typescript
-if (width > 1200) { ... }
-```
-
-**Good:**
-```typescript
-if (width > LAYOUT_CONFIG.BREAKPOINTS.lg) { ... }
-```
+**Bad:** `if (width > 1200)`  
+**Good:** `if (width > LAYOUT_CONFIG.BREAKPOINTS.lg)`
 
 ### ❌ Don't Hardcode Strings
 
-**Bad:**
-```typescript
-<button>Add Counter</button>
-```
-
-**Good:**
-```typescript
-<button>{APP_STRINGS.ADD_COUNTER_BUTTON}</button>
-```
+**Bad:** `<button>Add Counter</button>`  
+**Good:** `{APP_STRINGS.ADD_COUNTER_BUTTON}`
 
 ### ❌ Don't Mix Side Effects in Reducers
 
-**Bad:**
-```typescript
-reducers: {
-  addWindow: (state, action) => {
-    state.windows.push(action.payload);
-    localStorage.setItem('windows', JSON.stringify(state.windows)); // ❌
-  }
-}
-```
-
-**Good:**
-```typescript
-// Reducer stays pure
-reducers: {
-  addWindow: (state, action) => {
-    state.windows.push(action.payload);
-  }
-}
-
-// Middleware handles side effects
-export const middleware = store => next => action => {
-  const result = next(action);
-  if (addWindow.match(action)) {
-    localStorage.setItem('windows', JSON.stringify(store.getState().windows));
-  }
-  return result;
-};
-```
+**Bad:** Put `localStorage.setItem` inside the reducer  
+**Good:** Keep reducer pure; handle persistence in middleware
 
 ### ❌ Don't Forget Middleware Registration
 
@@ -553,22 +454,15 @@ Use `useCallback` for stable references.
 
 ### ❌ Don't Use Index as Key
 
-**Bad:**
-```typescript
-{items.map((item, index) => <div key={index}>{item}</div>)}
-```
-
-**Good:**
-```typescript
-{items.map(item => <div key={item.id}>{item}</div>)}
-```
+**Bad:** `key={index}`  
+**Good:** `key={item.id}`
 
 ---
 
 ## Checklist for New Features
 
 - [ ] Component in `src/features/YourFeature/`
-- [ ] Entry in `componentLoader.ts`
+- [ ] Entry in `src/core/utils/componentLoader.ts`
 - [ ] Constants in `constants.ts`
 - [ ] Button in `Header.tsx` with `useCallback`
 - [ ] Unit tests (`YourFeature.test.tsx`)
@@ -629,7 +523,7 @@ Before submitting a PR:
 
 **Current Status**: Centralized test IDs in `testSelectors.ts`
 
-All `data-testid` values are defined in a single source of truth (`src/testSelectors.ts`), making tests maintainable and refactor-friendly.
+All `data-testid` values are defined in a single source of truth (`src/shared/testSelectors.ts`), making tests maintainable and refactor-friendly.
 
 ### Benefits
 
@@ -640,43 +534,16 @@ All `data-testid` values are defined in a single source of truth (`src/testSelec
 
 ### Good Example
 
-```typescript
-// src/testSelectors.ts
-export const TEST_SELECTORS = {
-  FORM_EDITOR: 'form-editor',
-  FORM_FIELD_PREFIX: 'form-field-',
-} as const;
+**testSelectors.ts:** Export `TEST_SELECTORS` object and `getFormFieldTestId(fieldName)` helper.
 
-export const getFormFieldTestId = (fieldName: string): string => {
-  return `${TEST_SELECTORS.FORM_FIELD_PREFIX}${fieldName}`;
-};
+**Component:** Use `TEST_SELECTORS.FORM_EDITOR` and `getFormFieldTestId('firstName')` for `data-testid`.
 
-// Component
-import { TEST_SELECTORS, getFormFieldTestId } from '../../testSelectors';
-
-<form data-testid={TEST_SELECTORS.FORM_EDITOR}>
-  <input data-testid={getFormFieldTestId('firstName')} />
-</form>
-
-// E2E Test
-import { TEST_SELECTORS, getFormFieldTestId } from '../src/testSelectors';
-
-await page.getByTestId(TEST_SELECTORS.FORM_EDITOR).click();
-await page.getByTestId(getFormFieldTestId('firstName')).fill('Jane');
-```
+**E2E test:** Import from `~/shared/testSelectors` and use the same constants.
 
 ### Bad Example
 
-```typescript
-// Hardcoded strings scattered across components
-<form data-testid="form-editor">
-  <input data-testid="form-field-firstName" />
-</form>
-
-// Hardcoded strings in tests
-await page.getByTestId('form-editor').click();
-await page.getByTestId('form-field-firstName').fill('Jane');
-```
+**Component:** hardcoded `data-testid="form-editor"`  
+**E2E test:** hardcoded `'form-editor'`, `'form-field-firstName'`
 
 ---
 
@@ -685,8 +552,8 @@ await page.getByTestId('form-field-firstName').fill('Jane');
 This project follows industry best practices:
 
 1. **Type Safety:** Strict TypeScript with minimal `any` usage
-2. **Performance:** Lazy loading, memoization, code splitting
-3. **Testing:** 91 unit tests + 34 E2E tests with excellent coverage
+2. **Performance:** Lazy loading, memoization, code splitting, cached lazy components
+3. **Testing:** 90+ unit tests + 49 E2E tests with excellent coverage
 4. **Accessibility:** ARIA attributes, keyboard navigation
 5. **Security:** No dangerous patterns, dependencies audited
 6. **Code Quality:** Prettier + ESLint + pre-commit hooks

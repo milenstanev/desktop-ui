@@ -14,14 +14,19 @@ interface CounterProps {
 }
 
 const Counter: React.FC<CounterProps> = ({ lazyLoadReducerName }) => {
+  //region states
+  const value = useAppSelector(
+    (state: RootState) => state[lazyLoadReducerName]?.value || 0
+  );
+  //endregion
+
+  //region hooks
   useLazyLoadReducer({
     lazyLoadReducerName,
     featureReducer,
   });
   const dispatch = useAppDispatch();
-  const value = useAppSelector(
-    (state: RootState) => state[lazyLoadReducerName]?.value || 0
-  );
+  //endregion
 
   return (
     <div

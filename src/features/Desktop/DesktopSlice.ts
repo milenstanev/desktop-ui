@@ -17,7 +17,7 @@ import { safeParseJson } from '~/shared/utils/storage';
  * IMPORTANT: Persistence to localStorage
  * ========================================
  * Any action that modifies `desktopWindows` or `layouts` MUST be registered
- * in `src/middleware/desktopStorageMiddleware.ts` to ensure the state is
+ * in `src/core/middleware/desktopStorageMiddleware.ts` to ensure the state is
  * persisted to localStorage.
  *
  * When adding a new action:
@@ -26,7 +26,7 @@ import { safeParseJson } from '~/shared/utils/storage';
  * 3. Add `yourAction.match(action) ||` to the middleware's if condition
  *
  * Example:
- *   import { yourAction } from '../components/Desktop/DesktopSlice';
+ *   import { yourAction } from '~/features/Desktop/DesktopSlice';
  *
  *   if (
  *     removeWindow.match(action) ||

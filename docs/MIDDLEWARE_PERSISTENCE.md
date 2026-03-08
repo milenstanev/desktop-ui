@@ -10,42 +10,10 @@ The application uses Redux middleware to persist Desktop state (windows and layo
 
 ### 1. Middleware Pattern
 
-The `desktopStorageMiddleware` listens for specific Redux actions and persists state to localStorage when they occur:
+The `desktopStorageMiddleware` listens for specific Redux actions:
 
-```typescript
-// src/middleware/desktopStorageMiddleware.ts
-export const desktopStorageMiddleware: Middleware<object, RootState> =
-  (store) => (next) => (action) => {
-    const result = next(action);
-
-    if (
-      removeWindow.match(action) ||
-      addWindow.match(action) ||
-      updateLayouts.match(action) ||
-      resetLayouts.match(action) ||
-      removeAllWindows.match(action) ||
-      organizeGrid.match(action)
-    ) {
-      const state = store.getState();
-      const { desktopWindows, layouts } = state.Desktop;
-
-      try {
-        localStorage.setItem(
-          LOCAL_STORAGE_DESKTOP_KEY,
-          JSON.stringify(desktopWindows)
-        );
-        localStorage.setItem(
-          LOCAL_STORAGE_LAYOUT_KEY,
-          JSON.stringify(layouts)
-        );
-      } catch {
-        console.warn(MIDDLEWARE_STRINGS.PERSIST_ERROR);
-      }
-    }
-
-    return result;
-  };
-```
+- **Most actions** (addWindow, removeWindow, updateLayouts, resetLayouts, organizeGrid): persist state to localStorage via `localStorage.setItem()`.
+- **removeAllWindows** (Close All button): completely removes the Desktop keys from localStorage via `localStorage.removeItem()`. This provides a full reset so that on next load the app treats it as a first visit (e.g. shows `INITIAL_STATE_CONFIG` windows if configured).
 
 ### 2. Action Registration
 
@@ -57,8 +25,8 @@ The middleware uses action matchers (`action.match()`) to determine if an action
 
 **1. Create the action in DesktopSlice**
 
-```typescript
-// src/components/Desktop/DesktopSlice.ts
+```
+// src/features/Desktop/DesktopSlice.ts
 const DesktopSlice = createSlice({
   name: 'Desktop',
   initialState,
@@ -79,8 +47,8 @@ export const { minimizeWindow } = DesktopSlice.actions;
 
 **2. Import the action in middleware**
 
-```typescript
-// src/middleware/desktopStorageMiddleware.ts
+```
+// src/core/middleware/desktopStorageMiddleware.ts
 import {
   removeWindow,
   addWindow,
@@ -89,22 +57,21 @@ import {
   removeAllWindows,
   organizeGrid,
   minimizeWindow, // ← Add your import
-} from '../components/Desktop/DesktopSlice';
+} from '~/features/Desktop/DesktopSlice';
 ```
 
 **3. Register in the if condition**
 
-```typescript
+```
 if (
   removeWindow.match(action) ||
   addWindow.match(action) ||
   updateLayouts.match(action) ||
   resetLayouts.match(action) ||
-  removeAllWindows.match(action) ||
   organizeGrid.match(action) ||
-  minimizeWindow.match(action) // ← Add your matcher
+  minimizeWindow.match(action) // ← Add your matcher (modifying actions only; removeAllWindows has its own branch)
 ) {
-  // Persist to localStorage
+  // Persist via setItem
 }
 ```
 
@@ -125,34 +92,17 @@ If you don't register an action in the middleware:
 | `updateLayouts` | Updates window positions/sizes | `layouts` |
 | `resetLayouts` | Resets all layouts to defaults | `layouts` |
 | `organizeGrid` | Organizes windows in grid | `layouts` |
-| `removeAllWindows` | Clears all windows | `desktopWindows`, `layouts` |
+| `removeAllWindows` | Removes Desktop keys from localStorage (full reset) | N/A (keys removed) |
 
 ## Actions That DON'T Need Registration
 
 Actions that only modify `focusedWindowId` do NOT need registration because focus is not persisted:
 
-```typescript
-// This action does NOT need middleware registration
-setFocus: (state, action: PayloadAction<string | null>) => {
-  state.focusedWindowId = action.payload; // Only modifies focus
-},
-```
+Actions that only modify focus (e.g. `setFocus`) do not need middleware registration.
 
 ## Testing Persistence
 
-When adding a new action, add a test in `desktopStorageMiddleware.test.ts`:
-
-```typescript
-it('persists when yourAction is dispatched', () => {
-  store.dispatch(yourAction(payload));
-
-  const savedData = localStorage.getItem(LOCAL_STORAGE_DESKTOP_KEY);
-  expect(savedData).toBeTruthy();
-  
-  const data = JSON.parse(savedData!);
-  // Assert expected state
-});
-```
+When adding a new action, add a test in `desktopStorageMiddleware.test.ts` that dispatches the action and asserts `localStorage` contains the updated state.
 
 ## Checklist for New Actions
 
@@ -167,34 +117,13 @@ When adding a new Desktop action:
 ## Common Mistakes
 
 ### ❌ Mistake 1: Forgetting to Import
-
-```typescript
-// BAD: Action not imported
-if (
-  removeWindow.match(action) ||
-  yourAction.match(action) // ← Error: yourAction is not defined
-) {
-```
+Import the action before using it in the matcher.
 
 ### ❌ Mistake 2: Wrong Import Path
-
-```typescript
-// BAD: Importing from wrong file
-import { yourAction } from './DesktopSlice'; // ← Wrong path
-```
+Use `~/features/Desktop/DesktopSlice` not a relative path.
 
 ### ❌ Mistake 3: Not Adding to If Condition
-
-```typescript
-// BAD: Action imported but not registered
-import { yourAction } from '../components/Desktop/DesktopSlice';
-
-if (
-  removeWindow.match(action) ||
-  addWindow.match(action)
-  // ← Missing: yourAction.match(action) ||
-) {
-```
+Add `yourAction.match(action)` to the middleware's if condition.
 
 ## Best Practices
 
@@ -206,10 +135,10 @@ if (
 
 ## Related Files
 
-- `src/middleware/desktopStorageMiddleware.ts` - The middleware implementation
-- `src/middleware/desktopStorageMiddleware.test.ts` - Middleware tests
-- `src/components/Desktop/DesktopSlice.ts` - Desktop actions
-- `src/components/Desktop/config.ts` - localStorage keys
+- `src/core/middleware/desktopStorageMiddleware.ts` - The middleware implementation
+- `src/core/middleware/desktopStorageMiddleware.test.ts` - Middleware tests
+- `src/features/Desktop/DesktopSlice.ts` - Desktop actions
+- `src/features/Desktop/config.ts` - localStorage keys
 
 ## Questions?
 
