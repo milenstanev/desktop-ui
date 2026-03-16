@@ -1,8 +1,17 @@
 const path = require('path');
+const webpack = require('webpack');
 const { GenerateSW } = require('workbox-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
+const packageJson = require('./package.json');
+
 module.exports = function override(config, env) {
+  // Required for Module Federation and correct asset loading when served at root
+  config.output = {
+    ...config.output,
+    publicPath: process.env.NODE_ENV === 'production' ? '/' : config.output?.publicPath,
+  };
+
   // Add alias for absolute imports
   config.resolve = {
     ...config.resolve,
@@ -11,6 +20,48 @@ module.exports = function override(config, env) {
       '~': path.resolve(__dirname, 'src'),
     },
   };
+
+  // Module Federation: host (consumes remotes) + remote (exposes modules)
+  config.plugins.push(
+    new webpack.container.ModuleFederationPlugin({
+      name: 'desktopUI',
+      filename: 'remoteEntry.js',
+      remotes: {},
+      exposes: {
+        './App': './src/app/App',
+        './Counter': './src/features/Counter/Counter',
+        './Notes': './src/features/Notes/Notes',
+        './Desktop': './src/features/Desktop/Desktop',
+      },
+      shared: {
+        react: {
+          singleton: true,
+          requiredVersion: packageJson.dependencies.react,
+          strictVersion: false,
+        },
+        'react-dom': {
+          singleton: true,
+          requiredVersion: packageJson.dependencies['react-dom'],
+          strictVersion: false,
+        },
+        'react/jsx-runtime': {
+          singleton: true,
+          requiredVersion: packageJson.dependencies.react,
+          strictVersion: false,
+        },
+        'react-redux': {
+          singleton: true,
+          requiredVersion: packageJson.dependencies['react-redux'],
+          strictVersion: false,
+        },
+        '@reduxjs/toolkit': {
+          singleton: true,
+          requiredVersion: packageJson.dependencies['@reduxjs/toolkit'],
+          strictVersion: false,
+        },
+      },
+    })
+  );
 
   // Add Workbox service worker plugin for production
   if (env === 'production') {

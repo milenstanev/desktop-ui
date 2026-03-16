@@ -36,7 +36,12 @@
     "type-check": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
     "eject": "react-scripts eject",
-    "prepare": "husky"
+    "prepare": "husky",
+    "host:start": "cd host && npm run start",
+    "host:build": "cd host && npm run build",
+    "analytics:start": "cd src/features/remotes/analytics && npm run start",
+    "analytics:build": "cd src/features/remotes/analytics && npm run build",
+    "mf:demo": "npm run build && npx serve -s build -l 3000"
   },
   "eslintConfig": {
     "extends": [

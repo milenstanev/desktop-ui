@@ -40,7 +40,8 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'npx serve -s build -l 3000',
+    command:
+      'npx serve -s build -l 3000 & (cd src/features/remotes/analytics && npm run start)',
     port: 3000,
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,
