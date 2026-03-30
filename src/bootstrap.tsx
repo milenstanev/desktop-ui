@@ -3,16 +3,12 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './app/App';
 import reportWebVitals from './reportWebVitals';
-import {
-  initGoogleAnalytics,
-  sendGAEvent,
-} from './core/analytics/googleAnalytics';
+import { sendGAEvent } from './core/analytics/googleAnalytics';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
-initGoogleAnalytics();
 
 root.render(
   <React.StrictMode>
