@@ -3,11 +3,17 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './app/App';
 import reportWebVitals from './reportWebVitals';
+import {
+  initGoogleAnalytics,
+  sendGAEvent,
+} from './core/analytics/googleAnalytics';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+initGoogleAnalytics();
+
 root.render(
   <React.StrictMode>
     <App />
@@ -44,6 +50,14 @@ reportWebVitals((metric) => {
       value: metric.value,
       delta: metric.delta,
       id: metric.id,
+    });
+  }
+
+  if (process.env.NODE_ENV === 'production') {
+    sendGAEvent(metric.name, {
+      value: Math.round(metric.value),
+      event_label: metric.id,
+      non_interaction: true,
     });
   }
 });
