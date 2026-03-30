@@ -6,10 +6,11 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const packageJson = require('./package.json');
 
 module.exports = function override(config, env) {
-  // Required for Module Federation and correct asset loading when served at root
+  // Module Federation remotes need runtime asset resolution so chunks load from
+  // the remote origin even when consumed by a different host domain.
   config.output = {
     ...config.output,
-    publicPath: process.env.NODE_ENV === 'production' ? '/' : config.output?.publicPath,
+    publicPath: 'auto',
   };
 
   // Add alias for absolute imports
