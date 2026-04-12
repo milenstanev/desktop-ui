@@ -118,10 +118,24 @@ export async function loadRemoteFeature(
     | undefined;
 
   if (!container?.init || !container?.get) {
+    const availableContainerGlobals = Object.keys(
+      window as unknown as Record<string, unknown>
+    )
+      .filter((key) => /^[a-zA-Z_$][\w$]*$/.test(key))
+      .filter(
+        (key) =>
+          ['desktopUI', 'analytics', 'host'].includes(key) ||
+          key.toLowerCase().includes('remote')
+      )
+      .slice(0, 10);
+
     throw new Error(
       `Remote "${remoteName}" container not found. Tried: ${config.entryUrls.join(
         ', '
-      )}. Ensure one URL serves a valid remoteEntry.js that exposes "${remoteName}".`
+      )}. Ensure one URL serves a valid remoteEntry.js that exposes "${remoteName}".` +
+        (availableContainerGlobals.length
+          ? ` Available container-like globals: ${availableContainerGlobals.join(', ')}.`
+          : '')
     );
   }
 
