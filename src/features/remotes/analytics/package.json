@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "webpack serve --mode development --port 3002",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "build:vercel": "npm run build && test -f dist/remoteEntry.js"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.6",

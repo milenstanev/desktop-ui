@@ -20,3 +20,19 @@ npm run build
 ```
 
 Output in `dist/`. Deploy `dist/` and configure Desktop UI with `REACT_APP_ANALYTICS_REMOTE_URL` pointing to the deployed URL.
+
+## Vercel Deploy
+
+From repo root:
+
+```bash
+npm run analytics:deploy:vercel
+```
+
+Preview deploy:
+
+```bash
+npm run analytics:deploy:vercel:preview
+```
+
+The Vercel build validates that `dist/remoteEntry.js` exists before completing deployment.

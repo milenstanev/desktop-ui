@@ -44,6 +44,8 @@
     "host:deploy:vercel:preview": "./scripts/deploy-host-vercel.sh --preview",
     "analytics:start": "cd src/features/remotes/analytics && npm run start",
     "analytics:build": "cd src/features/remotes/analytics && npm run build",
+    "analytics:deploy:vercel": "./scripts/deploy-analytics-vercel.sh",
+    "analytics:deploy:vercel:preview": "./scripts/deploy-analytics-vercel.sh --preview",
     "mf:demo": "npm run build && npx serve -s build -l 3000"
   },
   "eslintConfig": {
