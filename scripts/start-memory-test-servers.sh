@@ -5,6 +5,7 @@ set -euo pipefail
 # Main app: port 3000, Analytics: port 3002
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+ANALYTICS_DIR="$ROOT_DIR/src/features/remotes/analytics"
 cd "$ROOT_DIR"
 
 cleanup() {
@@ -23,6 +24,12 @@ trap cleanup EXIT INT TERM
 if [[ ! -d build ]]; then
   echo "build/ not found. Running npm run build..."
   npm run build
+fi
+
+# Ensure analytics remote dependencies exist (CI runners only install root deps by default).
+if [[ ! -x "$ANALYTICS_DIR/node_modules/.bin/webpack" ]]; then
+  echo "analytics remote dependencies missing. Running npm ci in $ANALYTICS_DIR..."
+  npm ci --prefix "$ANALYTICS_DIR" --no-audit --no-fund
 fi
 
 npx serve -s build -l 3000 &
