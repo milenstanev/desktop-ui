@@ -17,13 +17,25 @@ export interface RemoteConfig {
   entryUrl: string;
 }
 
+function getAnalyticsRemoteBaseUrl(): string {
+  const configured = process.env.REACT_APP_ANALYTICS_REMOTE_URL;
+  if (configured) {
+    return configured.replace(/\/$/, '');
+  }
+
+  // In production, default to microfrontend route on same origin.
+  if (process.env.NODE_ENV === 'production') {
+    return `${window.location.origin}/remote`;
+  }
+
+  return 'http://localhost:3002';
+}
+
 const REMOTES: Record<string, RemoteConfig> = {
   analytics: {
     name: 'analytics',
-    url: process.env.REACT_APP_ANALYTICS_REMOTE_URL || 'http://localhost:3002',
-    entryUrl:
-      (process.env.REACT_APP_ANALYTICS_REMOTE_URL || 'http://localhost:3002') +
-      '/remoteEntry.js',
+    url: getAnalyticsRemoteBaseUrl(),
+    entryUrl: `${getAnalyticsRemoteBaseUrl()}/remoteEntry.js`,
   },
 };
 
