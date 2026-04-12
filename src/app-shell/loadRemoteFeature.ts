@@ -14,7 +14,7 @@ import { store } from '~/core/store';
 export interface RemoteConfig {
   name: string;
   url: string;
-  entryUrl: string;
+  entryUrls: string[];
 }
 
 function getAnalyticsRemoteBaseUrl(): string {
@@ -23,19 +23,47 @@ function getAnalyticsRemoteBaseUrl(): string {
     return configured.replace(/\/$/, '');
   }
 
-  // In production, default to microfrontend route on same origin.
+  // In production, default to same-origin deployment.
+  // The loader will also try a "/remote" variant for Vercel microfrontends.
   if (process.env.NODE_ENV === 'production') {
-    return `${window.location.origin}/remote`;
+    return `${window.location.origin}`;
   }
 
   return 'http://localhost:3002';
+}
+
+function buildRemoteEntryUrls(baseUrl: string): string[] {
+  const resolved = new URL(baseUrl, window.location.origin);
+  const basePath = resolved.pathname.replace(/\/+$/, '');
+
+  const toEntryUrl = (path: string): string => {
+    const normalizedPath = path.replace(/\/+$/, '');
+    return normalizedPath
+      ? `${resolved.origin}${normalizedPath}/remoteEntry.js`
+      : `${resolved.origin}/remoteEntry.js`;
+  };
+
+  const candidates: string[] = [];
+  candidates.push(toEntryUrl(basePath));
+
+  if (basePath.endsWith('/remote')) {
+    const rootPath = basePath.slice(0, -'/remote'.length);
+    candidates.push(toEntryUrl(rootPath));
+  } else {
+    candidates.push(toEntryUrl(`${basePath}/remote`));
+  }
+
+  // Always keep pure origin as final fallback.
+  candidates.push(toEntryUrl(''));
+
+  return Array.from(new Set(candidates));
 }
 
 const REMOTES: Record<string, RemoteConfig> = {
   analytics: {
     name: 'analytics',
     url: getAnalyticsRemoteBaseUrl(),
-    entryUrl: `${getAnalyticsRemoteBaseUrl()}/remoteEntry.js`,
+    entryUrls: buildRemoteEntryUrls(getAnalyticsRemoteBaseUrl()),
   },
 };
 
@@ -66,7 +94,19 @@ export async function loadRemoteFeature(
     throw new Error(`Unknown remote: ${remoteName}`);
   }
 
-  await loadScript(config.entryUrl);
+  let loadError: Error | null = null;
+  for (const entryUrl of config.entryUrls) {
+    try {
+      await loadScript(entryUrl);
+      loadError = null;
+      break;
+    } catch (error) {
+      loadError = error instanceof Error ? error : new Error(String(error));
+    }
+  }
+  if (loadError) {
+    throw loadError;
+  }
 
   const container = (window as unknown as Record<string, unknown>)[
     remoteName
@@ -79,7 +119,9 @@ export async function loadRemoteFeature(
 
   if (!container?.init || !container?.get) {
     throw new Error(
-      `Remote "${remoteName}" container not found. Ensure ${config.entryUrl} is served and exposes the container.`
+      `Remote "${remoteName}" container not found. Tried: ${config.entryUrls.join(
+        ', '
+      )}. Ensure one URL serves a valid remoteEntry.js that exposes "${remoteName}".`
     );
   }
 
