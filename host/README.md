@@ -19,3 +19,18 @@ Minimal host application that consumes the desktop-ui remote via Webpack Module 
 ## Environment
 
 - `REMOTE_URL` — override remote entry URL (default: `http://localhost:3000`)
+- You can set it in `host/.env`, `host/.env.development`, or `host/.env.production`.
+
+## Vercel Deploy (Host)
+
+From repo root:
+
+```bash
+npm run host:deploy:vercel -- --remote-url https://desktop-ui.vercel.app
+```
+
+Preview deploy:
+
+```bash
+npm run host:deploy:vercel:preview -- --remote-url https://desktop-ui.vercel.app
+```
