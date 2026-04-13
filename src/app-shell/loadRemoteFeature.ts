@@ -23,6 +23,14 @@ function getAnalyticsRemoteBaseUrl(): string {
     return configured.replace(/\/$/, '');
   }
 
+  const isLocalHost =
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname === '[::1]';
+  if (isLocalHost) {
+    return 'http://localhost:3002';
+  }
+
   // In production, default to same-origin deployment.
   // The loader will also try a "/remote" variant for Vercel microfrontends.
   if (process.env.NODE_ENV === 'production') {
