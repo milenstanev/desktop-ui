@@ -67,6 +67,8 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Build app
+        env:
+          REACT_APP_ANALYTICS_REMOTE_URL: http://localhost:3002
         run: npm run build
 
       - name: Run Playwright tests
