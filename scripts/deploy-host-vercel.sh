@@ -50,8 +50,9 @@ fi
 echo "Deploying host with REMOTE_URL=$REMOTE_URL"
 
 cd "$HOST_DIR"
+BUILD_ENV="REMOTE_URL=$REMOTE_URL,DESKTOP_UI_REMOTE_URL=$REMOTE_URL"
 if [[ "$DEPLOY_MODE" == "prod" ]]; then
-  vercel deploy --prod --yes --build-env "REMOTE_URL=$REMOTE_URL"
+  vercel deploy --prod --yes --build-env "$BUILD_ENV"
 else
-  vercel deploy --yes --build-env "REMOTE_URL=$REMOTE_URL"
+  vercel deploy --yes --build-env "$BUILD_ENV"
 fi

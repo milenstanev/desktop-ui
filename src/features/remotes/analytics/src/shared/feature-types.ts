@@ -3,6 +3,7 @@
  * Keeps analytics remote self-contained.
  */
 import type { ComponentType } from 'react';
+import type { Reducer } from '@reduxjs/toolkit';
 
 export interface RemoteWindowProps {
   windowId: string;
@@ -12,7 +13,7 @@ export interface RemoteWindowProps {
 
 export interface FeatureReducerSpec {
   name: string;
-  reducer: unknown;
+  reducer: Reducer;
 }
 
 export interface FeatureModule {

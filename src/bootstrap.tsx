@@ -3,7 +3,10 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './app/App';
 import reportWebVitals from './reportWebVitals';
-import { sendGAEvent } from './core/analytics/googleAnalytics';
+import {
+  initGoogleAnalytics,
+  sendGAEvent,
+} from './core/analytics/googleAnalytics';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 const root = ReactDOM.createRoot(
@@ -15,6 +18,8 @@ root.render(
     <App />
   </React.StrictMode>
 );
+
+initGoogleAnalytics();
 
 // Register service worker for PWA capabilities
 const enablePWA =

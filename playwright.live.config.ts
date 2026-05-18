@@ -2,8 +2,11 @@ import { defineConfig, devices } from '@playwright/test';
 
 /**
  * Playwright configuration for testing live/running application
- * Use this when testing against http://192.168.1.5:3000/
+ * Use this when testing against an already running app instance.
  */
+const LIVE_BASE_URL =
+  process.env.PLAYWRIGHT_LIVE_BASE_URL ?? 'http://192.168.1.5:3000';
+
 export default defineConfig({
   testDir: './tests',
   testMatch: '**/live-*.spec.ts', // Match live-ui-test.spec.ts and live-diagnostic.spec.ts
@@ -21,7 +24,7 @@ export default defineConfig({
   reporter: 'list',
 
   use: {
-    baseURL: 'http://192.168.1.5:3000',
+    baseURL: LIVE_BASE_URL,
     headless: true,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',

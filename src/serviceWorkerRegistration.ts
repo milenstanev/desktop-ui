@@ -19,7 +19,11 @@ type Config = {
 };
 
 export function register(config?: Config) {
-  if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+  const shouldRegister =
+    process.env.NODE_ENV === 'production' ||
+    process.env.REACT_APP_ENABLE_PWA === 'true';
+
+  if (shouldRegister && 'serviceWorker' in navigator) {
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
     if (publicUrl.origin !== window.location.origin) {
       return;

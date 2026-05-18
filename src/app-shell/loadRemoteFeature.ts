@@ -7,14 +7,68 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as ReactJsxRuntime from 'react/jsx-runtime';
-import { registerFeature } from '~/core/feature-registry';
+import {
+  getFeature,
+  hasFeature,
+  registerFeature,
+} from '~/core/feature-registry';
 import type { FeatureModule } from '~/core/feature-types';
-import { store } from '~/core/store';
+import { lazyLoadReducer } from '~/core/utils/lazyLoadReducer';
+import { store, type StoreWithReducerManager } from '~/core/store';
 
 export interface RemoteConfig {
   name: string;
   url: string;
   entryUrls: string[];
+}
+
+type ShareScope = Record<string, Record<string, unknown>>;
+
+type ModuleFederationContainer = {
+  init: (scope: unknown) => Promise<void>;
+  get: (module: string) => Promise<() => { default: unknown }>;
+};
+
+const remoteLoadCache = new Map<string, Promise<FeatureModule>>();
+const initializedContainers = new WeakSet<ModuleFederationContainer>();
+
+function isFeatureModule(value: unknown): value is FeatureModule {
+  if (value == null || typeof value !== 'object') {
+    return false;
+  }
+  const candidate = value as Partial<FeatureModule>;
+  return (
+    typeof candidate.name === 'string' &&
+    typeof candidate.displayName === 'string' &&
+    typeof candidate.component === 'function'
+  );
+}
+
+function ensureSharedSingleton(
+  scope: ShareScope,
+  moduleKey: string,
+  moduleValue: unknown,
+  version: string
+): void {
+  if (scope[moduleKey]) {
+    return;
+  }
+
+  scope[moduleKey] = {
+    [version]: {
+      get: () => Promise.resolve(() => moduleValue),
+      loaded: 1,
+      from: 'desktopUI',
+    },
+  };
+}
+
+function getReactDomVersion(): string {
+  const version = (ReactDOM as unknown as { version?: string }).version;
+  if (typeof version === 'string' && version.trim()) {
+    return version;
+  }
+  return React.version;
 }
 
 function getAnalyticsRemoteBaseUrl(): string {
@@ -97,6 +151,32 @@ function loadScript(src: string): Promise<void> {
 export async function loadRemoteFeature(
   remoteName: string
 ): Promise<FeatureModule> {
+  const existingFeature = hasFeature(remoteName)
+    ? getFeature(remoteName)
+    : null;
+  if (existingFeature) {
+    return existingFeature;
+  }
+
+  const cached = remoteLoadCache.get(remoteName);
+  if (cached) {
+    return cached;
+  }
+
+  const loadPromise = loadRemoteFeatureInternal(remoteName);
+  remoteLoadCache.set(remoteName, loadPromise);
+
+  try {
+    return await loadPromise;
+  } catch (error) {
+    remoteLoadCache.delete(remoteName);
+    throw error;
+  }
+}
+
+async function loadRemoteFeatureInternal(
+  remoteName: string
+): Promise<FeatureModule> {
   const config = REMOTES[remoteName];
   if (!config) {
     throw new Error(`Unknown remote: ${remoteName}`);
@@ -118,12 +198,7 @@ export async function loadRemoteFeature(
 
   const container = (window as unknown as Record<string, unknown>)[
     remoteName
-  ] as
-    | {
-        init: (scope: unknown) => Promise<void>;
-        get: (module: string) => Promise<() => { default: FeatureModule }>;
-      }
-    | undefined;
+  ] as ModuleFederationContainer | undefined;
 
   if (!container?.init || !container?.get) {
     const availableContainerGlobals = Object.keys(
@@ -150,7 +225,7 @@ export async function loadRemoteFeature(
   const win = window as Window & {
     __webpack_init_sharing__?: (scope: string) => Promise<void>;
     __webpack_share_scopes__?: {
-      default: Record<string, Record<string, unknown>>;
+      default: ShareScope;
     };
   };
   if (typeof win.__webpack_init_sharing__ === 'function') {
@@ -158,58 +233,45 @@ export async function loadRemoteFeature(
   }
 
   const scope = win.__webpack_share_scopes__?.default ?? {};
-  const ensureReactInScope = () => {
-    if (!scope.react) {
-      scope.react = {
-        '18.3.1': {
-          get: () => Promise.resolve(() => React),
-          loaded: 1,
-          from: 'desktopUI',
-        },
-      };
-    }
-    if (!scope['react-dom']) {
-      scope['react-dom'] = {
-        '18.3.1': {
-          get: () => Promise.resolve(() => ReactDOM),
-          loaded: 1,
-          from: 'desktopUI',
-        },
-      };
-    }
-    if (!scope['react/jsx-runtime']) {
-      scope['react/jsx-runtime'] = {
-        '18.3.1': {
-          get: () => Promise.resolve(() => ReactJsxRuntime),
-          loaded: 1,
-          from: 'desktopUI',
-        },
-      };
-    }
-  };
-  ensureReactInScope();
-  await container.init(scope);
+  ensureSharedSingleton(scope, 'react', React, React.version);
+  ensureSharedSingleton(scope, 'react-dom', ReactDOM, getReactDomVersion());
+  ensureSharedSingleton(
+    scope,
+    'react/jsx-runtime',
+    ReactJsxRuntime,
+    React.version
+  );
+
+  if (!initializedContainers.has(container)) {
+    await container.init(scope);
+    initializedContainers.add(container);
+  }
 
   const factory = await container.get('./Feature');
   const mod = factory();
-  const feature = mod.default;
-
-  if (!feature?.name || !feature?.component) {
+  if (!isFeatureModule(mod.default)) {
     throw new Error(`Invalid FeatureModule from remote "${remoteName}"`);
   }
+  const feature = mod.default;
 
   registerFeature(feature);
 
   if (feature.reducer) {
-    const storeWithManager = store as typeof store & {
-      reducerManager?: { add: (key: string, reducer: unknown) => void };
-    };
-    if (storeWithManager.reducerManager) {
-      storeWithManager.reducerManager.add(
-        feature.reducer!.name,
-        feature.reducer!.reducer
+    const appStore = store as StoreWithReducerManager;
+    const reducerMap = appStore.reducerManager.getReducerMap();
+    const existingReducer = reducerMap[feature.reducer.name];
+
+    if (
+      existingReducer &&
+      existingReducer !== feature.reducer.reducer &&
+      process.env.NODE_ENV !== 'production'
+    ) {
+      console.warn(
+        `Reducer "${feature.reducer.name}" already exists with a different implementation. Keeping existing reducer.`
       );
     }
+
+    lazyLoadReducer(appStore, feature.reducer.name, feature.reducer.reducer);
   }
 
   if (feature.init) {

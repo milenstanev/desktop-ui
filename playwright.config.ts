@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  grepInvert: /@memory/,
+  grepInvert: /@memory|@live/,
   testMatch: [
     'tests/**/*.spec.ts', // Core/integration tests at root
     'src/**/__tests__/e2e/**/*.spec.ts', // Feature-specific E2E tests

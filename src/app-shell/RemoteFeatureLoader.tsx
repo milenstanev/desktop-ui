@@ -13,6 +13,7 @@ const RemoteFeatureLoader: React.FC<RemoteFeatureLoaderProps> = ({
   remoteFeatureName,
   windowId,
   windowName,
+  lazyLoadReducerName,
 }) => {
   const feature = getFeature(remoteFeatureName);
 
@@ -31,7 +32,7 @@ const RemoteFeatureLoader: React.FC<RemoteFeatureLoaderProps> = ({
       <Component
         windowId={windowId}
         windowName={windowName}
-        lazyLoadReducerName={undefined}
+        lazyLoadReducerName={lazyLoadReducerName}
       />
     </Suspense>
   );

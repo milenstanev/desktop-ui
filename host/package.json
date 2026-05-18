@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "start": "webpack serve --mode development --port 3001",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "build:vercel": "webpack --mode production",
+    "check": "npm run build"
   },
   "dependencies": {
     "react": "^18.3.1",

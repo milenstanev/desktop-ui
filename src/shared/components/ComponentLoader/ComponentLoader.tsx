@@ -13,8 +13,13 @@ export interface ComponentLoaderProps {
 type LazyWindowProps = {
   windowId: string;
   windowName: string;
-  lazyLoadReducerName: string;
+  lazyLoadReducerName?: string;
 };
+
+const COMPONENTS_REQUIRING_REDUCER = new Set<ComponentNames>([
+  'Counter',
+  'Notes',
+]);
 
 const ComponentLoader: React.FC<ComponentLoaderProps> = ({
   componentName,
@@ -22,6 +27,12 @@ const ComponentLoader: React.FC<ComponentLoaderProps> = ({
   windowName,
   lazyLoadReducerName,
 }) => {
+  if (COMPONENTS_REQUIRING_REDUCER.has(componentName) && !lazyLoadReducerName) {
+    throw new Error(
+      `Component "${componentName}" requires a lazyLoadReducerName but none was provided.`
+    );
+  }
+
   const LazyComponent = getLazyComponent(
     componentName
   ) as React.ComponentType<LazyWindowProps>;
@@ -30,7 +41,7 @@ const ComponentLoader: React.FC<ComponentLoaderProps> = ({
       <LazyComponent
         windowId={windowId}
         windowName={windowName}
-        lazyLoadReducerName={lazyLoadReducerName ?? ''}
+        lazyLoadReducerName={lazyLoadReducerName}
       />
     </Suspense>
   );

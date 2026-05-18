@@ -37,6 +37,7 @@ Run tests:
 ```bash
 npm run test:unit      # Unit tests (Jest)
 npm run test:e2e       # E2E tests (Playwright)
+npm run test:e2e:live  # Live-environment Playwright suite (@live)
 npm run test:all       # Unit + E2E
 ```
 
