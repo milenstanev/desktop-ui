@@ -143,13 +143,13 @@ State persistence is handled by Redux middleware, keeping reducers pure.
 **Implementation:**
 ```
 // desktopStorageMiddleware.ts
-if (
-  addWindow.match(action) ||
-  removeWindow.match(action) ||
-  updateLayouts.match(action)
-) {
-  // Save to localStorage after state update
-  localStorage.setItem('desktopState', JSON.stringify(state.desktop));
+const windowsChanged = prevDesktop.desktopWindows !== nextDesktop.desktopWindows;
+const layoutsChanged = prevDesktop.layouts !== nextDesktop.layouts;
+
+if (windowsChanged || layoutsChanged) {
+  // Save after any reducer that mutates these branches
+  localStorage.setItem('desktopUI.desktop', JSON.stringify(nextDesktop.desktopWindows));
+  localStorage.setItem('desktopUI.layouts', JSON.stringify(nextDesktop.layouts));
 }
 ```
 

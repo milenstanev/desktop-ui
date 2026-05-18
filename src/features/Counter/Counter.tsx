@@ -10,10 +10,16 @@ import styles from './Counter.module.css';
 interface CounterProps {
   windowId: string;
   windowName: string;
-  lazyLoadReducerName: string;
+  lazyLoadReducerName?: string;
 }
 
 const Counter: React.FC<CounterProps> = ({ lazyLoadReducerName }) => {
+  if (!lazyLoadReducerName) {
+    throw new Error(
+      'Counter feature requires lazyLoadReducerName for dynamic reducer injection.'
+    );
+  }
+
   //region states
   const value = useAppSelector(
     (state: RootState) => state[lazyLoadReducerName]?.value || 0

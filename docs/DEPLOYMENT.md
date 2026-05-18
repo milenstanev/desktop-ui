@@ -24,6 +24,23 @@ Free deployment options for the desktop-ui starter.
 npx vercel
 ```
 
+### Host app (Module Federation shell)
+
+The `host/` app loads desktop-ui from `{REMOTE_URL}/remoteEntry.js`. It must **not** use `localhost` in production.
+
+1. Deploy the main app first (root project → `https://your-desktop-ui.vercel.app`).
+2. Create a second Vercel project with **Root Directory** = `host`.
+3. Set **Environment variable** `REMOTE_URL` = `https://your-desktop-ui.vercel.app` (Production).
+4. Redeploy the host project.
+
+Or from the repo root:
+
+```bash
+npm run host:deploy:vercel -- --remote-url https://your-desktop-ui.vercel.app
+```
+
+See `host/README.md` for details.
+
 ---
 
 ## Netlify

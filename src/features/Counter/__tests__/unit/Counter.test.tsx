@@ -2,7 +2,11 @@ import { render, screen, act } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { setupStore } from '~/core/store';
 import Counter from '~/features/Counter/Counter';
-import { COUNTER_STRINGS, COMPONENT_NAMES, REDUCER_NAMES } from '~/shared/constants';
+import {
+  COUNTER_STRINGS,
+  COMPONENT_NAMES,
+  REDUCER_NAMES,
+} from '~/shared/constants';
 import { TEST_SELECTORS } from '~/shared/testSelectors';
 
 const INITIAL_VALUE = '0';
@@ -24,6 +28,30 @@ function renderCounter() {
 }
 
 describe('Counter', () => {
+  it('throws a helpful error when reducer name is missing', () => {
+    const store = setupStore();
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    try {
+      expect(() =>
+        render(
+          <Provider store={store}>
+            <Counter
+              windowId={TEST_SELECTORS.WINDOW_ID_W1}
+              windowName={COMPONENT_NAMES.COUNTER}
+            />
+          </Provider>
+        )
+      ).toThrow(
+        'Counter feature requires lazyLoadReducerName for dynamic reducer injection.'
+      );
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
+  });
+
   it('renders counter with increment and decrement buttons', () => {
     renderCounter();
     expect(

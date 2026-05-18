@@ -11,6 +11,8 @@ export type DesktopUIWindow = {
   id: string;
   name: string;
   lazyLoadComponent?: ComponentNames;
+  /** For remote micro-frontends loaded via Module Federation */
+  remoteFeatureName?: string;
   layout: WindowLayout | undefined;
   lazyLoadReducerName?: string | undefined;
 };

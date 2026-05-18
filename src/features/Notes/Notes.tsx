@@ -12,10 +12,16 @@ const EMPTY_ITEMS: string[] = [];
 interface NotesProps {
   windowId: string;
   windowName: string;
-  lazyLoadReducerName: string;
+  lazyLoadReducerName?: string;
 }
 
 const Notes: React.FC<NotesProps> = ({ lazyLoadReducerName }) => {
+  if (!lazyLoadReducerName) {
+    throw new Error(
+      'Notes feature requires lazyLoadReducerName for dynamic reducer injection.'
+    );
+  }
+
   //region states
   const items = useAppSelector(
     (state: RootState) =>

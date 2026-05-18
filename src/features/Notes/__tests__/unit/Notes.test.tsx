@@ -3,7 +3,11 @@ import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { setupStore } from '~/core/store';
 import Notes from '~/features/Notes/Notes';
-import { NOTES_STRINGS, COMPONENT_NAMES, REDUCER_NAMES } from '~/shared/constants';
+import {
+  NOTES_STRINGS,
+  COMPONENT_NAMES,
+  REDUCER_NAMES,
+} from '~/shared/constants';
 import { TEST_SELECTORS } from '~/shared/testSelectors';
 
 const BUTTON_ROLE = 'button';
@@ -26,6 +30,30 @@ function renderNotes() {
 }
 
 describe('Notes', () => {
+  it('throws a helpful error when reducer name is missing', () => {
+    const store = setupStore();
+    const consoleErrorSpy = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    try {
+      expect(() =>
+        render(
+          <Provider store={store}>
+            <Notes
+              windowId={TEST_SELECTORS.WINDOW_ID_W1}
+              windowName={COMPONENT_NAMES.NOTES}
+            />
+          </Provider>
+        )
+      ).toThrow(
+        'Notes feature requires lazyLoadReducerName for dynamic reducer injection.'
+      );
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
+  });
+
   it('renders notes feature with input and add button', () => {
     renderNotes();
     expect(

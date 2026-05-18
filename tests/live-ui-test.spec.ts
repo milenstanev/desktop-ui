@@ -12,7 +12,7 @@ import { test, expect } from '@playwright/test';
 import { TEST_SELECTORS } from '~/shared/testSelectors';
 import { closeAllWindows } from '~/tests/helpers';
 
-test.describe('Live UI - Comprehensive Test', () => {
+test.describe('Live UI - Comprehensive Test', { tag: '@live' }, () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');

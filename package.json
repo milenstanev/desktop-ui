@@ -23,10 +23,12 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
+    "build:vercel": "react-app-rewired build && ./scripts/verify-remote-entry-build.sh",
     "build:analyze": "ANALYZE=true react-app-rewired build",
     "test": "react-app-rewired test",
     "test:unit": "react-scripts test --watchAll=false",
     "test:e2e": "playwright test",
+    "test:e2e:live": "playwright test --config=playwright.live.config.ts",
     "test:memory": "playwright test --config=playwright.memory.config.ts",
     "test:memory:forever": "./run-memory-chaos-forever.sh",
     "test:e2e:ui": "playwright test --ui",
@@ -36,7 +38,19 @@
     "type-check": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
     "eject": "react-scripts eject",
-    "prepare": "husky"
+    "prepare": "husky",
+    "host:start": "cd host && npm run start",
+    "host:build": "cd host && npm run build",
+    "host:check": "cd host && npm run check",
+    "host:deploy:vercel": "./scripts/deploy-host-vercel.sh",
+    "host:deploy:vercel:preview": "./scripts/deploy-host-vercel.sh --preview",
+    "analytics:start": "cd src/features/remotes/analytics && npm run start",
+    "analytics:build": "cd src/features/remotes/analytics && npm run build",
+    "analytics:check": "cd src/features/remotes/analytics && npm run check",
+    "analytics:deploy:vercel": "./scripts/deploy-analytics-vercel.sh",
+    "analytics:deploy:vercel:preview": "./scripts/deploy-analytics-vercel.sh --preview",
+    "mf:demo": "npm run build && npx serve -s build -l 3000",
+    "check:all": "npm run type-check && npm run lint && npm run test:unit -- --watchAll=false && npm run host:check && npm run analytics:check"
   },
   "eslintConfig": {
     "extends": [

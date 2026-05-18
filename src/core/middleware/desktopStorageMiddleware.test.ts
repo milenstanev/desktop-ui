@@ -7,6 +7,7 @@ import DesktopSlice, {
   resetLayouts,
   removeAllWindows,
   organizeGrid,
+  setFocus,
 } from '~/features/Desktop/DesktopSlice';
 import {
   LOCAL_STORAGE_DESKTOP_KEY,
@@ -207,6 +208,27 @@ describe('desktopStorageMiddleware', () => {
 
     expect(localStorage.getItem(LOCAL_STORAGE_DESKTOP_KEY)).toBeNull();
     expect(localStorage.getItem(LOCAL_STORAGE_LAYOUT_KEY)).toBeNull();
+  });
+
+  it('does not persist when only focus changes', () => {
+    store.dispatch(
+      addWindow({
+        id: 'test-1',
+        name: COMPONENT_NAMES.COUNTER,
+        lazyLoadComponent: 'Counter',
+        layout: undefined,
+      })
+    );
+
+    const initialWindows = localStorage.getItem(LOCAL_STORAGE_DESKTOP_KEY);
+    const initialLayouts = localStorage.getItem(LOCAL_STORAGE_LAYOUT_KEY);
+
+    store.dispatch(setFocus('test-1'));
+
+    expect(localStorage.getItem(LOCAL_STORAGE_DESKTOP_KEY)).toBe(
+      initialWindows
+    );
+    expect(localStorage.getItem(LOCAL_STORAGE_LAYOUT_KEY)).toBe(initialLayouts);
   });
 
   it('handles localStorage errors gracefully', () => {

@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  grepInvert: /@memory/,
+  grepInvert: /@memory|@live/,
   testMatch: [
     'tests/**/*.spec.ts', // Core/integration tests at root
     'src/**/__tests__/e2e/**/*.spec.ts', // Feature-specific E2E tests
@@ -28,9 +28,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npx serve -s build -l 3000',
+    command: './scripts/start-memory-test-servers.sh',
     port: 3000,
     timeout: 120 * 1000,
-    reuseExistingServer: true,
+    reuseExistingServer: false,
   },
 });

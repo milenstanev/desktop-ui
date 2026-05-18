@@ -10,6 +10,7 @@ import {
   X,
   Grid3x3,
 } from 'lucide-react';
+import MicroFrontendDemo from '~/features/MicroFrontendDemo/MicroFrontendDemo';
 import styles from './Header.module.css';
 import { useAppDispatch } from '~/core/hooks';
 import {
@@ -199,6 +200,7 @@ const Header: React.FC = () => {
           {theme === 'gradient' && <Timer size={16} />}
           <span>{APP_STRINGS.BUTTON_ADD_TIMER}</span>
         </button>
+        <MicroFrontendDemo />
       </div>
     </header>
   );
