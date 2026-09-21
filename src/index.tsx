@@ -3,11 +3,17 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './app/App';
 import reportWebVitals from './reportWebVitals';
+import {
+  initGoogleAnalytics,
+  sendGAEvent,
+} from './core/analytics/googleAnalytics';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+initGoogleAnalytics();
+
 root.render(
   <React.StrictMode>
     <App />
@@ -52,9 +58,12 @@ reportWebVitals((metric) => {
     });
   }
 
-  // In production, send to your analytics service
+  // In production, send Web Vitals to Google Analytics
   if (process.env.NODE_ENV === 'production') {
-    // Example: sendToAnalytics(metric);
-    // Google Analytics 4: gtag('event', metric.name, { value: Math.round(metric.value) });
+    sendGAEvent(metric.name, {
+      value: Math.round(metric.value),
+      event_label: metric.id,
+      non_interaction: true,
+    });
   }
 });
